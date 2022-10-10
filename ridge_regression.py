@@ -1,0 +1,1 @@
+def ridge_regression(y, tx, lambda_):

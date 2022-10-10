@@ -1,0 +1,1 @@
+def reg_logistic_regression(y, tx, lambda_,initial w, max_iters, gamma)
