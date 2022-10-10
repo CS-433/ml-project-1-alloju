@@ -1,4 +1,5 @@
 from utilities import compute_mse
+import numpy as np
 
 
 def ridge_regression(y, tx, lambda_):
@@ -18,6 +19,6 @@ def ridge_regression(y, tx, lambda_):
     >>> ridge_regression(np.array([0.1,0.2]), np.array([[2.3, 3.2], [1., 0.1]]), 1)
     array([0.03947092, 0.00319628])
     """
-    weights = np.linalg.solve(tx.T@tx + 2 * tx.shape[0]*lambda_*np.identity(tx.shape[1]), tx.T@y)
-    loss = compute_mse(y, tx, weights)
-    return weights
+    w = np.linalg.solve(tx.T@tx + 2 * tx.shape[0]*lambda_*np.identity(tx.shape[1]), tx.T@y)
+    loss = compute_mse(y, tx, w)
+    return w, loss
