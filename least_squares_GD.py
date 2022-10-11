@@ -28,7 +28,7 @@ def least_squares_GD(y, tx, initial_w, max_iters, gamma):
         gamma: a scalar denoting the stepsize
 
     Returns:
-        loss: the last loss value (scalar) for each iteration of GD
+        loss: the loss value (scalar) for last iteration of GD
         w: the last computed model parameters as numpy arrays of shape (2, ), for each iteration of GD
     """
     w = initial_w
