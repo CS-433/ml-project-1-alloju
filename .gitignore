@@ -1,5 +1,5 @@
 #default python gitignore
-data/
+data/*
 # Editors
 .vscode/
 .idea/
