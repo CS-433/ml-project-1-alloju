@@ -1,5 +1,6 @@
 #default python gitignore
-data/*
+data/
+predictions/
 # Editors
 .vscode/
 .idea/

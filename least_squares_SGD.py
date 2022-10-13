@@ -17,7 +17,7 @@ def compute_stoch_gradient(y, tx, w):
     # ***************************************************
     return compute_gradient(y,tx,w)
 
-def least_squares_SGD(y, tx, initial_w, batch_size, max_iters, gamma):
+def least_squares_SGD(y, tx, initial_w, max_iters, gamma):
     """Linear regression using stochastic gradient descent
 
     Args:
@@ -37,8 +37,8 @@ def least_squares_SGD(y, tx, initial_w, batch_size, max_iters, gamma):
     
     for minibatch_y, minibatch_tx in batch_iter(y, tx, 1):
         for n_iter in range(max_iters):
-        grad = compute_stoch_gradient(minibatch_y,minibatch_tx,w)
-        loss = compute_mse(minibatch_y, minibatch_tx, w)
-        w = w - gamma * grad
+            grad = compute_stoch_gradient(minibatch_y,minibatch_tx,w)
+            loss = compute_mse(minibatch_y, minibatch_tx, w)
+            w = w - gamma * grad
 
     return w, loss
