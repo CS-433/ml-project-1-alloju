@@ -5,8 +5,8 @@ def compute_mse(y, tx, w):
 
     Args:
         y: shape=(N, )
-        tx: shape=(N,2)
-        w: shape=(2,). The vector of model parameters.
+        tx: shape=(N,D)
+        w: shape=(D,). The vector of model parameters.
 
     Returns:
         the value of the loss (a scalar), corresponding to the input parameters w.
@@ -14,3 +14,14 @@ def compute_mse(y, tx, w):
     e = y - np.dot(tx,w)
     L = 1/(2*y.shape[0])*(np.dot(np.transpose(e),e))
     return L
+
+def compute_rmse(mse):
+    """Compute the rmse given the mse
+
+    Args:
+        mse: mean square errors
+
+    Returns:
+        The root mean square error
+    """
+    return np.sqrt(2 * mse)
