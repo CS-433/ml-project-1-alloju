@@ -29,10 +29,10 @@ def split_data(x, y, ratio, seed=1):
     len_tr = int(np.floor(ratio * len(x)))
     data = np.column_stack((x,y))
     data = np.random.permutation(data)
-    x_tr = data[0:len_tr,0]
-    x_val= data[len_tr::,0]
-    y_tr = data[0:len_tr,1]
-    y_val= data[len_tr::,1]
+    x_tr = data[0:len_tr,0:29]
+    x_val= data[len_tr::,0:29]
+    y_tr = data[0:len_tr,-1]
+    y_val= data[len_tr::,-1]
     return (x_tr, x_val, y_tr, y_val)
 
 def load_data(path_dataset):
@@ -43,9 +43,22 @@ def load_data(path_dataset):
         path_dataset, delimiter=",", skip_header=1, usecols=[1],
         converters={1: lambda x: 0 if b"b" in x else 1}) #signal and background ?
     x = data[:,2:-1]
-    print(data.shape)
-    print("x:", x)
     y = label
-    print("y: ", y)
     return x, y
 
+def load_test_data(path_testset):
+    """Load test data and return id and features
+
+    Args:
+        path_testset: relative path to test data
+
+    Returns:
+        id: id of the features
+        x: features
+    """
+    data = np.genfromtxt(path_testset, delimiter=",", skip_header=1)
+    print("data:", data.shape)
+    id = data[:,0]
+    x = data[:,2:-1]
+    print("test:", x.shape)
+    return id, x
