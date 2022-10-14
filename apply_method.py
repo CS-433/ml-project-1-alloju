@@ -17,6 +17,7 @@ def apply_method(method,y_tr,x_tr,y_val,x_val, x_te, id):
         rmse_tr: training rmse
         rmse_val: validation rmse
     """
+    # TODO: if blablabla in file name 
     w, mse = method(y_tr,x_tr)
     rmse_tr = compute_rmse(mse)
     rmse_val = compute_rmse(compute_mse(y_val,x_val,w))
@@ -34,6 +35,7 @@ def predict(method, id, x_te, w):
     print(x_te.shape)
     print(w.shape)
     y = np.dot(x_te,w)
+    # appliquer les labels
     pred = np.column_stack((id,y))
     path = op.join(prediction_dir, "prediction" + str(method) + ".csv")
     np.savetxt(path, pred, delimiter=",")

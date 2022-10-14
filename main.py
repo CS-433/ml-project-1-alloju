@@ -17,3 +17,18 @@ rmse_tr_ls, rmse_val_ls = apply_method(im.least_squares, y_tr,x_tr,y_val,x_val, 
 #rmse_tr_ls, rmse_val_ls = apply_method(im.mean_squared_SGD, y_tr,x_tr,y_val,x_val, x_te, id)
 #rmse_tr_ls, rmse_val_ls = apply_method(im.mean_squared_GD, y_tr,x_tr,y_val,x_val, x_te, id)
 #rmse_tr_ls, rmse_val_ls = apply_method(im.ridge_regression, y_tr,x_tr,y_val,x_val, x_te, id)
+
+def test(a,b,c):
+    """_summary_
+
+    Args:
+        a (_type_): _description_
+        b (_type_): _description_
+        c (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """
+    #autodocstring
+    info = 0
+    return info
