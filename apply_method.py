@@ -18,7 +18,16 @@ def apply_method(method,y_tr,x_tr,y_val,x_val, x_te, id):
         rmse_val: validation rmse
     """
     # TODO: if blablabla in file name 
-    w, mse = method(y_tr,x_tr)
+    if (method == 'mean_squared_error' or 'mean_squared_error_sgd' or 'logistic_regression'):
+        weights = np.random.rand(x_tr.shape[1])
+        w, mse = method(y_tr,x_tr, initial_w = weights, max_iters = 100, gamma = 0.1)
+    elif (method == 'least_squares'):
+        w, mse = method(y_tr, x_tr)
+    elif (method == 'ridge_regression'):
+        w, mse = method(y_tr, x_tr, lambda_ = 0.1)
+    elif (method == 'reg_logistic_regression'):
+        weights = np.random.rand(x_tr.shape[1])
+        w, mse = method(y_tr, x_tr, lambda_ = 0.1, initial_w = weights, max_iters = 100, gamma = 0.1)
     rmse_tr = compute_rmse(mse)
     rmse_val = compute_rmse(compute_mse(y_val,x_val,w))
     predict(method, id, x_te, w)
