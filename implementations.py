@@ -16,11 +16,13 @@ def mean_squared_error_gd(y, tx, initial_w, max_iters, gamma):
         loss: the loss value (scalar) for last iteration of GD
     """
     w = initial_w
+    loss = ut.compute_mse(y, tx, w)
     for n_iter in range(max_iters):
+        print('coucou', n_iter)
         grad = ut.compute_gradient_MSE(y,tx,w)
         loss = ut.compute_mse(y, tx, w)
         w -= gamma * grad
-    return w, loss
+    return w, np.squeeze(loss)
 
 def mean_squared_error_sgd(y, tx, initial_w, max_iters, gamma):
     """Linear regression using stochastic gradient descent
@@ -43,7 +45,7 @@ def mean_squared_error_sgd(y, tx, initial_w, max_iters, gamma):
             grad = ut.compute_gradient_MSE(minibatch_y,minibatch_tx,w)
             loss = ut.compute_mse(minibatch_y, minibatch_tx, w)
             w -= gamma * grad
-    return w, loss
+    return w, np.squeeze(loss)
 
 def least_squares(y, tx):
     """Least squares regression using normal equations
@@ -58,7 +60,7 @@ def least_squares(y, tx):
     """
     w = np.linalg.solve(np.dot(tx.T,tx), tx.T@y)
     loss = ut.compute_mse(y,tx,w)
-    return w, loss
+    return w, np.squeeze(loss)
 
 def ridge_regression(y, tx, lambda_):
     """Ridge regression using normal equations
@@ -74,7 +76,7 @@ def ridge_regression(y, tx, lambda_):
     """
     w = np.linalg.solve(tx.T@tx + 2 * tx.shape[0]*lambda_*np.identity(tx.shape[1]), tx.T@y)
     loss = ut.compute_mse(y, tx, w)
-    return w, loss
+    return w, np.squeeze(loss)
 
 def logistic_regression(y, tx, initial_w, max_iters, gamma):
     """Logistic regression using gradient descent or SGD (y ∈ {0, 1})
@@ -99,7 +101,7 @@ def logistic_regression(y, tx, initial_w, max_iters, gamma):
         w -= gamma * gradient
         # compute the cost: 
         loss = ut.compute_loss_neg_loglikeli(y, tx, w)
-    return w, loss
+    return w, np.squeeze(loss)
 
 def reg_logistic_regression(y, tx, lambda_,initial_w, max_iters, gamma):
     """# Regularized logistic regression using gradient descent or SGD (y ∈ {0, 1}, with regularization term λ∥w∥2 (ridge regulation))
@@ -125,4 +127,4 @@ def reg_logistic_regression(y, tx, lambda_,initial_w, max_iters, gamma):
         w -= gamma * gradient
         # compute the cost: 
     loss = ut.compute_loss_neg_loglikeli(y, tx, w) # Don't include the penalty term 
-    return w, loss
+    return w, np.squeeze(loss)
