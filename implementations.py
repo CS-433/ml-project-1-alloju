@@ -20,8 +20,8 @@ def mean_squared_error_gd(y, tx, initial_w, max_iters, gamma):
     for n_iter in range(max_iters):
         print('coucou', n_iter)
         grad = ut.compute_gradient_MSE(y,tx,w)
-        loss = ut.compute_mse(y, tx, w)
         w -= gamma * grad
+        loss = ut.compute_mse(y, tx, w)
     return w, np.squeeze(loss)
 
 def mean_squared_error_sgd(y, tx, initial_w, max_iters, gamma):
@@ -43,8 +43,8 @@ def mean_squared_error_sgd(y, tx, initial_w, max_iters, gamma):
     for minibatch_y, minibatch_tx in hp.batch_iter(y, tx, 1):
         for n_iter in range(max_iters):
             grad = ut.compute_gradient_MSE(minibatch_y,minibatch_tx,w)
-            loss = ut.compute_mse(minibatch_y, minibatch_tx, w)
             w -= gamma * grad
+            loss = ut.compute_mse(minibatch_y, minibatch_tx, w)
     return w, np.squeeze(loss)
 
 def least_squares(y, tx):
@@ -92,15 +92,20 @@ def logistic_regression(y, tx, initial_w, max_iters, gamma):
         w: the last computed model parameters as numpy arrays of shape (D, )
         loss: the loss value (scalar) for the last iteration 
     """
+    print(y)
+    print(tx)
     w = initial_w
+    print(w)
     loss = ut.compute_loss_neg_loglikeli(y, tx, w)
+    print('avant boucle')
     for i in range(max_iters):
+        print('dans la boucle, iteration n°', i)
         # compute the gradient: 
         gradient = ut.compute_gradient_neg_loglikeli(y, tx, w)
         # update w: 
         w -= gamma * gradient
         # compute the cost: 
-        loss = ut.compute_loss_neg_loglikeli(y, tx, w)
+        loss = ut.compute_mse(y, tx, w)
     return w, np.squeeze(loss)
 
 def reg_logistic_regression(y, tx, lambda_,initial_w, max_iters, gamma):
