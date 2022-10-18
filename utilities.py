@@ -63,7 +63,7 @@ def compute_loss_neg_loglikeli(y, tx, w):
         the value of the loss (a scalar), corresponding to the input parameters w.
     """
     sig = sigmoid(tx.dot(w))
-    loss = - y.T.dot(np.log(sig)) - (1-y).T.dot(np.log(1 - sig))
+    loss = - y.T@(np.log(sig)) - (1-y).T@(np.log(1 - sig))
     return np.squeeze(loss) # squeeze remove axes of length 1 from loss
 
 def compute_gradient_neg_loglikeli(y, tx, w):
@@ -75,7 +75,9 @@ def compute_gradient_neg_loglikeli(y, tx, w):
         Returns: 
             the value of the gradient corresponding to the input parameters.
     """
-    return tx.T.dot(sigmoid(tx.dot(w))-y)
+    return tx.T@(sigmoid(tx@(w))-y)/(y.shape[0]) 
+    #TODO testé (1/N) selon ce que j'ai lu sur un site mais comprendre pk ça marche 
+    #https://medium.com/@IwriteDSblog/gradient-descent-for-logistics-regression-in-python-18e033775082
 
 
 """"
