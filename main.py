@@ -1,4 +1,4 @@
-from helpers import standardize
+from helpers import standardize, load_csv_data
 from split_data import load_data, split_data, load_test_data
 from paths import training_set, test_set
 from apply_method import apply_method
@@ -12,9 +12,11 @@ from preprocessing import angle_values, normalize, preproc
 #from utilities import compute_mse, compute_rmse
 
 
-x,y = load_data(training_set)
+#x,y = load_data(training_set)
+y,x,ids = load_csv_data(training_set)
 x = preproc(x)
-id, x_te = load_test_data(test_set) 
+#id, x_te = load_test_data(test_set) 
+_, x_te, id = load_csv_data(test_set)
 x_te, x_te_m, xe_te_std = standardize(x_te)
 x_te = angle_values(x_te)
 
