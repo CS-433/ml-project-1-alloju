@@ -28,16 +28,18 @@ def apply_method(method,y_tr,x_tr,y_val,x_val, x_te, id):
     #bar = getattr(foo, 'bar')
     #result = bar()
 
+    # TODO: w_initial à np.zeros ?
+
     if ('mean_squared_error' in str(method) or 'mean_squared_error_sgd' in str(method) or 'logistic_regression' in str(method)):
         weights = np.random.rand(x_tr.shape[1])
-        w, mse = method(y_tr,x_tr, initial_w = weights, max_iters = 100, gamma = 0.1)
+        w, mse = method(y_tr,x_tr, initial_w = weights, max_iters = 5, gamma = 0.08)
     elif ('least_squares' in str(method)):
         w, mse = method(y_tr, x_tr)
     elif ('ridge_regression' in str(method)):
         w, mse = method(y_tr, x_tr, lambda_ = 0.1)
     elif ('reg_logistic_regression' in str(method)):
         weights = np.random.rand(x_tr.shape[1])
-        w, mse = method(y_tr, x_tr, lambda_ = 0.1, initial_w = weights, max_iters = 100, gamma = 0.1)
+        w, mse = method(y_tr, x_tr, lambda_ = 0.1, initial_w = weights, max_iters = 50, gamma = 0.005)
     rmse_tr = compute_rmse(mse)
     rmse_val = compute_rmse(compute_mse(y_val,x_val,w))
     predict(method, id, x_te, w)

@@ -37,8 +37,8 @@ def angle_values(x):
 
 def preproc(x):
     x = missing_data(x)
-    x, x_mean, x_std = standardize(x)
     x = angle_values(x)
+    x, x_mean, x_std = standardize(x)
     return x
         
         
