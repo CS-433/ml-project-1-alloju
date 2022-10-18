@@ -1,9 +1,11 @@
 from split_data import load_data
 import numpy as np
 import csv
+from helpers import standardize
 
-data_path = "Data/train.csv"
-x,y = load_data(data_path)
+
+#data_path = "data/train.csv"
+#x,y = load_data(data_path)
 
 def missing_data(x): # à voir si on utilise mean ou median
     d = x.shape[1] # determine the number of features
@@ -33,7 +35,11 @@ def angle_values(x):
         colomns = colomns + 1
     return x
 
-        
+def preproc(x):
+    x = missing_data(x)
+    x, x_mean, x_std = standardize(x)
+    x = angle_values(x)
+    return x
         
         
 
