@@ -1,9 +1,13 @@
-from utilities import compute_mse,compute_rmse
+from sys import implementation
+from utilities import compute_mse,compute_rmse, sigmoid
 from paths import  prediction_dir
 import os.path as op
 import numpy as np
+from helpers import create_csv_submission
 
 def apply_method(method,y_tr,x_tr,y_val,x_val, x_te, id):
+    #TODO: def applay_method(method, y_tr, x_tr, y_val, x_val, x_te, id, lamda_ = 0.5, initial_w = np.array([0]), max_iters = 100, gamma = 0.1):
+
     """Apply a given method to the training and validation sets.
 
     Args:
@@ -17,15 +21,21 @@ def apply_method(method,y_tr,x_tr,y_val,x_val, x_te, id):
         rmse_tr: training rmse
         rmse_val: validation rmse
     """
+
     # TODO: if blablabla in file name 
-    if (method == 'mean_squared_error' or 'mean_squared_error_sgd' or 'logistic_regression'):
+    #une manière plus élégante de faire maybe ?:
+    #import foo
+    #bar = getattr(foo, 'bar')
+    #result = bar()
+
+    if ('mean_squared_error' in str(method) or 'mean_squared_error_sgd' in str(method) or 'logistic_regression' in str(method)):
         weights = np.random.rand(x_tr.shape[1])
         w, mse = method(y_tr,x_tr, initial_w = weights, max_iters = 100, gamma = 0.1)
-    elif (method == 'least_squares'):
+    elif ('least_squares' in str(method)):
         w, mse = method(y_tr, x_tr)
-    elif (method == 'ridge_regression'):
+    elif ('ridge_regression' in str(method)):
         w, mse = method(y_tr, x_tr, lambda_ = 0.1)
-    elif (method == 'reg_logistic_regression'):
+    elif ('reg_logistic_regression' in str(method)):
         weights = np.random.rand(x_tr.shape[1])
         w, mse = method(y_tr, x_tr, lambda_ = 0.1, initial_w = weights, max_iters = 100, gamma = 0.1)
     rmse_tr = compute_rmse(mse)
@@ -41,10 +51,12 @@ def predict(method, id, x_te, w):
         id (_type_): _description_
         x_te (_type_): _description_
     """
-    print(x_te.shape)
-    print(w.shape)
     y = np.dot(x_te,w)
     # appliquer les labels
-    pred = np.column_stack((id,y))
+    y = sigmoid(y)
+    y[y < 0.5] = -1
+    y[y > 0.5] = 1
+    #pred = np.vstack((np.array(["Id", "Prediction"]),np.column_stack((id,y))))
     path = op.join(prediction_dir, "prediction" + str(method) + ".csv")
-    np.savetxt(path, pred, delimiter=",")
+    create_csv_submission(id, y, path)
+    #np.savetxt(path, pred, delimiter=",")
