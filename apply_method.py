@@ -53,10 +53,10 @@ def predict(method, id, x_te, w):
     """
     y = np.dot(x_te,w)
     # appliquer les labels
-    y = sigmoid(y)
-    y[y < 0.5] = -1
-    y[y > 0.5] = 1
+    y_bin = sigmoid(y)
+    y_bin[y_bin < 0.5] = -1
+    y_bin[y_bin >= 0.5] = 1
     #pred = np.vstack((np.array(["Id", "Prediction"]),np.column_stack((id,y))))
     path = op.join(prediction_dir, "prediction" + str(method) + ".csv")
-    create_csv_submission(id, y, path)
+    create_csv_submission(id, y_bin, path)
     #np.savetxt(path, pred, delimiter=",")
