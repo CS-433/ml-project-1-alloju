@@ -28,7 +28,7 @@ def apply_method(method,y_tr,x_tr,y_val,x_val, x_te, id, lambda_ = 0.5, initial_
     #result = bar()
 
     if (initial_w == None):
-        initial_w = np.zeros(x_tr.shape[0])
+        initial_w = np.zeros(x_tr.shape[1])
 
     if ('mean_squared_error' in str(method) or 'mean_squared_error_sgd' in str(method) or 'logistic_regression' in str(method)):
         w, mse = method(y_tr,x_tr, initial_w, max_iters, gamma)
