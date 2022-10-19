@@ -1,7 +1,7 @@
 # Todo
 
 - [x] A [ ] J [ ] L: Check & relire toutes les fonctions dans Implementations
-- [ ] L Adapter apply method à toutes les méthodes
+- [x] L Adapter apply method à toutes les méthodes
 - [x] J Run les tests fournis 
 - [x] J créer une fonction compute_label(y) qui renvoie un np array de taille y avec des 0 et 1 (1 = s, 0 = b)
 - [x] A-L-J Régler le problème des least squares (pourquoi c'est pas entre 0 et 1??)

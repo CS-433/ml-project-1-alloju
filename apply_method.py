@@ -5,8 +5,7 @@ import os.path as op
 import numpy as np
 from helpers import create_csv_submission
 
-def apply_method(method,y_tr,x_tr,y_val,x_val, x_te, id):
-    #TODO: def applay_method(method, y_tr, x_tr, y_val, x_val, x_te, id, lamda_ = 0.5, initial_w = np.array([0]), max_iters = 100, gamma = 0.1):
+def apply_method(method,y_tr,x_tr,y_val,x_val, x_te, id, lambda_ = 0.5, initial_w = None, max_iters = 100, gamma = 0.1):
 
     """Apply a given method to the training and validation sets.
 
@@ -28,18 +27,17 @@ def apply_method(method,y_tr,x_tr,y_val,x_val, x_te, id):
     #bar = getattr(foo, 'bar')
     #result = bar()
 
-    # TODO: w_initial à np.zeros ?
+    if (initial_w == None):
+        initial_w = np.zeros(x_tr.shape[0])
 
     if ('mean_squared_error' in str(method) or 'mean_squared_error_sgd' in str(method) or 'logistic_regression' in str(method)):
-        weights = np.random.rand(x_tr.shape[1])
-        w, mse = method(y_tr,x_tr, initial_w = weights, max_iters = 5, gamma = 0.08)
+        w, mse = method(y_tr,x_tr, initial_w, max_iters, gamma)
     elif ('least_squares' in str(method)):
         w, mse = method(y_tr, x_tr)
     elif ('ridge_regression' in str(method)):
-        w, mse = method(y_tr, x_tr, lambda_ = 0.1)
+        w, mse = method(y_tr, x_tr, lambda_)
     elif ('reg_logistic_regression' in str(method)):
-        weights = np.random.rand(x_tr.shape[1])
-        w, mse = method(y_tr, x_tr, lambda_ = 0.1, initial_w = weights, max_iters = 50, gamma = 0.005)
+        w, mse = method(y_tr, x_tr, lambda_, initial_w, max_iters, gamma)
     rmse_tr = compute_rmse(mse)
     rmse_val = compute_rmse(compute_mse(y_val,x_val,w))
     predict(method, id, x_te, w)
