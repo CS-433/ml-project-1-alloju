@@ -23,6 +23,7 @@ x_te, x_te_m, xe_te_std = standardize(x_te)
 
 x_tr, x_val, y_tr, y_val = split_data(x,y,0.8)
 rmse_tr_ls, rmse_val_ls = apply_method(im.least_squares, y_tr,x_tr,y_val,x_val, x_te, id)
+
 print(rmse_tr_ls, rmse_val_ls)
 rmse_tr_lr, rmse_val_lr = apply_method(im.logistic_regression, y_tr,x_tr,y_val,x_val, x_te, id) #y, tx, initial_w, max_iters, gamma
 rmse_tr_mss, rmse_val_mss = apply_method(im.mean_squared_error_sgd, y_tr,x_tr,y_val,x_val, x_te, id)
