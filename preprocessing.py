@@ -12,8 +12,10 @@ def missing_data(x): # à voir si on utilise mean ou median
     for i in range(d):
         feature_removed = x[:,i][x[:,i] != -999] #remove all features equal to -999 (undetermined)
         mean = np.mean(feature_removed) #determine the mean
+        #TODO: try with median and totally removing these feature 
         x[:,i][np.isclose(x[:,i],-999)]=mean #replace undetermined values by the mean
     return x
+
 
 def normalize(x):
     colomns = np.array([15,18,20,25,28]) #index of colomns containing the colomns with angle values --> no normalization

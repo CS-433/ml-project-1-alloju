@@ -5,7 +5,7 @@ import os.path as op
 import numpy as np
 from helpers import create_csv_submission
 
-def apply_method(method,y_tr,x_tr,y_val,x_val, x_te, id, lambda_ = 0.5, initial_w = None, max_iters = 100, gamma = 0.1):
+def apply_method(method,y_tr,x_tr,y_val,x_val, x_te = np.zeros([5,1]), id = np.zeros(5), lambda_ = 0.5, initial_w = None, max_iters = 100, gamma = 0.1, cross_val = False, validation = True):
 
     """Apply a given method to the training and validation sets.
 
@@ -19,6 +19,7 @@ def apply_method(method,y_tr,x_tr,y_val,x_val, x_te, id, lambda_ = 0.5, initial_
     Returns:
         rmse_tr: training rmse
         rmse_val: validation rmse
+        w: computed weights
     """
 
     # TODO: if blablabla in file name 
@@ -39,8 +40,11 @@ def apply_method(method,y_tr,x_tr,y_val,x_val, x_te, id, lambda_ = 0.5, initial_
     elif ('reg_logistic_regression' in str(method)):
         w, mse = method(y_tr, x_tr, lambda_, initial_w, max_iters, gamma)
     rmse_tr = compute_rmse(mse)
-    rmse_val = compute_rmse(compute_mse(y_val,x_val,w))
-    predict(method, id, x_te, w)
+    rmse_val = 0 #avoid error if no validation set
+    if validation:
+        rmse_val = compute_rmse(compute_mse(y_val,x_val,w))
+    if not(cross_val):
+        predict(method, id, x_te, w)
     return rmse_tr, rmse_val
 
 def predict(method, id, x_te, w):
