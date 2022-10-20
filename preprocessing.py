@@ -15,6 +15,13 @@ def missing_data(x): # à voir si on utilise mean ou median
         x[:,i][np.isclose(x[:,i],-999)]=mean #replace undetermined values by the mean
     return x
 
+def separate(x,y):
+    x_0 = np.array([])
+    x_1 = np.array([])
+    x_0 = np.append(x_0, np.where(y==-1))
+    x_1 = np.append(x_1, np.where(y==1))
+    return x_0,x_1
+
 def normalize(x):
     colomns = np.array([15,18,20,25,28]) #index of colomns containing the colomns with angle values --> no normalization
     means = np.mean(x, axis = 0)
@@ -22,8 +29,7 @@ def normalize(x):
     x = np.add(x, - means)
     x = x/stdev
     return x
-    
-    
+       
 def angle_values(x):
     colomns = np.array([15,18,20,25,28]) #index of colomns containing the colomns with angle values
     for i in range(len(colomns)):
@@ -41,5 +47,5 @@ def preproc(x):
     x, x_mean, x_std = standardize(x)
     return x
         
-        
-
+#data =missing_data(x)      
+#x0,x1 = separate(x,y)
