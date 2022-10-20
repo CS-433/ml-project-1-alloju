@@ -23,7 +23,9 @@ x_te = angle_values(x_te)
 x_te, x_te_m, xe_te_std = standardize(x_te)
 x_tr, x_val, y_tr, y_val = split_data(x,y,0.8)
 
-lambda_, cross_rmse_tr_rr, cross_rmse_te_rr = best_lambda_selection(im.ridge_regression, y, x, x_te, id, 10, lambdas = [0.1,0.3,0.5,0.9])
+#lambda_, cross_rmse_tr_rr, cross_rmse_te_rr = best_lambda_selection(im.ridge_regression, y, x, x_te, id, 10, lambdas = [0.00001, 0.01, 0.05, 0.1,0.3,0.5,0.9])
+lambda_, cross_rmse_tr_rr, cross_rmse_te_rr = best_lambda_selection(im.reg_logistic_regression, y, x, x_te, id, 10, lambdas = [0.1,0.5,1.5,2.5,3,6,6.5,7,8])
+
 #predict(im.ridge_regression, id, x_te, w_tr)
 # k_indices = build_k_indices(y, 10, 1)
 # print(apply_method(im.ridge_regression, y_tr, x_tr, y_val, x_val, x_te, id, lambda_ = 0.1))

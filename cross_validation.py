@@ -71,7 +71,7 @@ def best_lambda_selection(method, y,x, x_te, id, k_fold, lambdas = [0.1, 0.5], i
         temp_rmse_tr = []
         temp_rmse_te = []
         for k in range(k_fold):
-            loss_tr, loss_te= cross_validation(method, y , x, k_indices, k, lambda_)
+            loss_tr, loss_te= cross_validation(method, y , x, k_indices, k, lambda_ = lambda_)
             temp_rmse_tr.append(loss_tr)
             temp_rmse_te.append(loss_te)
         rmse_tr.append(np.mean(temp_rmse_tr))
@@ -82,8 +82,10 @@ def best_lambda_selection(method, y,x, x_te, id, k_fold, lambdas = [0.1, 0.5], i
     best_rmse_tr = rmse_tr[np.squeeze(idx)]
     best_lambda = lambdas[np.squeeze(idx)]
 
-    apply_method(method, y, x, np.zeros_like(y), np.zeros_like(x), x_te, id, best_lambda, validation = False)
     cross_validation_visualization(lambdas, rmse_tr, rmse_te)
+
+    rmse_tr_final, rmse_te_final = apply_method(method, y, x, np.zeros_like(y), np.zeros_like(x), x_te, id, best_lambda, validation = False)
+    
 
     return best_lambda, best_rmse_te, best_rmse_tr
 

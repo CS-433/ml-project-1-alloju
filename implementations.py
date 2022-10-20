@@ -128,4 +128,5 @@ def reg_logistic_regression(y, tx, lambda_,initial_w, max_iters, gamma):
         w -= gamma * gradient
         # compute the cost: 
     loss = ut.compute_loss_neg_loglikeli(y, tx, w) # Don't include the penalty term 
-    return w, np.squeeze(loss)
+    final_loss = ut.compute_rmse(ut.compute_mse(y,tx,w))
+    return w, np.squeeze(final_loss)
