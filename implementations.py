@@ -101,7 +101,8 @@ def logistic_regression(y, tx, initial_w, max_iters, gamma):
         # compute the cost: 
         #loss = ut.compute_mse(y, tx, w)
         loss = ut.compute_loss_neg_loglikeli(y, tx, w)
-    return w, np.squeeze(loss)
+    final_loss = ut.compute_rmse(ut.compute_mse(y,tx,w))
+    return w, np.squeeze(final_loss)
 
 def reg_logistic_regression(y, tx, lambda_,initial_w, max_iters, gamma):
     """# Regularized logistic regression using gradient descent or SGD (y ∈ {0, 1}, with regularization term λ∥w∥2 (ridge regulation))

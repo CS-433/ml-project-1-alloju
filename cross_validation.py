@@ -1,6 +1,7 @@
 import numpy as np
-from apply_method import apply_method
-from utilities import compute_rmse
+from apply_method import apply_method, predict
+from utilities import compute_mse, compute_rmse
+from plots import cross_validation_visualization
 
 def build_k_indices(y, k_fold, seed):
     """build k indices for k-fold.
@@ -20,7 +21,7 @@ def build_k_indices(y, k_fold, seed):
     k_indices = [indices[k * interval: (k + 1) * interval] for k in range(k_fold)]
     return np.array(k_indices)
 
-def cross_validation(method, y, x, x_te, k_indices, k, lambda_ = 0.5, initial_w = np.array([0]), max_iters = 100, gamma = 0.1):
+def cross_validation(method, y, x, k_indices, k, lambda_ = 0.5, initial_w = np.array([0]), max_iters = 100, gamma = 0.1):
     #TODO: si on a pas de initial w c'est qu'on l'utilise pas non? Donc on peut y mettre n'importe quoi ?
     """return the loss of ridge regression for a fold corresponding to k_indices
     
@@ -44,14 +45,11 @@ def cross_validation(method, y, x, x_te, k_indices, k, lambda_ = 0.5, initial_w 
     y_tr = y[train_indices]
     y_val = y[valid_indices]  
 
-    w_tr = apply_method(method, y_tr, x_tr,y_val,x_val, x_te, lambda_)
+    loss_tr, loss_val = apply_method(method, y_tr, x_tr, y_val, x_val, lambda_ = lambda_, cross_val= True)
 
-    loss_tr = compute_rmse(y_tr, x_tr, w_tr)
-    loss_te = compute_rmse(y_val, x_val, w_tr)
+    return loss_tr, loss_val
 
-    return loss_tr, loss_te, w_tr
-
-def best_lambda_selection(method, y,x, x_te, k_fold, lambdas = [0.1, 0.5], initial_ws = np.array([0]), maxs_iters = 10, gammas = 0.1, seed = 1):
+def best_lambda_selection(method, y,x, x_te, id, k_fold, lambdas = [0.1, 0.5], initial_ws = np.array([0]), maxs_iters = 10, gammas = 0.1, seed = 1):
     """cross validation over regularisation parameter lambda.
     
     Args:
@@ -73,15 +71,21 @@ def best_lambda_selection(method, y,x, x_te, k_fold, lambdas = [0.1, 0.5], initi
         temp_rmse_tr = []
         temp_rmse_te = []
         for k in range(k_fold):
-            loss_tr, loss_te, w_tr = cross_validation(method, y , x, x_te, k_indices, k, lambda_)
+            loss_tr, loss_te= cross_validation(method, y , x, k_indices, k, lambda_)
             temp_rmse_tr.append(loss_tr)
             temp_rmse_te.append(loss_te)
         rmse_tr.append(np.mean(temp_rmse_tr))
         rmse_te.append(np.mean(temp_rmse_te))
-    best_rmse = (min(rmse_te))
-    best_lambda = lambdas[np.where(rmse_te == best_rmse)]
+        print("lambda_ = ", lambda_, "rmse_tr = ", np.mean(temp_rmse_tr), "rmse_te", np.mean(temp_rmse_te))
+    best_rmse_te = (min(rmse_te))
+    idx = np.where(rmse_te == best_rmse_te)
+    best_rmse_tr = rmse_tr[np.squeeze(idx)]
+    best_lambda = lambdas[np.squeeze(idx)]
 
-    return best_lambda, best_rmse
+    apply_method(method, y, x, np.zeros_like(y), np.zeros_like(x), x_te, id, best_lambda, validation = False)
+    cross_validation_visualization(lambdas, rmse_tr, rmse_te)
+
+    return best_lambda, best_rmse_te, best_rmse_tr
 
 def best_lambda_and_maxiters_selection(method, y, x, x_te, max_iters, k_fold, lambdas, seed = 1):
     """cross validation over regularisation parameter lambda and degree.

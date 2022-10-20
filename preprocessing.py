@@ -13,6 +13,7 @@ def missing_data(x): # à voir si on utilise mean ou median
     for i in range(d):
         feature_removed = x[:,i][x[:,i] != -999] #remove all features equal to -999 (undetermined)
         mean = np.mean(feature_removed) #determine the mean
+        #TODO: try with median and totally removing these feature 
         x[:,i][np.isclose(x[:,i],-999)]=mean #replace undetermined values by the mean
     return x
 
