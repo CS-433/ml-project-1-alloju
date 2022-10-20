@@ -2,10 +2,11 @@ from split_data import load_data
 import numpy as np
 import csv
 from helpers import standardize
+import matplotlib.pyplot as plt
 
 
-#data_path = "data/train.csv"
-#x,y = load_data(data_path)
+data_path = "data/train.csv"
+x,y = load_data(data_path)
 
 def missing_data(x): # à voir si on utilise mean ou median
     d = x.shape[1] # determine the number of features
@@ -16,20 +17,10 @@ def missing_data(x): # à voir si on utilise mean ou median
     return x
 
 def separate(x,y):
-    x_0 = np.array([])
-    x_1 = np.array([])
-    x_0 = np.append(x_0, np.where(y==-1))
-    x_1 = np.append(x_1, np.where(y==1))
+    x_0 = np.delete(x, np.where(y==1), axis = 0)
+    x_1 = np.delete(x, np.where(y==-1), axis = 0)
     return x_0,x_1
 
-def normalize(x):
-    colomns = np.array([15,18,20,25,28]) #index of colomns containing the colomns with angle values --> no normalization
-    means = np.mean(x, axis = 0)
-    stdev = np.std(x, axis = 0)
-    x = np.add(x, - means)
-    x = x/stdev
-    return x
-       
 def angle_values(x):
     colomns = np.array([15,18,20,25,28]) #index of colomns containing the colomns with angle values
     for i in range(len(colomns)):
@@ -41,11 +32,29 @@ def angle_values(x):
         colomns = colomns + 1
     return x
 
+def plot_hist(x0, x1):
+    for i in range (len(x0[0])):
+        plt.hist(x0.T[i], bins = 100, density = True, label = 'Background', alpha = 0.5)
+        plt.hist(x1.T[i], bins = 100, density = True, label = 'Signal', alpha = 0.5)
+        plt.legend()
+        plt.show()
+    return None
+
+def boxplot(x):
+    for i in range(10, 14, 1):
+        dict = plt.boxplot(x.T[i])
+        plt.show()
+    return None
+
 def preproc(x):
     x = missing_data(x)
     x = angle_values(x)
     x, x_mean, x_std = standardize(x)
     return x
-        
-#data =missing_data(x)      
-#x0,x1 = separate(x,y)
+
+x =missing_data(x)
+x = angle_values(x) 
+x, x_mean, x_std = standardize(x) 
+x0,x1 = separate(x, y)
+#plot_hist(x0,x1)
+boxplot(x)
