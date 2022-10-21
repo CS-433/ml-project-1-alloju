@@ -52,7 +52,7 @@ def sigmoid(t):
     """
     return 1/(1 + np.exp(-t))
 
-def compute_loss_neg_loglikeli(y, tx, w):
+def compute_loss_neg_loglikelihood(y, tx, w):
     """Compute the cost by negative log likelihood.
     
     Args:
@@ -66,7 +66,7 @@ def compute_loss_neg_loglikeli(y, tx, w):
     loss = - y.T@(np.log(sig)) - (1-y).T@(np.log(1 - sig))
     return (1/y.shape[0])*np.squeeze(loss) # squeeze remove axes of length 1 from loss
 
-def compute_gradient_neg_loglikeli(y, tx, w):
+def compute_gradient_neg_loglikelihood(y, tx, w):
     """Compute the gradient of loss (negative log likelihood).
         Args:
             y: shape=(N, )

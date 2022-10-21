@@ -32,7 +32,7 @@ lambda_, cross_rmse_tr_rr, cross_rmse_te_rr = best_lambda_selection(im.ridge_reg
 # print(apply_method(im.ridge_regression, y_tr, x_tr, y_val, x_val, x_te, id, lambda_ = 0.5))
 # print(cross_validation(im.ridge_regression, y, x, x_te, k_indices, 4, lambda_ = 0.1))
 # print(cross_validation(im.ridge_regression, y, x, x_te, k_indices, 4, lambda_ = 0.5))
-print("cross validation on ridge regression: selected lambda = ", lambda_, "cross_rmse_tr_rr = ", cross_rmse_tr_rr, "cross_rmse_te_rr", cross_rmse_te_rr )
+#print("cross validation on ridge regression: selected lambda = ", lambda_, "cross_rmse_tr_rr = ", cross_rmse_tr_rr, "cross_rmse_te_rr", cross_rmse_te_rr )
 
 
 rmse_tr_ls, rmse_val_ls = apply_method(im.least_squares, y_tr,x_tr,y_val,x_val, x_te, id)
@@ -44,6 +44,8 @@ print(rmse_tr_ls, rmse_val_ls)
 # rmse_tr_mss, rmse_val_mss = apply_method(im.mean_squared_error_sgd, y_tr,x_tr,y_val,x_val, x_te, id)
 # rmse_tr_msg, rmse_val_msg = apply_method(im.mean_squared_error_gd, y_tr,x_tr,y_val,x_val, x_te, id)
 # rmse_tr_rr, rmse_val_rr = apply_method(im.ridge_regression, y_tr,x_tr,y_val,x_val, x_te, id)
+#rmse_tr_rlr, rmse_val_rlr = apply_method(im.reg_logistic_regression, y_tr, x_tr, y_val, x_val, x_te, id, lambda_=10)
+#print("reg logistic regression rmse: ", rmse_tr_rlr, rmse_val_rlr)
 # print("least squares rmse: ", rmse_tr_ls, rmse_val_ls)
 #print("logistic regression rmse: ", rmse_tr_lr, rmse_val_lr)
 # print("ridge regression: ", rmse_tr_rr, rmse_val_rr)
