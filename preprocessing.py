@@ -4,7 +4,6 @@ import csv
 from helpers import standardize
 import matplotlib.pyplot as plt
 
-
 data_path = "data/train.csv"
 x,y = load_data(data_path)
 
@@ -17,7 +16,6 @@ def missing_data(x): # à voir si on utilise mean ou median
     for i in range(d):
         feature_removed = x[:,i][x[:,i] != -999] #remove all features equal to -999 (undetermined)
         mean = np.mean(feature_removed) #determine the mean
-        #TODO: try with median and totally removing these feature 
         x[:,i][np.isclose(x[:,i],-999)]=mean #replace undetermined values by the mean
     return x
 
@@ -38,7 +36,6 @@ def angle_values(x):
     return x
 
 def plot_hist(x0, x1, id):
-    #for i in range (len(x0[0])):
     for i in range (4):
         plt.hist(x0.T[i], bins = 100, density = True, label = 'Background', alpha = 0.5)
         plt.hist(x1.T[i], bins = 100, density = True, label = 'Signal', alpha = 0.5)
@@ -83,14 +80,22 @@ def replace_class(x):
 
 def corr(x):
     #TODO check which attributes have high correlation, if above a certain threshold, delete one of them
+    #corr = np.zeros([x.shape[1], x.shape[1]])
+    corr = np.corrcoef(x,rowvar = False)
+    corr[:][np.isclose(corr,1)] = 0
+    corr[:][corr < 0.95] = 0
+    corr = np.triu(corr)
+    dia = np.diag(corr)
+    ind = (np.array([np.nonzero(corr)]))
+    print(ind)
     return x
 
 def preproc(x):
-
     x = remove_outliers(x)
     x = angle_values(x)
     x = replace_class(x)
-    #x, x_mean, x_std = standardize(x)
+    x = corr(x)
+    x, x_mean, x_std = standardize(x)
     return x
 
 x= preproc(x)
