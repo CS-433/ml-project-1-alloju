@@ -65,23 +65,36 @@ def remove_outliers(x):
         x[:, i][x[:, i] == -999] = qs[1]
     return x
 
-def preproc(x):
-
-    x = remove_outliers(x)
-    x = angle_values(x)
-    #x, x_mean, x_std = standardize(x)
-    return x
-
 def replace_class(x):
-    #TODO replace argument 0,1,2,3 by 4 different colomns containing 0 and 1
+    len_ = np.shape(x)[0]
+    #create 4 new colomns with indexes 25 to 28 containing solely zeros
+    x = np.insert(x, 30, np.zeros(len_), axis = 1)
+    x = np.insert(x, 30, np.zeros(len_), axis = 1)
+    x = np.insert(x, 30, np.zeros(len_), axis = 1)
+    x = np.insert(x, 30, np.zeros(len_), axis = 1)
+    #replace indixes that are missing
+    x[:, 30][x[:,29] == 0] = 1
+    x[:, 31][x[:,29] == 1] = 1
+    x[:, 32][x[:,29] == 2] = 1
+    x[:, 33][x[:,29] == 3] = 1
+    #delete the colomn
+    x = np.delete(x, 29, axis = 1)
     return x
 
 def corr(x):
     #TODO check which attributes have high correlation, if above a certain threshold, delete one of them
     return x
 
+def preproc(x):
+
+    x = remove_outliers(x)
+    x = angle_values(x)
+    x = replace_class(x)
+    #x, x_mean, x_std = standardize(x)
+    return x
+
 x= preproc(x)
-id = get_id(data_path)
-x0,x1 = separate(x, y)
-plot_hist(x0,x1,id)
+#id = get_id(data_path)
+#x0,x1 = separate(x, y)
+#plot_hist(x0,x1,id)
 #boxplot(x)
