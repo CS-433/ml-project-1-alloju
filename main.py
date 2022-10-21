@@ -1,4 +1,4 @@
-from cross_validation import best_lambda_selection, build_k_indices, cross_validation
+from cross_validation import best_single_param_selection, build_k_indices, cross_validation, best_triple_param_selection
 from helpers import standardize, load_csv_data
 from split_data import split_data
 from paths import training_set, test_set
@@ -24,7 +24,7 @@ x_te = preproc(x_te)
 #x_tr, x_val, y_tr, y_val = split_data(x,y,0.8)
 
 #lambda_, cross_rmse_tr_rr, cross_rmse_te_rr = best_lambda_selection(im.ridge_regression, y, x, x_te, id, 10, params = [0.0, 0.00001, 0.01, 0.05, 0.1,0.3,0.5,0.9], tuned_param = "lambda")
-lambda_, cross_rmse_tr_rr, cross_rmse_te_rr = best_lambda_selection(im.reg_logistic_regression, y, x, x_te, id, 10, params = [0.1,0.5,1.5,2.5,3,6,6.5,7,8], tuned_param = "lambda")
+best_lambda, best_gamma, best_max_iters, best_rmse_val, rmse_tr_final = best_triple_param_selection(im.reg_logistic_regression, y, x, x_te, id, 10, lambdas = [3,5], gammas = [0.05,0.1], maxs_iters = [1,100])
 
 #predict(im.ridge_regression, id, x_te, w_tr)
 # k_indices = build_k_indices(y, 10, 1)
@@ -32,7 +32,7 @@ lambda_, cross_rmse_tr_rr, cross_rmse_te_rr = best_lambda_selection(im.reg_logis
 # print(apply_method(im.ridge_regression, y_tr, x_tr, y_val, x_val, x_te, id, lambda_ = 0.5))
 # print(cross_validation(im.ridge_regression, y, x, x_te, k_indices, 4, lambda_ = 0.1))
 # print(cross_validation(im.ridge_regression, y, x, x_te, k_indices, 4, lambda_ = 0.5))
-#print("cross validation on ridge regression: selected lambda = ", lambda_, "cross_rmse_tr_rr = ", cross_rmse_tr_rr, "cross_rmse_te_rr", cross_rmse_te_rr )
+# print("cross validation on ridge regression: selected lambda = ", lambda_, "cross_rmse_tr_rr = ", cross_rmse_tr_rr, "cross_rmse_te_rr", cross_rmse_te_rr )
 
 
 #rmse_tr_ls, rmse_val_ls = apply_method(im.least_squares, y_tr,x_tr,y_val,x_val, x_te, id)
