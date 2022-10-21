@@ -45,17 +45,24 @@ def cross_validation(method, y, x, k_indices, k, lambda_ = 0.5, initial_w = np.a
     y_tr = y[train_indices]
     y_val = y[valid_indices]  
 
-    loss_tr, loss_val = apply_method(method, y_tr, x_tr, y_val, x_val, lambda_ = lambda_, cross_val= True)
+    loss_tr, loss_val = apply_method(method, y_tr, x_tr, y_val = y_val, x_val = x_val, lambda_ = lambda_, cross_val= True)
 
     return loss_tr, loss_val
 
-def best_lambda_selection(method, y,x, x_te, id, k_fold, lambdas = [0.1, 0.5], initial_ws = np.array([0]), maxs_iters = 10, gammas = 0.1, seed = 1):
+def best_lambda_selection(method, y,x, x_te, id, k_fold, params = [0.1, 0.5], tuned_param = "", lamda_ = 0.1, initial_ws = np.array([0]), max_iters = 10, gamma = 0.1, seed = 1):
     """cross validation over regularisation parameter lambda.
     
     Args:
         degree: integer, degree of the polynomial expansion
         k_fold: integer, the number of folds
-        lambdas: shape = (p, ) where p is the number of values of lambda to test
+        params: shape = (p, ) where p is the number of values of tuned parameter to test. 
+        tuned_param: name of parameters to tune. Possibilities are: lambda, initial_w, max_iters, gamma
+        lambda_: value if lambda is not tuned
+        initial_ws: initial weights
+        maxs_iters: nb maximal of iterations
+        gamma: value if gamma is not tuned
+        seed: fixed seed
+        
     Returns:
         best_lambda : scalar, value of the best lambda
         best_rmse : scalar, the associated root mean squared error for the best lambda
@@ -67,27 +74,42 @@ def best_lambda_selection(method, y,x, x_te, id, k_fold, lambdas = [0.1, 0.5], i
     rmse_tr = []
     rmse_val = []
     # cross validation over lambdas
-    for lambda_ in lambdas:
+    for param in params:
         temp_rmse_tr = []
         temp_rmse_val = []
         for k in range(k_fold):
-            loss_tr, loss_val= cross_validation(method, y , x, k_indices, k, lambda_ = lambda_)
+            if tuned_param == "lambda":
+                loss_tr, loss_val= cross_validation(method, y , x, k_indices, k, lambda_ = param, initial_w = np.array([0]), max_iters = 10, gamma = 0.1)
+            elif tuned_param == "gamma":
+                loss_tr, loss_val= cross_validation(method, y , x, k_indices, k, gamma = param, lamda_ = 0.1, initial_w = np.array([0]), max_iters = 10)
+            elif tuned_param == "max_iters":
+                loss_tr, loss_val= cross_validation(method, y , x, k_indices, k, max_iters = param, lamda_ = 0.1, initial_w = np.array([0]), gamma = 0.1)
+            else:
+                print("Please specify which parameter you are tuning")
+                return 0
             temp_rmse_tr.append(loss_tr)
             temp_rmse_val.append(loss_val)
         rmse_tr.append(np.mean(temp_rmse_tr))
         rmse_val.append(np.mean(temp_rmse_val))
-        print("lambda_ = ", lambda_, "rmse_tr = ", np.mean(temp_rmse_tr), "rmse_val", np.mean(temp_rmse_val))
+        print("tuned_param = ", param, "rmse_tr = ", np.mean(temp_rmse_tr), "rmse_val", np.mean(temp_rmse_val))
     best_rmse_val = (min(rmse_val))
     idx = np.where(rmse_val == best_rmse_val)
     best_rmse_tr = rmse_tr[np.squeeze(idx)]
-    best_lambda = lambdas[np.squeeze(idx)]
+    best_param = params[np.squeeze(idx)]
 
-    cross_validation_visualization(lambdas, rmse_tr, rmse_val)
+    cross_validation_visualization(params, rmse_tr, rmse_val)
 
-    rmse_tr_final, _ = apply_method(method, y, x, np.zeros_like(y), np.zeros_like(x), x_te, id, best_lambda, validation = False)
-    
+    if tuned_param == "lambda":
+        rmse_tr_final = apply_method(method, y, x, x_te = x_te, id = id, lambda_ = best_param, initial_w = np.array([0]), max_iters = 10, gamma = 0.1, validation = False)
+    elif tuned_param == "gamma":
+        rmse_tr_final = apply_method(method, y, x, x_te = x_te, id = id, gamma = best_param, lamda_ = 0.1, initial_w = np.array([0]), max_iters = 10, validation = False)
+    elif tuned_param == "max_iters":
+        rmse_tr_final = apply_method(method, y, x, x_te = x_te, id = id, max_iters = best_param, lamda_ = 0.1, initial_w = np.array([0]), gamma = 0.1, validation = False)
 
-    return best_lambda, best_rmse_val, best_rmse_tr
+    #rmse_tr_final, _ = apply_method(method, y, x, np.zeros_like(y), np.zeros_like(x), x_te, id, best_param, validation = False)
+    print("final training rmse", rmse_tr_final)
+
+    return best_param, best_rmse_val, best_rmse_tr
 
 def best_lambda_and_maxiters_selection(method, y, x, x_te, max_iters, k_fold, lambdas, seed = 1):
     """cross validation over regularisation parameter lambda and degree.

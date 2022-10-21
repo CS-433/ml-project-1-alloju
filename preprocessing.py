@@ -87,14 +87,13 @@ def corr(x):
     corr = np.triu(corr)
     dia = np.diag(corr)
     ind = (np.array([np.nonzero(corr)]))
-    print(ind)
     return x
 
 def preproc(x):
     x = remove_outliers(x)
     x = angle_values(x)
     x = replace_class(x)
-    x = corr(x)
+    #x = corr(x)
     x, x_mean, x_std = standardize(x)
     return x
 

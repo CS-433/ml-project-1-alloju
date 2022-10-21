@@ -5,16 +5,17 @@ import os.path as op
 import numpy as np
 from helpers import create_csv_submission
 
-def apply_method(method,y_tr,x_tr,y_val,x_val, x_te = np.zeros([5,1]), id = np.zeros(5), lambda_ = 0.5, initial_w = None, max_iters = 100, gamma = 0.1, cross_val = False, validation = True):
+def apply_method(method,y_tr,x_tr,y_val = np.zeros([10,1]) ,x_val = np.zeros([10,1]), x_te = np.zeros([5,1]), id = np.zeros(5), lambda_ = 0.5, initial_w = None, max_iters = 100, gamma = 0.1, cross_val = False, validation = True):
 
     """Apply a given method to the training and validation sets.
 
     Args:
         method: method to apply to the data
         y_tr: training labels
-        x_tr : training features
-        y_val : validation labels
-        x_val : validation features
+        x_tr: training features
+        y_val: validation labels
+        x_val: validation features
+        x_te:  
 
     Returns:
         rmse_tr: training rmse
