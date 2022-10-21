@@ -65,29 +65,29 @@ def best_lambda_selection(method, y,x, x_te, id, k_fold, lambdas = [0.1, 0.5], i
     k_indices = build_k_indices(y, k_fold, seed)
     # define lists to store the loss of training data and test data
     rmse_tr = []
-    rmse_te = []
+    rmse_val = []
     # cross validation over lambdas
     for lambda_ in lambdas:
         temp_rmse_tr = []
-        temp_rmse_te = []
+        temp_rmse_val = []
         for k in range(k_fold):
-            loss_tr, loss_te= cross_validation(method, y , x, k_indices, k, lambda_ = lambda_)
+            loss_tr, loss_val= cross_validation(method, y , x, k_indices, k, lambda_ = lambda_)
             temp_rmse_tr.append(loss_tr)
-            temp_rmse_te.append(loss_te)
+            temp_rmse_val.append(loss_val)
         rmse_tr.append(np.mean(temp_rmse_tr))
-        rmse_te.append(np.mean(temp_rmse_te))
-        print("lambda_ = ", lambda_, "rmse_tr = ", np.mean(temp_rmse_tr), "rmse_te", np.mean(temp_rmse_te))
-    best_rmse_te = (min(rmse_te))
-    idx = np.where(rmse_te == best_rmse_te)
+        rmse_val.append(np.mean(temp_rmse_val))
+        print("lambda_ = ", lambda_, "rmse_tr = ", np.mean(temp_rmse_tr), "rmse_val", np.mean(temp_rmse_val))
+    best_rmse_val = (min(rmse_val))
+    idx = np.where(rmse_val == best_rmse_val)
     best_rmse_tr = rmse_tr[np.squeeze(idx)]
     best_lambda = lambdas[np.squeeze(idx)]
 
-    cross_validation_visualization(lambdas, rmse_tr, rmse_te)
+    cross_validation_visualization(lambdas, rmse_tr, rmse_val)
 
-    rmse_tr_final, rmse_te_final = apply_method(method, y, x, np.zeros_like(y), np.zeros_like(x), x_te, id, best_lambda, validation = False)
+    rmse_tr_final, _ = apply_method(method, y, x, np.zeros_like(y), np.zeros_like(x), x_te, id, best_lambda, validation = False)
     
 
-    return best_lambda, best_rmse_te, best_rmse_tr
+    return best_lambda, best_rmse_val, best_rmse_tr
 
 def best_lambda_and_maxiters_selection(method, y, x, x_te, max_iters, k_fold, lambdas, seed = 1):
     """cross validation over regularisation parameter lambda and degree.
