@@ -153,7 +153,7 @@ def best_triple_param_selection(method, y,x, x_te, id, k_fold, lambdas = [0.1, 0
             
             best_temp_rmse = min(rmse_val)
             best_rmse_val.append(best_temp_rmse)
-            best_max_iters.append(maxs_iters[np.argmin(temp_rmse_val)])
+            best_max_iters.append(maxs_iters[np.argmin(rmse_val)])
         best_rmse = min(best_rmse_val)
         best_max_iter = best_max_iters[np.argmin(best_rmse_val)]
         super_best_iter.append(best_max_iter)

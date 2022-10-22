@@ -24,7 +24,7 @@ x_te = preproc(x_te)
 #x_tr, x_val, y_tr, y_val = split_data(x,y,0.8)
 
 #lambda_, cross_rmse_tr_rr, cross_rmse_te_rr = best_lambda_selection(im.ridge_regression, y, x, x_te, id, 10, params = [0.0, 0.00001, 0.01, 0.05, 0.1,0.3,0.5,0.9], tuned_param = "lambda")
-best_lambda, best_gamma, best_max_iters, best_rmse_val, rmse_tr_final = best_triple_param_selection(im.reg_logistic_regression, y, x, x_te, id, 10, lambdas = [3,5], gammas = [0.05,0.1], maxs_iters = [1,100])
+best_lambda, best_gamma, best_max_iters, best_rmse_val, rmse_tr_final = best_triple_param_selection(im.reg_logistic_regression, y, x, x_te, id, 10, lambdas = [0.5,1,3,5,7,9,10,15,50,80], gammas = [0.05,0.1,0.25,0.5,0.75,0.9], maxs_iters = [10,20,50,75,100,150,200])
 
 #predict(im.ridge_regression, id, x_te, w_tr)
 # k_indices = build_k_indices(y, 10, 1)
