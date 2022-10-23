@@ -50,6 +50,7 @@ def boxplot(x):
         plt.show()
     return None
 
+
 def remove_outliers(x):
     for i in range(len(x[1])):
         feature_removed = x[:,i][x[:,i] != -999]
@@ -61,6 +62,7 @@ def remove_outliers(x):
         x[:, i][x[:, i] > upper_limit] = qs[1]
         x[:, i][x[:, i] == -999] = qs[1]
     return x
+
 
 def replace_class(x):
     len_ = np.shape(x)[0]
@@ -89,7 +91,7 @@ def corr(x):
     return x
 
 def preproc(x):
-    x = missing_data(x)
+    #x = missing_data(x)
     x = remove_outliers(x)
     x = angle_values(x)
     x = replace_class(x)

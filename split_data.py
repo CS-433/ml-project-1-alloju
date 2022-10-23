@@ -77,5 +77,5 @@ def load_test_data(path_testset):
     """
     data = np.genfromtxt(path_testset, delimiter=",", skip_header=1)
     id = data[:,0]
-    x = data[:,2::]
+    x = data[:,2:]
     return id, x
