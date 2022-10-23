@@ -16,15 +16,31 @@ import numpy as np
 
 #x,y = load_data(training_set)
 y,x,ids = load_csv_data(training_set)
-x = preproc(x)
+
+x = preproc(x) #TODO: decomment
+
 #id, x_te = load_test_data(test_set)
 _, x_te, id = load_csv_data(test_set)
-x_te = preproc(x_te)
+
+x_te = preproc(x_te) #TODO: decomment
+print(np.count(x[:,-2]), " te ")
+
+#x, _, _ = standardize(x)
+
+#x_te, _, _ = standardize(x_te)
+
 #x_te, x_te_m, xe_te_std = standardize(x_te)
 #x_tr, x_val, y_tr, y_val = split_data(x,y,0.8)
 
-#lambda_, cross_rmse_tr_rr, cross_rmse_te_rr = best_lambda_selection(im.ridge_regression, y, x, x_te, id, 10, params = [0.0, 0.00001, 0.01, 0.05, 0.1,0.3,0.5,0.9], tuned_param = "lambda")
-best_lambda, best_gamma, best_max_iters, best_rmse_val, rmse_tr_final = best_triple_param_selection(im.reg_logistic_regression, y, x, x_te, id, 10, lambdas = [0.5,1,3,5,7,9,10,15,50,80], gammas = [0.05,0.1,0.25,0.5,0.75,0.9], maxs_iters = [10,20,50,75,100,150,200])
+rmse_train, _ = apply_method(im.least_squares, y, x, x_te = x_te, validation = False)
+print(rmse_train)
+
+#lambda_, cross_rmse_tr_rr, cross_rmse_te_rr = best_single_param_selection(im.ridge_regression, y, x, x_te, id, 10, params = [0.0, 0.01, 0.1,0.3,0.5,0.9,2,5,7], tuned_param = "lambda")
+#best_lambda, best_gamma, best_max_iters, best_rmse_val, rmse_tr_final = best_triple_param_selection(im.reg_logistic_regression, y, x, x_te, id, 20, lambdas = [0.5,1,3,5,6,6.5,7,7.5,8,8.5,9,9.5,10,15,50,80], gammas = [0.01, 0.02,0.04,0.05,0.06,0.07,0.1,0.25,0.5,0.75,0.9], maxs_iters = [5,10,15,20,50,75,100,150,200,500])
+#best_lambda, best_gamma, best_max_iters, best_rmse_val, rmse_tr_final = best_triple_param_selection(im.reg_logistic_regression, y, x, x_te, id, 20, lambdas = [0.5,1,3,5,6,6.5,7,7.5,8,8.5,9,9.5,10,15,50,80], gammas = [0.01, 0.02,0.04,0.05,0.06,0.07,0.1,0.25,0.5,0.75,0.9], maxs_iters = [5,7,8,9,10,15,20,50,75,100,150,200,500])
+
+#best_lambda, best_gamma, best_max_iters, best_rmse_val, rmse_tr_final = best_triple_param_selection(im.mean_squared_error_gd, y, x, x_te, id, 10, lambdas = [0.0], gammas = [0.05,0.1,0.25,0.5,0.75,0.9], maxs_iters = [10,20,50,75,100,150,200])
+#TODO: best_lambda, best_gamma, best_max_iters, best_rmse_val, rmse_tr_final = best_triple_param_selection(im.logistic_regression, y, x, x_te, id, 20, lambdas = [0.0], gammas = [0.01, 0.02,0.04,0.05,0.06,0.07,0.1,0.25,0.5,0.75,0.9], maxs_iters = [5,10,15,20,50,75,100, 150])
 
 #predict(im.ridge_regression, id, x_te, w_tr)
 # k_indices = build_k_indices(y, 10, 1)
@@ -51,19 +67,3 @@ best_lambda, best_gamma, best_max_iters, best_rmse_val, rmse_tr_final = best_tri
 # print("ridge regression: ", rmse_tr_rr, rmse_val_rr)
 # print("mean squared SGD: ", rmse_tr_mss, rmse_val_mss)
 # print("mean squared GD: ", rmse_tr_msg, rmse_val_msg)
-
-
-def test(a,b,c):
-    """_summary_
-
-    Args:
-        a (_type_): _description_
-        b (_type_): _description_
-        c (_type_): _description_
-
-    Returns:
-        _type_: _description_
-    """
-    #autodocstring
-    info = 0
-    return info

@@ -45,7 +45,7 @@ def cross_validation(method, y, x, k_indices, k, lambda_ = 0.5, initial_w = None
     y_tr = y[train_indices]
     y_val = y[valid_indices]  
 
-    loss_tr, loss_val = apply_method(method, y_tr, x_tr, y_val = y_val, x_val = x_val, lambda_ = lambda_, cross_val= True)
+    loss_tr, loss_val = apply_method(method, y_tr, x_tr, y_val = y_val, x_val = x_val, lambda_ = lambda_, initial_w = initial_w, max_iters = max_iters, gamma = gamma, cross_val= True)
 
     return loss_tr, loss_val
 
@@ -79,11 +79,11 @@ def best_single_param_selection(method, y,x, x_te, id, k_fold, params = [0.1, 0.
         temp_rmse_val = []
         for k in range(k_fold):
             if tuned_param == "lambda":
-                loss_tr, loss_val= cross_validation(method, y , x, k_indices, k, lambda_ = param, initial_w = None, max_iters = 10, gamma = 0.1)
+                loss_tr, loss_val= cross_validation(method, y , x, k_indices, k, lambda_ = param, initial_w = initial_w, max_iters = max_iters, gamma = gamma)
             elif tuned_param == "gamma":
-                loss_tr, loss_val= cross_validation(method, y , x, k_indices, k, gamma = param, lambda_ = 0.1, initial_w = None, max_iters = 10)
+                loss_tr, loss_val= cross_validation(method, y , x, k_indices, k, gamma = param, lambda_ = lambda_, initial_w = initial_w, max_iters = max_iters)
             elif tuned_param == "max_iters":
-                loss_tr, loss_val= cross_validation(method, y , x, k_indices, k, max_iters = param, lambda_ = 0.1, initial_w = None, gamma = 0.1)
+                loss_tr, loss_val= cross_validation(method, y , x, k_indices, k, max_iters = param, lambda_ = lambda_, initial_w = initial_w, gamma = gamma)
             else:
                 print("Please specify which parameter you are tuning")
                 return 0
@@ -97,22 +97,22 @@ def best_single_param_selection(method, y,x, x_te, id, k_fold, params = [0.1, 0.
     best_rmse_tr = rmse_tr[np.squeeze(idx)]
     best_param = params[np.squeeze(idx)]
 
-    cross_validation_visualization(params, rmse_tr, rmse_val)
+    cross_validation_visualization(method, params, rmse_tr, rmse_val)
 
     if tuned_param == "lambda":
-        rmse_tr_final = apply_method(method, y, x, x_te = x_te, id = id, lambda_ = best_param, initial_w = None, max_iters = 10, gamma = 0.1, validation = False)
+        rmse_tr_final, _ = apply_method(method, y, x, x_te = x_te, id = id, lambda_ = best_param, initial_w = initial_w, max_iters = max_iters, gamma = gamma, validation = False)
     elif tuned_param == "gamma":
-        rmse_tr_final = apply_method(method, y, x, x_te = x_te, id = id, gamma = best_param, lambda_ = 0.1, initial_w = None, max_iters = 10, validation = False)
+        rmse_tr_final, _ = apply_method(method, y, x, x_te = x_te, id = id, gamma = best_param, lambda_ = lambda_, initial_w = initial_w, max_iters = max_iters, validation = False)
     elif tuned_param == "max_iters":
-        rmse_tr_final = apply_method(method, y, x, x_te = x_te, id = id, max_iters = best_param, lambda_ = 0.1, initial_w = None, gamma = 0.1, validation = False)
+        rmse_tr_final, _ = apply_method(method, y, x, x_te = x_te, id = id, max_iters = best_param, lambda_ = lambda_, initial_w = initial_w, gamma = gamma, validation = False)
 
     #rmse_tr_final, _ = apply_method(method, y, x, np.zeros_like(y), np.zeros_like(x), x_te, id, best_param, validation = False)
     print("final training rmse", rmse_tr_final)
-    print("Chosen" + tuned_param + "is: ", best_param)
+    print("Chosen " + tuned_param + " is: ", best_param)
 
     return best_param, best_rmse_val, best_rmse_tr
 
-def best_triple_param_selection(method, y,x, x_te, id, k_fold, lambdas = [0.1, 0.5], gammas =[0.1,0.5], maxs_iters = [5,10], initial_w = None, seed = 1):
+def best_triple_param_selection(method, y,x, x_te, id, k_fold, lambdas = [0.1, 0.5], gammas =[0.1,0.5], maxs_iters = [5,10], initial_w = None, seed = 1, verbose = True):
     """cross validation over regularisation parameter lambda.
     
     Args:
@@ -140,14 +140,20 @@ def best_triple_param_selection(method, y,x, x_te, id, k_fold, lambdas = [0.1, 0
     super_best_iter = []
     # cross validation over lambdas
     for lambda_ in lambdas:
+        if verbose:
+            print("looping for lambda:", lambda_)
         best_rmse_val = []
         best_max_iters = []
         for gamma in gammas:
+            if verbose:
+                print("looping for gamma:", gamma)
             rmse_val = []
             for max_iters in maxs_iters:
+                if verbose:
+                    print("looping for max_iters:", max_iters)
                 temp_rmse_val = []
                 for k in range(k_fold):
-                    loss_tr, loss_val= cross_validation(method, y , x, k_indices, k, lambda_ = lambda_, initial_w = None, max_iters = max_iters, gamma = gamma)
+                    loss_tr, loss_val= cross_validation(method, y , x, k_indices, k, lambda_ = lambda_, initial_w = initial_w, max_iters = max_iters, gamma = gamma)
                     temp_rmse_val.append(loss_val)
                 rmse_val.append(np.mean(temp_rmse_val))
             
@@ -169,7 +175,7 @@ def best_triple_param_selection(method, y,x, x_te, id, k_fold, lambdas = [0.1, 0
 
     #cross_validation_visualization(params, rmse_tr, rmse_val)
 
-    rmse_tr_final = apply_method(method, y, x, x_te = x_te, id = id, max_iters = best_max_iter, lambda_ = best_lambda, initial_w = None, gamma = best_gamma, validation = False)
+    rmse_tr_final = apply_method(method, y, x, x_te = x_te, id = id, max_iters = best_max_iter, lambda_ = best_lambda, initial_w = initial_w, gamma = best_gamma, validation = False)
 
     #rmse_tr_final, _ = apply_method(method, y, x, np.zeros_like(y), np.zeros_like(x), x_te, id, best_param, validation = False)
     print("final training rmse", rmse_tr_final)
