@@ -23,5 +23,12 @@ final training rmse (0.9229663064909535, 0)
 - 4th submission: only std: ridge reg: lambda = 0.0, final training rmse (0.8239500193849315)
 
 #### 23.10
-- 1st sumission: only standardization: reg_log_reg: lambda =  7.5 max_iters =  5 gamma =  0.01 rmse_tr =  0.9429446373340948
+- 1st submission: only standardization: reg_log_reg: lambda =  7.5 max_iters =  5 gamma =  0.01 rmse_tr =  0.9429446373340948
 final training rmse (0.9388746578777089, 0)
+- 2nd submission: preprocessing, least_squares 
+- 3rd submission: logistic regression: lambda =  0.0 max_iters =  12 gamma =  0.0 rmse_val =  1.0
+final training rmse (0.5853785100257781, 0)
+- 4th submission: logistic regression: lambda =  0.0 max_iters =  12 gamma =  0.0 rmse_val =  1.0
+final training rmse (0.5853785100257781, 0)
+- 5th submission: logistic regression: lambda =  0.0 max_iters =  20 gamma =  0.01 rmse_val =  258.2929550331961
+final training rmse (96.60469177148643, 0)

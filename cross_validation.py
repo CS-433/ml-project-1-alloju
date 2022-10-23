@@ -73,7 +73,7 @@ def best_single_param_selection(method, y,x, x_te, id, k_fold, params = [0.1, 0.
     # define lists to store the loss of training data and test data
     rmse_tr = []
     rmse_val = []
-    # cross validation over lambdas
+    # cross validation over tuned parameter
     for param in params:
         temp_rmse_tr = []
         temp_rmse_val = []
@@ -135,22 +135,21 @@ def best_triple_param_selection(method, y,x, x_te, id, k_fold, lambdas = [0.1, 0
     k_indices = build_k_indices(y, k_fold, seed)
     # define lists to store the loss of training data and test data
     super_best_rmse_val = []
-    best_params1 = []
     best_gammas = []
-    super_best_iter = []
-    # cross validation over lambdas
-    for lambda_ in lambdas:
+    super_best_lambdas = []
+
+    for max_iters in maxs_iters:
         if verbose:
-            print("looping for lambda:", lambda_)
+            print("looping for max iters:", max_iters)
         best_rmse_val = []
-        best_max_iters = []
+        best_lambdas = []
         for gamma in gammas:
             if verbose:
                 print("looping for gamma:", gamma)
             rmse_val = []
-            for max_iters in maxs_iters:
+            for lambda_ in lambdas:
                 if verbose:
-                    print("looping for max_iters:", max_iters)
+                    print("looping for lambda:", lambda_)
                 temp_rmse_val = []
                 for k in range(k_fold):
                     loss_tr, loss_val= cross_validation(method, y , x, k_indices, k, lambda_ = lambda_, initial_w = initial_w, max_iters = max_iters, gamma = gamma)
@@ -159,23 +158,23 @@ def best_triple_param_selection(method, y,x, x_te, id, k_fold, lambdas = [0.1, 0
             
             best_temp_rmse = min(rmse_val)
             best_rmse_val.append(best_temp_rmse)
-            best_max_iters.append(maxs_iters[np.argmin(rmse_val)])
+            best_lambdas.append(lambdas[np.argmin(rmse_val)])
         best_rmse = min(best_rmse_val)
-        best_max_iter = best_max_iters[np.argmin(best_rmse_val)]
-        super_best_iter.append(best_max_iter)
+        best_lambda = best_lambdas[np.argmin(best_rmse_val)]
+        super_best_lambdas.append(best_lambda)
         best_gammas.append(gammas[np.argmin(best_rmse_val)])
         super_best_rmse_val.append(best_rmse)
     super_best_rmse = min(super_best_rmse_val)
     idx_super_best = np.argmin(super_best_rmse_val)
-    best_lambda = lambdas[idx_super_best]
+    best_max_iters = maxs_iters[idx_super_best]
     best_gamma = best_gammas[idx_super_best]
-    best_max_iters = super_best_iter[idx_super_best]
+    super_best_lambda = super_best_lambdas[idx_super_best]
         
-    print("lambda = ", best_lambda, "max_iters = ", best_max_iters, "gamma = ", best_gamma, "rmse_tr = ", super_best_rmse)
+    print("lambda = ", super_best_lambda, "max_iters = ", best_max_iters, "gamma = ", best_gamma, "rmse_val = ", super_best_rmse)
 
     #cross_validation_visualization(params, rmse_tr, rmse_val)
 
-    rmse_tr_final = apply_method(method, y, x, x_te = x_te, id = id, max_iters = best_max_iter, lambda_ = best_lambda, initial_w = initial_w, gamma = best_gamma, validation = False)
+    rmse_tr_final = apply_method(method, y, x, x_te = x_te, id = id, max_iters = best_max_iters, lambda_ = best_lambda, initial_w = initial_w, gamma = best_gamma, validation = False)
 
     #rmse_tr_final, _ = apply_method(method, y, x, np.zeros_like(y), np.zeros_like(x), x_te, id, best_param, validation = False)
     print("final training rmse", rmse_tr_final)

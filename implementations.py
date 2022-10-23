@@ -91,7 +91,11 @@ def logistic_regression(y, tx, initial_w, max_iters, gamma):
         w: the last computed model parameters as numpy arrays of shape (D, )
         loss: the loss value (scalar) for the last iteration 
     """
+    y[y < 0.5] = 0
+    y[y > 0.5] = 1
+
     w = initial_w
+
     for i in range(max_iters):
         # compute the gradient: 
         gradient = ut.compute_gradient_neg_loglikelihood(y, tx, w)
@@ -99,7 +103,7 @@ def logistic_regression(y, tx, initial_w, max_iters, gamma):
         w -= gamma * gradient
         # compute the cost: 
     #loss = ut.compute_rmse(ut.compute_mse(y,tx,w))
-    loss = ut.compute_mse(y,tx,w)
+    loss = ut.compute_loss_neg_loglikelihood(y,tx,w)
     return w, np.squeeze(loss)
 
 def reg_logistic_regression(y, tx, lambda_,initial_w, max_iters, gamma):
@@ -118,6 +122,9 @@ def reg_logistic_regression(y, tx, lambda_,initial_w, max_iters, gamma):
         loss: the loss value (scalar) for the last iteration 
     """
 
+    y[y < 0.5] = 0
+    y[y > 0.5] = 1
+
     w = initial_w
     for i in range(max_iters):
         # compute the gradient with the penalty term: 
@@ -126,5 +133,5 @@ def reg_logistic_regression(y, tx, lambda_,initial_w, max_iters, gamma):
         w -= gamma * gradient
         # compute the cost: 
     #loss = ut.compute_rmse(ut.compute_mse(y,tx,w))
-    loss = ut.compute_mse(y, tx, w) 
+    loss = ut.compute_loss_neg_loglikelihood(y,tx,w)
     return w, np.squeeze(loss)

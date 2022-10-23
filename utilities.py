@@ -77,7 +77,7 @@ def compute_gradient_neg_loglikelihood(y, tx, w):
             the value of the gradient corresponding to the input parameters.
     """
     
-    return np.dot(tx.T,(sigmoid(np.dot(tx,w)-y)/(y.shape[0])))
+    return np.dot(tx.T,sigmoid(np.dot(tx,w))-y)/y.shape[0]
     #TODO testé (1/N) selon ce que j'ai lu sur un site mais comprendre pk ça marche 
     #https://medium.com/@IwriteDSblog/gradient-descent-for-logistics-regression-in-python-18e033775082
 
