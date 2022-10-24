@@ -96,7 +96,7 @@ def preproc(x):
     x = angle_values(x)
     x = replace_class(x)
     #x = corr(x)
-    #x, x_mean, x_std = standardize(x)
+    x, x_mean, x_std = standardize(x)
     return x
 
 x= preproc(x)

@@ -1,5 +1,5 @@
 from sys import implementation
-from utilities import compute_mse,compute_rmse, sigmoid
+from utilities import compute_accuracy, compute_mse,compute_rmse, sigmoid
 from paths import  prediction_dir
 import os.path as op
 import numpy as np
@@ -45,13 +45,18 @@ def apply_method(method,y_tr,x_tr,y_val = np.zeros([10,1]) ,x_val = np.zeros([10
     elif ('ridge_regression' in str(method)):
         w, mse = method(y_tr, x_tr, lambda_)
     
-    rmse_tr = compute_rmse(mse)
-    rmse_val = 0 #avoid error if no validation set
+    mse_tr = mse
+    mse_val = 0 #avoid error if no validation set
+    loss_val = 0
     if validation:
-        rmse_val = compute_rmse(compute_mse(y_val,x_val,w))
+        mse_val = compute_mse(y_val,x_val,w)
+        loss_val = compute_accuracy(y_val,x_val,w)
     if not(cross_val):
         predict(method, id, x_te, w)
-    return rmse_tr, rmse_val
+    loss_train = compute_accuracy(y_tr, x_tr, w)
+        
+    return loss_train, loss_val
+    #return mse_tr, mse_val
 
 def predict(method, id, x_te, w):
     """_summary_

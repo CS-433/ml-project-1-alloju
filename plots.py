@@ -14,7 +14,7 @@ def cross_validation_visualization(method, lambds, rmse_tr, rmse_te):
     plt.title("cross validation" + str(method))
     plt.legend(loc=2)
     plt.grid(True)
-    plt.savefig("cross_validation")
+    plt.savefig("cross_validation" + str(method))
 
 
 def bias_variance_decomposition_visualization(degrees, rmse_tr, rmse_te):

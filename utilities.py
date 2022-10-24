@@ -16,6 +16,14 @@ def compute_mse(y, tx, w):
     loss = 1/(2*y.shape[0])*(np.dot(np.transpose(e),e))
     return loss
 
+def compute_accuracy(y,tx,w):
+    e = y - np.dot(tx,w)
+    ŷ = np.dot(tx,w)
+    ŷ[ŷ < 0] = -1
+    ŷ[ŷ >= 0] = 1
+    return sum(ŷ != y)/len(y)
+
+
 def compute_rmse(mse):
     """Compute the rmse given the mse
 
