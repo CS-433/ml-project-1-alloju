@@ -81,26 +81,17 @@ def replace_class(x):
     return x
 
 def corr(x):
-    #TODO check which attributes have high correlation, if above a certain threshold, delete one of them
-    corr = np.corrcoef(x,rowvar = False)
-    corr[:][np.isclose(corr,1)] = 0
-    corr[:][corr < 0.95] = 0
-    corr = np.triu(corr)
-    dia = np.diag(corr)
-    ind = (np.array([np.nonzero(corr)]))
-    return x
+    corr = np.triu(np.abs(np.corrcoef(x,rowvar = False)), k=1)
+    ind = np.where(corr > 0.9)
+    return np.squeeze(ind)
 
 def preproc(x):
-    #x = missing_data(x)
     x = remove_outliers(x)
     x = angle_values(x)
     x = replace_class(x)
-    #x = corr(x)
     x, x_mean, x_std = standardize(x)
-    return x
+    ind = corr(x)
+    return x,ind
 
-x= preproc(x)
-#id = get_id(data_path)
-#x0,x1 = separate(x, y)
-#plot_hist(x0,x1,id)
-#boxplot(x)
+x,ind_corr= preproc(x)
+
