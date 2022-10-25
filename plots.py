@@ -4,11 +4,11 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-def cross_validation_visualization(method, lambds, rmse_tr, rmse_te):
+def cross_validation_visualization(method, params, rmse_tr, rmse_te, tuned_param):
     """visualization the curves of rmse_tr and rmse_te."""
-    plt.semilogx(lambds, rmse_tr, marker=".", color='b', label='train error')
-    plt.semilogx(lambds, rmse_te, marker=".", color='r', label='test error')
-    plt.xlabel("lambda")
+    plt.semilogx(params, rmse_tr, marker=".", color='b', label='train error')
+    plt.semilogx(params, rmse_te, marker=".", color='r', label='test error')
+    plt.xlabel(tuned_param)
     plt.ylabel("r mse")
     #plt.xlim(1e-4, 1)
     plt.title("cross validation" + str(method))

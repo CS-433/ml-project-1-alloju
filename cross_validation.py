@@ -90,6 +90,7 @@ def best_single_param_selection(method, y,x, x_te, id, k_fold, params = [0.1, 0.
             temp_mse_tr.append(loss_tr)
             temp_mse_val.append(loss_val)
         mse_tr.append(np.mean(temp_mse_tr))
+        print("temporary mean mse: ", np.mean(temp_mse_tr))
         mse_val.append(np.mean(temp_mse_val))
         print("tuned_param = ", param, "mse_tr = ", np.mean(temp_mse_tr), "mse_val", np.mean(temp_mse_val))
     best_mse_val = (min(mse_val))
@@ -97,7 +98,7 @@ def best_single_param_selection(method, y,x, x_te, id, k_fold, params = [0.1, 0.
     best_mse_tr = mse_tr[np.squeeze(idx)]
     best_param = params[np.squeeze(idx)]
 
-    cross_validation_visualization(method, params, mse_tr, mse_val)
+    cross_validation_visualization(method, params, mse_tr, mse_val, tuned_param)
 
     if tuned_param == "lambda":
         mse_tr_final, _ = apply_method(method, y, x, x_te = x_te, id = id, lambda_ = best_param, initial_w = initial_w, max_iters = max_iters, gamma = gamma, validation = False)
