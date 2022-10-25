@@ -4,7 +4,7 @@ from split_data import split_data
 from paths import training_set, test_set
 from apply_method import apply_method, predict
 import implementations as im
-from preprocessing import angle_values, preproc
+from preprocessing import angle_values, preproc, to_0_1
 import numpy as np
 
 #from least_squares import least_squares
@@ -16,8 +16,8 @@ import numpy as np
 
 #x,y = load_data(training_set)
 y,x,ids = load_csv_data(training_set)
-
 x = preproc(x) #TODO: decomment
+y = to_0_1(y)
 
 #id, x_te = load_test_data(test_set)
 _, x_te, id = load_csv_data(test_set)
@@ -35,7 +35,6 @@ x_te = preproc(x_te) #TODO: decomment
 
 #mse_train, _ = apply_method(im.least_squares, y, x, x_te = x_te, id = id, validation = False)
 #print(mse_train)
-
 # RIDGE REGRESSION
 
 #lambda_, cross_mse_tr_rr, cross_mse_te_rr = best_single_param_selection(im.ridge_regression, y, x, x_te, id, 30, params = [0.0,0.05,0.1,0.5,1], tuned_param = "lambda")
@@ -65,7 +64,9 @@ x_te = preproc(x_te) #TODO: decomment
 
 # SUBGRADIENT DESCENT:
 
-best_lambda, best_gamma, best_max_iters, best_mse_val, mse_tr_final = best_triple_param_selection(im.mean_squared_error_gd, y, x, x_te, id, 10, lambdas = [0.0], gammas = [0.001, 0.03,0.05,0.06,0.07, 0.1, 0.5,0.9], maxs_iters = [10,50,100,500,1000])
+#best_lambda, best_gamma, best_max_iters, best_mse_val, mse_tr_final = best_triple_param_selection(im.mean_squared_error_gd, y, x, x_te, id, 10, lambdas = [0.0], gammas = [0.001, 0.03,0.05,0.06,0.07, 0.1, 0.5,0.9], maxs_iters = [10,50,100,500,1000])
+best_lambda, best_gamma, best_max_iters, best_mse_val, mse_tr_final = best_triple_param_selection(im.mean_squared_error_gd, y, x, x_te, id, 10, lambdas = [0.0], gammas = [0.06,0.07], maxs_iters = [1200]) #[1200])
+
 #gamma, best_mse_val, mse_tr_final = best_single_param_selection(im.mean_squared_error_sgd, y,x, x_te, id, 10, params = [0.01,0.02,0.06,0.1, 0.2, 0.5], tuned_param = "gamma", lambda_ = 0, max_iters= 50)
 #max_iters, best_mse_val, mse_tr_final = best_single_param_selection(im.mean_squared_error_gd, y,x, x_te, id, 10, params = [100,500,1200,1250,1300], tuned_param = "max_iters", lambda_ = 0, gamma= 0.06)
 

@@ -7,6 +7,11 @@ import matplotlib.pyplot as plt
 data_path = "data/train.csv"
 x,y = load_data(data_path)
 
+def to_0_1(y):
+    y[y >= 0 ] = 1
+    y[y < 0 ] = 0
+    return y
+
 def get_id(data_path):
     id = np.genfromtxt(data_path, delimiter=",", skip_footer=250000, dtype = str)
     return id[2:-1]

@@ -19,12 +19,9 @@ def compute_mse(y, tx, w):
 def compute_accuracy(y,tx,w, logistic = False):
     #e = y - np.dot(tx,w)
     ŷ = np.dot(tx,w)
-    if logistic: 
-        ŷ[ŷ < 0] = 0
-        ŷ[ŷ >= 0] = 1
-    else:
-        ŷ[ŷ < 0] = -1
-        ŷ[ŷ >= 0] = 1
+    ŷ[ŷ < 0] = 0
+    ŷ[ŷ >= 0] = 1
+
     return sum(ŷ != y)/len(y)
 
 
