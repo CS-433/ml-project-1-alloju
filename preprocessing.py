@@ -91,7 +91,7 @@ def preproc(x):
     x = replace_class(x)
     x, x_mean, x_std = standardize(x)
     ind = corr(x)
-    return x,ind
+    return x
 
-x,ind_corr= preproc(x)
+#x,ind_corr= preproc(x)
 

@@ -65,8 +65,8 @@ x_te = preproc(x_te) #TODO: decomment
 
 # SUBGRADIENT DESCENT:
 
-#best_lambda, best_gamma, best_max_iters, best_mse_val, mse_tr_final = best_triple_param_selection(im.mean_squared_error_gd, y, x, x_te, id, 10, lambdas = [0.0], gammas = [0.001, 0.03,0.05,0.06,0.07, 0.1], maxs_iters = [50,100,500,1000])
-gamma, best_mse_val, mse_tr_final = best_single_param_selection(im.mean_squared_error_sgd, y,x, x_te, id, 10, params = [0.01,0.02,0.06,0.1, 0.2, 0.5], tuned_param = "gamma", lambda_ = 0, max_iters= 50)
+best_lambda, best_gamma, best_max_iters, best_mse_val, mse_tr_final = best_triple_param_selection(im.mean_squared_error_gd, y, x, x_te, id, 10, lambdas = [0.0], gammas = [0.001, 0.03,0.05,0.06,0.07, 0.1, 0.5,0.9], maxs_iters = [10,50,100,500,1000])
+#gamma, best_mse_val, mse_tr_final = best_single_param_selection(im.mean_squared_error_sgd, y,x, x_te, id, 10, params = [0.01,0.02,0.06,0.1, 0.2, 0.5], tuned_param = "gamma", lambda_ = 0, max_iters= 50)
 #max_iters, best_mse_val, mse_tr_final = best_single_param_selection(im.mean_squared_error_gd, y,x, x_te, id, 10, params = [100,500,1200,1250,1300], tuned_param = "max_iters", lambda_ = 0, gamma= 0.06)
 
 
