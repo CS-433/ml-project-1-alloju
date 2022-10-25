@@ -32,12 +32,13 @@ def apply_method(method,y_tr,x_tr,y_val = np.zeros([10,1]) ,x_val = np.zeros([10
     if (initial_w == None):
         initial_w = np.zeros(x_tr.shape[1])
 
+    logistic = False
     if ('reg_logistic_regression' in str(method)):
         w, loss = method(y_tr, x_tr, lambda_, initial_w, max_iters, gamma)
-        mse = compute_mse(y_tr, x_tr, w)
+        logistic = True
     elif ('logistic_regression' in str(method)):
         w, loss = method(y_tr,x_tr, initial_w, max_iters, gamma)
-        mse = compute_mse(y_tr, x_tr, w)
+        logistic = True
     elif ('mean_squared_error' in str(method) or 'mean_squared_error_sgd' in str(method)):
         w, mse = method(y_tr,x_tr, initial_w, max_iters, gamma)
     elif ('least_squares' in str(method)):
@@ -50,7 +51,7 @@ def apply_method(method,y_tr,x_tr,y_val = np.zeros([10,1]) ,x_val = np.zeros([10
     loss_val = 0
     if validation:
         mse_val = compute_mse(y_val,x_val,w)
-        loss_val = compute_accuracy(y_val,x_val,w)
+        loss_val = compute_accuracy(y_val,x_val,w, logistic)
     if not(cross_val):
         predict(method, id, x_te, w)
     loss_train = compute_accuracy(y_tr, x_tr, w)

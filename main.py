@@ -78,7 +78,6 @@ gamma, best_mse_val, mse_tr_final = best_single_param_selection(im.mean_squared_
 # print(cross_validation(im.ridge_regression, y, x, x_te, k_indices, 4, lambda_ = 0.5))
 # print("cross validation on ridge regression: selected lambda = ", lambda_, "cross_mse_tr_rr = ", cross_mse_tr_rr, "cross_mse_te_rr", cross_mse_te_rr )
 
-
 #mse_tr_ls, mse_val_ls = apply_method(im.least_squares, y_tr,x_tr,y_val,x_val, x_te, id)
 
 
