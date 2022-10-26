@@ -67,13 +67,12 @@ def predict(method, id, x_te, w):
         id (_type_): _description_
         x_te (_type_): _description_
     """
-    print("id: ", id)
     print(w)
     y = np.dot(x_te,w)
     # appliquer les labels
     #y_bin = sigmoid(y)
     #print("y after sigmoid:", y_bin)
-    print(sum(y>0))
+    print(y)
     y[y < 0.5] = -1
     y[y >= 0.5] = 1
     print(y)
