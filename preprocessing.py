@@ -91,11 +91,11 @@ def corr(x):
     return np.squeeze(ind)
 
 def preproc(x):
-    x = remove_outliers(x)
+    #x = remove_outliers(x)
     x = angle_values(x)
-    x = replace_class(x)
+    #x = replace_class(x)
     x, x_mean, x_std = standardize(x)
-    ind = corr(x)
+    #ind = corr(x)
     return x
 
 #x,ind_corr= preproc(x)
