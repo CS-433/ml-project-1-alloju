@@ -1,6 +1,7 @@
 import numpy as np
 import csv
 
+
 def compute_mse(y, tx, w):
     """Compute the loss using MSE
 
@@ -12,20 +13,21 @@ def compute_mse(y, tx, w):
     Returns:
         the value of the loss (a scalar), corresponding to the input parameters w.
     """
-    e = y - np.dot(tx,w)
-    loss = 1/(2*y.shape[0])*(np.dot(np.transpose(e),e))
+    e = y - np.dot(tx, w)
+    loss = 1 / (2 * y.shape[0]) * (np.dot(np.transpose(e), e))
     return loss
 
-def compute_accuracy(y,tx,w, logistic = False):
-    #e = y - np.dot(tx,w)
-    ŷ = np.dot(tx,w)
-    if logistic: 
+
+def compute_accuracy(y, tx, w, logistic=False):
+    # e = y - np.dot(tx,w)
+    ŷ = np.dot(tx, w)
+    if logistic:
         ŷ[ŷ < 0] = 0
         ŷ[ŷ >= 0] = 1
     else:
         ŷ[ŷ < 0] = -1
         ŷ[ŷ >= 0] = 1
-    return sum(ŷ != y)/len(y)
+    return sum(ŷ != y) / len(y)
 
 
 def compute_rmse(mse):
@@ -39,6 +41,7 @@ def compute_rmse(mse):
     """
     return np.sqrt(2 * mse)
 
+
 def compute_gradient_MSE(y, tx, w):
     """Computes the gradient at w of the MSE for linear regression.
 
@@ -50,54 +53,60 @@ def compute_gradient_MSE(y, tx, w):
     Returns:
         An array of shape (2, ) (same shape as w), containing the gradient of the loss at w.
     """
-    e = y - np.dot(tx,w)
-    gradient = -1/y.shape[0] * np.dot(np.transpose(tx),e)
-    return gradient   
+    e = y - np.dot(tx, w)
+    gradient = -1 / y.shape[0] * np.dot(np.transpose(tx), e)
+    return gradient
+
 
 def sigmoid(t):
     """Apply sigmoid function on t.
 
     Arg:
         t:
-    
+
     Returns:
-        The sigmoid corresponding to the input t 
+        The sigmoid corresponding to the input t
     """
-    return 1/(1 + np.exp(-t))
+    return 1 / (1 + np.exp(-t))
+
 
 def compute_loss_neg_loglikelihood(y, tx, w):
     """Compute the cost by negative log likelihood.
-    
+
     Args:
         y: shape=(N, )
         tx: shape=(N,D)
         w: shape=(D, ). The vector of model parameters.
-    Returns: 
+    Returns:
         the value of the loss (a scalar), corresponding to the input parameters w.
     """
     sig = sigmoid(tx.dot(w))
-    loss = - y.T@(np.log(sig)) - (1-y).T@(np.log(1 - sig))
-    return (1/y.shape[0])*np.squeeze(loss) # squeeze remove axes of length 1 from loss
+    loss = -y.T @ (np.log(sig)) - (1 - y).T @ (np.log(1 - sig))
+    return (1 / y.shape[0]) * np.squeeze(
+        loss
+    )  # squeeze remove axes of length 1 from loss
+
 
 def compute_gradient_neg_loglikelihood(y, tx, w):
     """Compute the gradient of loss (negative log likelihood).
-        Args:
-            y: shape=(N, )
-            tx: shape=(N,D)
-            w: shape=(D, ). The vector of model parameters.
-        Returns: 
-            the value of the gradient corresponding to the input parameters.
+    Args:
+        y: shape=(N, )
+        tx: shape=(N,D)
+        w: shape=(D, ). The vector of model parameters.
+    Returns:
+        the value of the gradient corresponding to the input parameters.
     """
-    
-    return np.dot(tx.T,sigmoid(np.dot(tx,w))-y)/y.shape[0]
-    #TODO testé (1/N) selon ce que j'ai lu sur un site mais comprendre pk ça marche 
-    #https://medium.com/@IwriteDSblog/gradient-descent-for-logistics-regression-in-python-18e033775082
+
+    return np.dot(tx.T, sigmoid(np.dot(tx, w)) - y) / y.shape[0]
+    # TODO testé (1/N) selon ce que j'ai lu sur un site mais comprendre pk ça marche
+    # https://medium.com/@IwriteDSblog/gradient-descent-for-logistics-regression-in-python-18e033775082
 
 
 """"
 if __name__ == "__main__":
     assert # Test 
 """
+
 
 def create_csv_submission(ids, y_pred, name):
     """
