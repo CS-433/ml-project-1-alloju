@@ -57,6 +57,7 @@ def apply_method(method,y_tr,x_tr,y_val = np.zeros([10,1]) ,x_val = np.zeros([10
     #loss_train = compute_accuracy(y_tr, x_tr, w)
         
     #return loss_train, loss_val
+    print(compute_accuracy(y_tr, x_tr, w))
     return mse_tr, mse_val
 
 def predict(method, id, x_te, w):

@@ -4,7 +4,7 @@ from split_data import split_data
 from paths import training_set, test_set
 from apply_method import apply_method, predict
 import implementations as im
-from preprocessing import angle_values, preproc_test, preproc_train, to_0_1
+from preprocessing import angle_values, preproc_train, preproc_test, to_0_1
 import numpy as np
 
 #from least_squares import least_squares
@@ -16,12 +16,17 @@ import numpy as np
 
 #x,y = load_data(training_set)
 y,x,ids = load_csv_data(training_set)
-x, x_mean, x_std, ind, projection_matrix = preproc_train(x) #TODO: decomment
+
+x_tr, tr_mean, tr_std = standardize(x)
+
+x, x_mean, x_std = preproc_train(x) #TODO: decomment
 y = to_0_1(y)
 
 _, x_te, id = load_csv_data(test_set)
 
-x_test = preproc_test(x, x_mean, x_std, ind, projection_matrix)
+x_te, te_mean, te_std = standardize(x_te)
+
+x_te = preproc_test(x_te, x_mean, x_std)
 
 #x, _, _ = standardize(x)
 

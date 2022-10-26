@@ -12,7 +12,7 @@
 - 5th submission: 1st SGD, tr_loss = 0.62, val_loss = 2.83, max_iters = 5, gamma = 0.08
 
 ## 21.10 
-- ??
+- ?? (ridge ou least squares?)
 
 #### 22.10
 - 1st submission: reg_logistic_regression, y, x, x_te, id, 10, lambdas = [0.5,1,3,5,6,7,8,9,10,15,50,80], gammas = [0.01,0.02,0.05,0.1,0.25,0.5,0.75,0.9], maxs_iters = [5,10,20,50,75,100,150,200]) -> chosen: lambda = 7, max_iters = 10, gamma = 0.05, rmse training = 1.137
@@ -41,11 +41,12 @@ final training rmse (96.60469177148643, 0)
 #### 25.10
 - 1st submission: GD: lambda =  0.0 max_iters =  1200 gamma =  0.06 mse_val =  0.24470400000000003
 final training 1-accuracy (0.244828, 0)
-
+- 2nd submission: trash
+- 3rd submission: least squares using labels 0,1
 
 #### 26.10
 Correct standardization
-- 1st submission: least squares
+- 1st submission: least squares with new preproc (labels 0,1)
 
 (log reg: lambda =  0.0 max_iters =  10 gamma =  0.01 mse_val =  0.29327745619785595
 id:
