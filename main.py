@@ -4,7 +4,7 @@ from split_data import split_data
 from paths import training_set, test_set
 from apply_method import apply_method, predict
 import implementations as im
-from preprocessing import angle_values, preproc, to_0_1
+from preprocessing import angle_values, preproc_test, preproc_train, to_0_1
 import numpy as np
 
 #from least_squares import least_squares
@@ -17,12 +17,12 @@ import numpy as np
 #x,y = load_data(training_set)
 y,x,ids = load_csv_data(training_set)
 
-x = preproc(x) #TODO: decomment
+x, x_mean, x_std = preproc_train(x) #TODO: decomment
 
 #id, x_te = load_test_data(test_set)
 _, x_te, id = load_csv_data(test_set)
 
-x_te = preproc(x_te) #TODO: decomment
+x_te = preproc_test(x_te, x_mean, x_std) #TODO: decomment
 
 y = to_0_1(y)
 
@@ -35,8 +35,8 @@ x_tr, x_val, y_tr, y_val = split_data(x,y,0.8)
 
 # LEAST SQUARES
 
-# mse_train, _ = apply_method(im.least_squares, y, x, x_te = x_te, id = id, validation = False)
-# print(mse_train)
+mse_train, _ = apply_method(im.least_squares, y, x, x_te = x_te, id = id, validation = False)
+print(mse_train)
 
 # RIDGE REGRESSION
 

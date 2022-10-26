@@ -41,3 +41,7 @@ final training rmse (96.60469177148643, 0)
 #### 25.10
 - 1st submission: GD: lambda =  0.0 max_iters =  1200 gamma =  0.06 mse_val =  0.24470400000000003
 final training mse (0.244828, 0)
+- ... failing for everyone
+- something went wrong ?
+- 4th submission: least square, with correct standardization (axis = 0). labels are 0,1, mse = 0.37466406834611504
+- 5th submission: least square, same standardization for test & train data, labels 0,1, mse = 0..37466406834611504

@@ -95,16 +95,27 @@ def corr(x):
     ind = (np.array([np.nonzero(corr)]))
     return x
 
-def preproc(x):
-    #x = missing_data(x)
+def preproc_train(x):
+    #ind = corr(x)
+    #x = delete_correlated(x, ind)
     x = remove_outliers(x)
     x = angle_values(x)
     x = replace_class(x)
-    #x = corr(x)
     x, x_mean, x_std = standardize(x)
+    #projection_matrix = pca(x)
+    #x = np.dot(x, projection_matrix)
+    return x, x_mean, x_std #, ind, projection_matrix
+
+def preproc_test(x, x_mean, x_std): #, ind, projection_matrix):
+    #x = delete_correlated(x, ind)
+    x = remove_outliers(x)
+    x = angle_values(x)
+    x = replace_class(x)
+    x = x-x_mean
+    x = x/x_std
+    #x = np.dot(x, projection_matrix)
     return x
 
-x= preproc(x)
 #id = get_id(data_path)
 #x0,x1 = separate(x, y)
 #plot_hist(x0,x1,id)
