@@ -34,7 +34,7 @@ final training rmse (0.5853785100257781, 0)
 final training rmse (96.60469177148643, 0)
 
 #### 24.10
-- 1st submission: ridge_regr: final training mse 0.32515735189806094, Chosen lambda is:  0.0
+- 1st submission: ridge_regr: final training mse 0.32515735189806094, Chosen lambda is:  0.0 (tag: v1.0)
 - 2nd submission: ridge_regr: test with higher mse
 - 3rd submission: mean squared error GD, 1-accuracy ≃ 0.24, gamma = 0.05
 
