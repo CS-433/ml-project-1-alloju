@@ -117,7 +117,7 @@ def preproc_train(x):
     x = replace_class(x)
     x, x_mean, x_std = standardize(x)
     projection_matrix = pca(x)
-    #x = np.dot(x, projection_matrix)
+    x = np.dot(x, projection_matrix)
     return x, x_mean, x_std, ind, projection_matrix
 
 def preproc_test(x, x_mean, x_std, ind, projection_matrix):
@@ -127,9 +127,9 @@ def preproc_test(x, x_mean, x_std, ind, projection_matrix):
     x = replace_class(x)
     x = x-x_mean
     x = x/x_std
-    #x = np.dot(x, projection_matrix)
+    x = np.dot(x, projection_matrix)
     return x
 
-#x_tr, x_mean, x_std, ind, projection_matrix  = preproc_train(x)
-#x_te = preproc_test(x, x_mean, x_std, ind, projection_matrix)
+x_tr, x_mean, x_std, ind, projection_matrix  = preproc_train(x)
+x_te = preproc_test(x, x_mean, x_std, ind, projection_matrix)
 
