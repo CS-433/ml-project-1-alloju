@@ -40,8 +40,8 @@ x_te = preproc(x_te) #TODO: decomment
 #lambda_, cross_mse_tr_rr, cross_mse_te_rr = best_single_param_selection(im.ridge_regression, y, x, x_te, id, 30, params = [0.0,0.05,0.1,0.5,1], tuned_param = "lambda")
 
 # LOG REG
-
-#best_lambda, best_gamma, best_max_iters, best_mse_val, mse_tr_final = best_triple_param_selection(im.mean_squared_error_gd, y, x, x_te, id, 10, lambdas = [0.0], gammas = [0.05,0.06,0.07, 0.1], maxs_iters = [500, 1000, 1200])
+#apply_method(im.logistic_regression, y, x, x_te = x_te, id = id, gamma = 0.1, max_iters = 1000, validation = False)
+#best_lambda, best_gamma, best_max_iters, best_mse_val, mse_tr_final = best_triple_param_selection(im.logistic_regression, y, x, x_te, id, 10, lambdas = [0.0], gammas = [0.001,0.005,0.01,0.02,0.03,0.04,0.05,0.06,0.07, 0.08, 0.1, 0.5,0.7], maxs_iters = [5,7,10,50,100, 250, 500, 1000, 1500, 2000])
 
 # REG LOG REG
 
@@ -64,8 +64,13 @@ x_te = preproc(x_te) #TODO: decomment
 
 # SUBGRADIENT DESCENT:
 
+#apply_method(im.mean_squared_error_gd, y, x, x_te = x_te, id = id, gamma = 0.5, max_iter = 500, validation = False)
+#TODO: nan y output for next line: 
+#apply_method(im.mean_squared_error_gd, y, x, x_te = x_te, id = id, gamma = 0.1, max_iters = 1000, validation = False)
+
+
 #best_lambda, best_gamma, best_max_iters, best_mse_val, mse_tr_final = best_triple_param_selection(im.mean_squared_error_gd, y, x, x_te, id, 10, lambdas = [0.0], gammas = [0.001, 0.03,0.05,0.06,0.07, 0.1, 0.5,0.9], maxs_iters = [10,50,100,500,1000])
-best_lambda, best_gamma, best_max_iters, best_mse_val, mse_tr_final = best_triple_param_selection(im.mean_squared_error_gd, y, x, x_te, id, 10, lambdas = [0.0], gammas = [0.06,0.07], maxs_iters = [1200]) #[1200])
+#best_lambda, best_gamma, best_max_iters, best_mse_val, mse_tr_final = best_triple_param_selection(im.mean_squared_error_gd, y, x, x_te, id, 10, lambdas = [0.0], gammas = [0.06,0.07], maxs_iters = [1200]) #[1200])
 
 #gamma, best_mse_val, mse_tr_final = best_single_param_selection(im.mean_squared_error_sgd, y,x, x_te, id, 10, params = [0.01,0.02,0.06,0.1, 0.2, 0.5], tuned_param = "gamma", lambda_ = 0, max_iters= 50)
 #max_iters, best_mse_val, mse_tr_final = best_single_param_selection(im.mean_squared_error_gd, y,x, x_te, id, 10, params = [100,500,1200,1250,1300], tuned_param = "max_iters", lambda_ = 0, gamma= 0.06)

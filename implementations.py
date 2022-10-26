@@ -19,7 +19,13 @@ def mean_squared_error_gd(y, tx, initial_w, max_iters, gamma):
     loss = ut.compute_mse(y, tx, w)
     for n_iter in range(max_iters):
         grad = ut.compute_gradient_MSE(y,tx,w)
+       
+        # if n_iter == 2:
+        #     print(y)
         w -= gamma * grad
+        # if n_iter < 10:
+        #     print(grad)
+        #     print(w)
         loss = ut.compute_mse(y, tx, w)
     return w, np.squeeze(loss)
 
@@ -91,7 +97,6 @@ def logistic_regression(y, tx, initial_w, max_iters, gamma):
         w: the last computed model parameters as numpy arrays of shape (D, )
         loss: the loss value (scalar) for the last iteration 
     """
-    print(y < 0)
     y[y < 0.5] = 0
     y[y > 0.5] = 1
 

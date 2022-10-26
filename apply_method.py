@@ -35,10 +35,10 @@ def apply_method(method,y_tr,x_tr,y_val = np.zeros([10,1]) ,x_val = np.zeros([10
     logistic = False
     if ('reg_logistic_regression' in str(method)):
         w, loss = method(y_tr, x_tr, lambda_, initial_w, max_iters, gamma)
-        logistic = True
+        mse = compute_mse(y_tr,x_tr,w)
     elif ('logistic_regression' in str(method)):
         w, loss = method(y_tr,x_tr, initial_w, max_iters, gamma)
-        logistic = True
+        mse = compute_mse(y_tr,x_tr,w)
     elif ('mean_squared_error' in str(method) or 'mean_squared_error_sgd' in str(method)):
         w, mse = method(y_tr,x_tr, initial_w, max_iters, gamma)
     elif ('least_squares' in str(method)):
@@ -68,12 +68,13 @@ def predict(method, id, x_te, w):
         x_te (_type_): _description_
     """
     print("id: ", id)
+    print(w)
     y = np.dot(x_te,w)
     # appliquer les labels
     #y_bin = sigmoid(y)
     print("y:", y)
-    y[y < 0.5] = -1
-    y[y >= 0.5] = 1
+    y[y < 0] = -1
+    y[y >= 0] = 1
     #pred = np.vstack((np.array(["Id", "Prediction"]),np.column_stack((id,y))))
     path = op.join(prediction_dir, "prediction" + str(method) + ".csv")
     create_csv_submission(id, y, path)

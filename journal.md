@@ -41,3 +41,8 @@ final training rmse (96.60469177148643, 0)
 #### 25.10
 - 1st submission: GD: lambda =  0.0 max_iters =  1200 gamma =  0.06 mse_val =  0.24470400000000003
 final training 1-accuracy (0.244828, 0)
+
+
+(log reg: lambda =  0.0 max_iters =  10 gamma =  0.01 mse_val =  0.29327745619785595
+id:
+final training mse (0.29327513413017453, 0))
