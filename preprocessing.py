@@ -108,6 +108,11 @@ def standardize(x):
     x = x / std_x
     return x, mean_x, std_x
 
+def to_0_1(y):
+    y[y >= 0 ] = 1
+    y[y < 0 ] = 0
+    return y
+
 def preproc_train(x):
     ind = corr(x)
     x = delete_correlated(x, ind)
@@ -127,5 +132,9 @@ def preproc_test(x, x_mean, x_std, ind, projection_matrix):
     x = x-x_mean
     x = x/x_std
     #x = np.dot(x, projection_matrix)
-    return x
+    return x, x_mean, x_std
 
+x_tr, x_mean, x_std, ind, projection_matrix  = preproc_train(x)
+x_te, x_mean, x_std = preproc_test(x, x_mean, x_std, ind, projection_matrix)
+print(x_tr.shape)
+print(x_te.shape)
