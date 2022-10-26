@@ -89,8 +89,9 @@ def pca(x):
     for i in eigen_val:
         variance_explained.append((i/sum(eigen_val))*100)
     cumulative_variance_explained = np.cumsum(variance_explained)
-    explained_99 =np.squeeze((cumulative_variance_explained > 99).nonzero())
-    nb_component_keep = explained_99[0]
+    explained_95 =np.squeeze((cumulative_variance_explained > 95).nonzero())
+    nb_component_keep = explained_95[0]
+    print('nb components to keep: ', nb_component_keep)
     projection_matrix = (eigen_vec.T[:][:nb_component_keep]).T
     return projection_matrix
 
@@ -127,10 +128,8 @@ def preproc_test(x, x_mean, x_std, ind, projection_matrix):
     x = x-x_mean
     x = x/x_std
     #x = np.dot(x, projection_matrix)
-    return x, x_mean, x_std
+    return x
 
-x_tr, x_mean, x_std, ind, projection_matrix  = preproc_train(x)
-x_te, x_mean, x_std = preproc_test(x, x_mean, x_std, ind, projection_matrix)
-print(x_tr.shape)
-print(x_te.shape)
+#x_tr, x_mean, x_std, ind, projection_matrix  = preproc_train(x)
+#x_te = preproc_test(x, x_mean, x_std, ind, projection_matrix)
 
