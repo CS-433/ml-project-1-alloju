@@ -36,7 +36,7 @@ def separate(x,y):
     return x_0,x_1
 
 def angle_values(x):
-    colomns = np.array([15,18,20,25,28]) #index of colomns containing the colomns with angle values
+    colomns = np.array([11,14,16,19,20]) #index of colomns containing the colomns with angle values
     for j in range(len(colomns)):
         i = colomns[j]
         sin = np.sin(x[:,i]) # compute sin of angle
@@ -79,17 +79,17 @@ def remove_outliers(x):
 def replace_class(x):
     len_ = np.shape(x)[0]
     #create 4 new colomns with indexes 25 to 28 containing solely zeros
-    x = np.insert(x, 26, np.zeros(len_), axis = 1)
-    x = np.insert(x, 26, np.zeros(len_), axis = 1)
-    x = np.insert(x, 26, np.zeros(len_), axis = 1)
-    x = np.insert(x, 26, np.zeros(len_), axis = 1)
+    x = np.insert(x, 22, np.zeros(len_), axis = 1)
+    x = np.insert(x, 22, np.zeros(len_), axis = 1)
+    x = np.insert(x, 22, np.zeros(len_), axis = 1)
+    x = np.insert(x, 22, np.zeros(len_), axis = 1)
     #replace indixes that are missing
-    x[:, 26][x[:,25] == 0] = 1
-    x[:, 27][x[:,25] == 1] = 1
-    x[:, 28][x[:,25] == 2] = 1
-    x[:, 29][x[:,25] == 3] = 1
+    x[:, 22][x[:,21] == 0] = 1
+    x[:, 23][x[:,21] == 1] = 1
+    x[:, 24][x[:,21] == 2] = 1
+    x[:, 25][x[:,21] == 3] = 1
     #delete the colomn
-    x = np.delete(x, 25, axis = 1)
+    x = np.delete(x, 21, axis = 1)
     return x
 
 
@@ -109,19 +109,22 @@ def pca(x):
 
 def corr(x):
     #TODO check which attributes have high correlation, if above a certain threshold, delete one of them
-    corr = np.corrcoef(x,rowvar = False)
-    corr[:][np.isclose(corr,1)] = 0
-    corr[:][corr < 0.95] = 0
-    corr = np.triu(corr)
-    dia = np.diag(corr)
-    ind = (np.array([np.nonzero(corr)]))
-    return x
-
+    #id = get_id(data_path)
+    corr = np.abs(np.corrcoef(x,rowvar = False))
+    #plt.imshow(corr)
+    #plt.colorbar()
+    #plt.xticks(ticks=np.arange(len(id)),labels=id,rotation=90)
+    #plt.yticks(ticks=np.arange(len(id)),labels=id)
+    #plt.show()
+    corr = np.triu(corr, k=1)
+    ind = np.where(corr > 0.95)
+    ind_to_delete = np.unique(ind[0])
+    return np.squeeze(ind_to_delete)
 
 
 def preproc_train(x, do_pca = True):
-    #ind = corr(x)
-    #x = delete_correlated(x, ind)
+    ind = corr(x)
+    x = delete_correlated(x, ind)
     x = remove_outliers(x)
     x = angle_values(x)
     x = replace_class(x)
@@ -131,7 +134,7 @@ def preproc_train(x, do_pca = True):
         x = np.dot(x, projection_matrix)
     else:
         projection_matrix = None
-    return x, x_mean, x_std, projection_matrix #, ind #, projection_matrix
+    return x, x_mean, x_std, ind, projection_matrix
 
 def preproc_test(x, x_mean, x_std, projection_matrix, do_pca): #, ind): #, projection_matrix):
     #x = delete_correlated(x, ind)
@@ -148,3 +151,5 @@ def preproc_test(x, x_mean, x_std, projection_matrix, do_pca): #, ind): #, proje
 #x0,x1 = separate(x, y)
 #plot_hist(x0,x1,id)
 #boxplot(x)
+
+x, x_mean, x_std, ind,  projection_matrix = preproc_train(x, do_pca = True)
