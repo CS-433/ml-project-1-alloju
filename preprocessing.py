@@ -12,6 +12,8 @@ def get_id(data_path):
     return id[2:-1]
 
 def missing_data(x): 
+    """_delete the colomns with too much missing data (indexes determined manually)
+    """
     # define colomns with too much missing data
     special = [4,5,6,12,23,24,25,26,27,28]
     for i in special :
@@ -96,7 +98,14 @@ def pca(x):
     return projection_matrix
 
 def corr(x):
-    corr = np.triu(np.abs(np.corrcoef(x,rowvar = False)), k=1)
+    id = get_id(data_path)
+    corr = np.abs(np.corrcoef(x,rowvar = False))
+    plt.imshow(corr)
+    plt.colorbar()
+    plt.xticks(ticks=np.arange(len(id)),labels=id,rotation=90)
+    plt.yticks(ticks=np.arange(len(id)),labels=id)
+    plt.show()
+    corr = np.triu(corr, k=1)
     ind = np.where(corr > 0.95)
     ind_to_delete = np.unique(ind[0])
     return np.squeeze(ind_to_delete)
@@ -116,8 +125,10 @@ def preproc_train(x):
     x = angle_values(x)
     x = replace_class(x)
     x, x_mean, x_std = standardize(x)
+    #ind2 = corr(x)
     projection_matrix = pca(x)
     x = np.dot(x, projection_matrix)
+    #ind3 = corr(x)
     return x, x_mean, x_std, ind, projection_matrix
 
 def preproc_test(x, x_mean, x_std, ind, projection_matrix):
@@ -131,5 +142,5 @@ def preproc_test(x, x_mean, x_std, ind, projection_matrix):
     return x
 
 x_tr, x_mean, x_std, ind, projection_matrix  = preproc_train(x)
-x_te = preproc_test(x, x_mean, x_std, ind, projection_matrix)
+#x_te = preproc_test(x, x_mean, x_std, ind, projection_matrix)
 
