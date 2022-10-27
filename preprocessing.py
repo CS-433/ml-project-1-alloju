@@ -122,9 +122,12 @@ def corr(x):
     return np.squeeze(ind_to_delete)
 
 
-def preproc_train(x, do_pca = True):
-    ind = corr(x)
-    x = delete_correlated(x, ind)
+def preproc_train(x, do_corr = True, do_pca = True):
+    if do_corr:
+        ind = corr(x)
+        x = delete_correlated(x, ind)
+    else:
+        ind = None
     x = remove_outliers(x)
     x = angle_values(x)
     x = replace_class(x)
@@ -136,8 +139,9 @@ def preproc_train(x, do_pca = True):
         projection_matrix = None
     return x, x_mean, x_std, ind, projection_matrix
 
-def preproc_test(x, x_mean, x_std, projection_matrix, do_pca): #, ind): #, projection_matrix):
-    #x = delete_correlated(x, ind)
+def preproc_test(x, x_mean, x_std, projection_matrix, ind, do_corr = True, do_pca = True): 
+    if do_corr:
+        x = delete_correlated(x, ind)
     x = remove_outliers(x)
     x = angle_values(x)
     x = replace_class(x)
@@ -152,4 +156,4 @@ def preproc_test(x, x_mean, x_std, projection_matrix, do_pca): #, ind): #, proje
 #plot_hist(x0,x1,id)
 #boxplot(x)
 
-x, x_mean, x_std, ind,  projection_matrix = preproc_train(x, do_pca = True)
+#x, x_mean, x_std, ind,  projection_matrix = preproc_train(x, do_pca = True)

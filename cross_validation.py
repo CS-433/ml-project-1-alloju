@@ -71,8 +71,8 @@ def best_single_param_selection(method, y,x, x_te, id, k_fold, params = [0.1, 0.
     # split data in k fold
     k_indices = build_k_indices(y, k_fold, seed)
     # define lists to store the loss of training data and test data
-    loss_tr = []
-    loss_val = []
+    losses_tr = []
+    losses_val = []
     # cross validation over tuned parameter
     for param in params:
         temp_loss_tr = []
@@ -89,16 +89,16 @@ def best_single_param_selection(method, y,x, x_te, id, k_fold, params = [0.1, 0.
                 return 0
             temp_loss_tr.append(loss_tr)
             temp_loss_val.append(loss_val)
-        loss_tr.append(np.mean(temp_loss_tr))
+        losses_tr.append(np.mean(temp_loss_tr))
         print("temporary mean loss: ", np.mean(temp_loss_tr))
-        loss_val.append(np.mean(temp_loss_val))
+        losses_val.append(np.mean(temp_loss_val))
         print("tuned_param = ", param, "loss_tr = ", np.mean(temp_loss_tr), "loss_val", np.mean(temp_loss_val))
-    best_loss_val = (min(loss_val))
-    idx = np.where(loss_val == best_loss_val)
-    best_loss_tr = loss_tr[np.squeeze(idx)]
+    best_loss_val = (min(losses_val))
+    idx = np.where(losses_val == best_loss_val)
+    best_loss_tr = losses_tr[np.squeeze(idx)]
     best_param = params[np.squeeze(idx)]
 
-    cross_validation_visualization(method, params, loss_tr, loss_val, tuned_param)
+    cross_validation_visualization(method, params, losses_tr, losses_val, tuned_param)
 
     if tuned_param == "lambda":
         loss_tr_final, _ = apply_method(method, y, x, x_te = x_te, id = id, lambda_ = best_param, initial_w = initial_w, max_iters = max_iters, gamma = gamma, validation = False)
@@ -147,7 +147,7 @@ def best_triple_param_selection(method, y,x, x_te, id, k_fold, lambdas = [0.1, 0
         for gamma in gammas:
             if verbose:
                 print("looping for gamma:", gamma)
-            loss_val = []
+            losses_val = []
             for lambda_ in lambdas:
                 if verbose:
                     print("looping for lambda:", lambda_)
@@ -155,10 +155,10 @@ def best_triple_param_selection(method, y,x, x_te, id, k_fold, lambdas = [0.1, 0
                 for k in range(k_fold):
                     loss_tr, loss_val= cross_validation(method, y , x, k_indices, k, lambda_ = lambda_, initial_w = initial_w, max_iters = max_iters, gamma = gamma)
                     temp_loss_val.append(loss_val)
-                loss_val.append(np.mean(temp_loss_val))
-            best_temp_loss = min(loss_val)
+                losses_val.append(np.mean(temp_loss_val))
+            best_temp_loss = min(losses_val)
             best_loss_val.append(best_temp_loss)
-            best_lambdas.append(lambdas[np.argmin(loss_val)])
+            best_lambdas.append(lambdas[np.argmin(losses_val)])
         best_loss = min(best_loss_val)
         best_lambda = best_lambdas[np.argmin(best_loss_val)]
         super_best_lambdas.append(best_lambda)

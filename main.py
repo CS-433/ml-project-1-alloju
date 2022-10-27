@@ -15,23 +15,21 @@ import numpy as np
 
 
 #x,y = load_data(training_set)
-y,x,ids = load_csv_data(training_set)
 
-x, x_mean, x_std, projection_matrix = preproc_train(x, do_pca = False) #TODO: decomment
+# TODO: décommenter
+# y,x,ids = load_csv_data(training_set)
 
-#id, x_te = load_test_data(test_set)
-_, x_te, id = load_csv_data(test_set)
+# x, x_mean, x_std, ind, projection_matrix = preproc_train(x, do_corr = False, do_pca = False) #TODO: decomment
 
-x_te = preproc_test(x_te, x_mean, x_std, projection_matrix, do_pca = False) #TODO: decomment
+# #id, x_te = load_test_data(test_set)
+# _, x_te, id = load_csv_data(test_set)
 
-y = to_0_1(y)
+# x_te = preproc_test(x_te, x_mean, x_std, projection_matrix, ind, do_corr = False, do_pca = False) #TODO: decomment
 
-#x, _, _ = standardize(x)
+# y = to_0_1(y)
 
-#x_te, _, _ = standardize(x_te)
+# TODO: stop décommenter
 
-#x_te, x_te_m, xe_te_std = standardize(x_te)
-x_tr, x_val, y_tr, y_val = split_data(x,y,0.8)
 
 # LEAST SQUARES
 
@@ -40,8 +38,8 @@ x_tr, x_val, y_tr, y_val = split_data(x,y,0.8)
 #print(mse_train, mse_val)
 
 # For prediction: 
-mse_train, _ = apply_method(im.least_squares, y, x, x_te = x_te, id = id, validation = False)
-print(mse_train)
+#mse_train, _ = apply_method(im.least_squares, y, x, x_te = x_te, id = id, validation = False)
+#print(mse_train)
 
 # RIDGE REGRESSION
 
@@ -57,7 +55,18 @@ print(mse_train)
 #best_lambda, best_gamma, best_max_iters, best_mse_val, mse_tr_final = best_triple_param_selection(im.reg_logistic_regression, y, x, x_te, id, 20, lambdas = [0.5,1,3,5,6,6.5,7,7.5,8,8.5,9,9.5,10,15,50,80], gammas = [0.01, 0.02,0.04,0.05,0.06,0.07,0.1,0.25,0.5,0.75,0.9], maxs_iters = [5,10,15,20,50,75,100,150,200,500])
 #best_lambda, best_gamma, best_max_iters, best_mse_val, mse_tr_final = best_triple_param_selection(im.reg_logistic_regression, y, x, x_te, id, 20, lambdas = [0.5,1,3,5,6,6.5,7,7.5,8,8.5,9,9.5,10,15,50,80], gammas = [0.01, 0.02,0.04,0.05,0.06,0.07,0.1,0.25,0.5,0.75,0.9], maxs_iters = [5,7,8,9,10,15,20,50,75,100,150,200,500])
 
-#best_lambda, best_gamma, best_max_iters, best_mse_val, mse_tr_final = best_triple_param_selection(im.reg_logistic_regression, y, x, x_te, id, 10, lambdas = [0.1,2,5], gammas = [0.1,0.5,0.9], maxs_iters = [6,50])
+y,x,ids = load_csv_data(training_set)
+
+x, x_mean, x_std, ind, projection_matrix = preproc_train(x, do_corr = True, do_pca = False) #TODO: decomment
+
+#id, x_te = load_test_data(test_set)
+_, x_te, id = load_csv_data(test_set)
+
+x_te = preproc_test(x_te, x_mean, x_std, projection_matrix, ind, do_corr = True, do_pca = False) #TODO: decomment
+
+y = to_0_1(y)
+
+best_lambda, best_gamma, best_max_iters, best_mse_val, mse_tr_final = best_triple_param_selection(im.reg_logistic_regression, y, x, x_te, id, 10, lambdas = [0.001,0.01, 0.1], gammas = [0.1,0.5,0.9], maxs_iters = [6,50, 500, 1000])
 
 #GRADIENT DESCENT:
 
