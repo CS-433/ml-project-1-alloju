@@ -59,7 +59,14 @@ def sigmoid(t):
     Returns:
         The sigmoid corresponding to the input t 
     """
-    return 1/(1 + np.exp(-t))
+    if t > 100:
+        sig = 1
+    elif t < -100:
+        sig = 0
+    else:
+        sig = 1/(1 + np.exp(-t))
+
+    return sig
 
 def compute_loss_neg_loglikelihood(y, tx, w):
     """Compute the cost by negative log likelihood.

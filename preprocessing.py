@@ -12,9 +12,11 @@ def to_0_1(y):
     y[y < 0] = -1
     return y
 
+
 def get_id(data_path):
     id = np.genfromtxt(data_path, delimiter=",", skip_footer=250000, dtype = str)
     return id[2:-1]
+
 
 def missing_data(x): 
     # define colomns with too much missing data
@@ -22,6 +24,11 @@ def missing_data(x):
     for i in special :
         x[:,i][x[:,i] == -999] = 0
     return x
+
+
+def delete_correlated(x, ind):
+    return np.delete(x, ind, axis = 1)
+
 
 def separate(x,y):
     x_0 = np.delete(x, np.where(y==1), axis = 0)
@@ -85,6 +92,21 @@ def replace_class(x):
     x = np.delete(x, 25, axis = 1)
     return x
 
+
+def pca(x):
+    cov = np.cov(x.T)
+    eigen_val, eigen_vec = np.linalg.eig(cov)
+    variance_explained = []
+    for i in eigen_val:
+        variance_explained.append((i/sum(eigen_val))*100)
+    cumulative_variance_explained = np.cumsum(variance_explained)
+    explained_95 =np.squeeze((cumulative_variance_explained > 95).nonzero())
+    nb_component_keep = explained_95[0]
+    print('PCA: nb components to keep: ', nb_component_keep)
+    projection_matrix = (eigen_vec.T[:][:nb_component_keep]).T
+    return projection_matrix
+
+
 def corr(x):
     #TODO check which attributes have high correlation, if above a certain threshold, delete one of them
     corr = np.corrcoef(x,rowvar = False)
@@ -95,25 +117,31 @@ def corr(x):
     ind = (np.array([np.nonzero(corr)]))
     return x
 
-def preproc_train(x):
+
+
+def preproc_train(x, do_pca = True):
     #ind = corr(x)
     #x = delete_correlated(x, ind)
     x = remove_outliers(x)
     x = angle_values(x)
     x = replace_class(x)
     x, x_mean, x_std = standardize(x)
-    #projection_matrix = pca(x)
-    #x = np.dot(x, projection_matrix)
-    return x, x_mean, x_std #, ind, projection_matrix
+    if do_pca:
+        projection_matrix = pca(x)
+        x = np.dot(x, projection_matrix)
+    else:
+        projection_matrix = None
+    return x, x_mean, x_std, projection_matrix #, ind #, projection_matrix
 
-def preproc_test(x, x_mean, x_std): #, ind, projection_matrix):
+def preproc_test(x, x_mean, x_std, projection_matrix, do_pca): #, ind): #, projection_matrix):
     #x = delete_correlated(x, ind)
     x = remove_outliers(x)
     x = angle_values(x)
     x = replace_class(x)
     x = x-x_mean
     x = x/x_std
-    #x = np.dot(x, projection_matrix)
+    if do_pca: 
+        x = np.dot(x, projection_matrix)
     return x
 
 #id = get_id(data_path)

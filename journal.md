@@ -44,4 +44,8 @@ final training mse (0.244828, 0)
 - ... failing for everyone
 - something went wrong ?
 - 4th submission: least square, with correct standardization (axis = 0). labels are 0,1, mse = 0.37466406834611504
-- 5th submission: least square, same standardization for test & train data, labels 0,1, mse = 0..37466406834611504
+- 5th submission: least square, same standardization for test & train data, labels 0,1, mse = 0.37466406834611504
+
+
+? lambda =  0.0 max_iters =  1200 gamma =  0.02 mse_val =  0.3765870081691118
+final training mse (0.3764975488089389, 0) ?

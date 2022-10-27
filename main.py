@@ -17,12 +17,12 @@ import numpy as np
 #x,y = load_data(training_set)
 y,x,ids = load_csv_data(training_set)
 
-x, x_mean, x_std = preproc_train(x) #TODO: decomment
+x, x_mean, x_std, projection_matrix = preproc_train(x, do_pca = False) #TODO: decomment
 
 #id, x_te = load_test_data(test_set)
 _, x_te, id = load_csv_data(test_set)
 
-x_te = preproc_test(x_te, x_mean, x_std) #TODO: decomment
+x_te = preproc_test(x_te, x_mean, x_std, projection_matrix, do_pca = False) #TODO: decomment
 
 y = to_0_1(y)
 
@@ -35,12 +35,17 @@ x_tr, x_val, y_tr, y_val = split_data(x,y,0.8)
 
 # LEAST SQUARES
 
-mse_train, _ = apply_method(im.least_squares, y, x, x_te = x_te, id = id, validation = False)
-print(mse_train)
+#For validation:
+#mse_train, mse_val = apply_method(im.least_squares, y_tr, x_tr, y_val = y_val, x_val = x_val, x_te = x_te, id = id, validation = True)
+#print(mse_train, mse_val)
+
+# For prediction: 
+#mse_train, _ = apply_method(im.least_squares, y, x, x_te = x_te, id = id, validation = False)
+#print(mse_train)
 
 # RIDGE REGRESSION
 
-#lambda_, cross_mse_tr_rr, cross_mse_te_rr = best_single_param_selection(im.ridge_regression, y, x, x_te, id, 30, params = [0.0,0.05,0.1,0.5,1], tuned_param = "lambda")
+#lambda_, cross_mse_tr_rr, cross_mse_te_rr = best_single_param_selection(im.ridge_regression, y, x, x_te, id, 10, params = [0.0, 1e-6, 1e-5, 1e-4, 1e-3, 1e-2, 1e-1], tuned_param = "lambda")
 
 # LOG REG
 
@@ -55,11 +60,12 @@ print(mse_train)
 
 #GRADIENT DESCENT:
 
-#best_lambda, best_gamma, best_max_iters, best_mse_val, mse_tr_final = best_triple_param_selection(im.mean_squared_error_gd, y, x, x_te, id, 10, lambdas = [0.0], gammas = [0.001, 0.02, 0.03,0.04,0.05,0.055,0.06,0.065,0.07, 0.1], maxs_iters = [50,100,200,300,400,500,600,700, 800, 900, 1000])
+#best_lambda, best_gamma, best_max_iters, best_mse_val, mse_tr_final = best_triple_param_selection(im.mean_squared_error_gd, y, x, x_te, id, 10, lambdas = [0.0], gammas = [0.001, 0.02, 0.03,0.04,0.05,0.055,0.06,0.065,0.07, 0.1], maxs_iters = [50,100,200,300,400,500,600,700, 800, 900, 1000, 1200, 1500])
 
+#best_lambda, best_gamma, best_max_iters, best_mse_val, mse_tr_final = best_triple_param_selection(im.mean_squared_error_gd, y, x, x_te, id, 10, lambdas = [0.0], gammas = [0.001, 0.01, 0.1], maxs_iters = [50,100, 1000])
 #best_lambda, best_gamma, best_max_iters, best_mse_val, mse_tr_final = best_triple_param_selection(im.mean_squared_error_gd, y, x, x_te, id, 10, lambdas = [0.0], gammas = [0.04, 0.045,0.05,0.055,0.06,0.065], maxs_iters = [1000, 1200, 1400, ])
 
-#gamma, best_mse_val, mse_tr_final = best_single_param_selection(im.mean_squared_error_gd, y,x, x_te, id, 10, params = [0.045,0.05,0.055], tuned_param = "gamma", lambda_ = 0, max_iters= 1500)
+gamma, best_mse_val, mse_tr_final = best_single_param_selection(im.mean_squared_error_gd, y,x, x_te, id, 10, params = [0.045,0.05,0.055,0.1], tuned_param = "gamma", lambda_ = 0, max_iters= 1500)
 #max_iters, best_mse_val, mse_tr_final = best_single_param_selection(im.mean_squared_error_gd, y,x, x_te, id, 10, params = [100,500,1200,1250,1300], tuned_param = "max_iters", lambda_ = 0, gamma= 0.06)
 #TODO: best_lambda, best_gamma, best_max_iters, best_mse_val, mse_tr_final = best_triple_param_selection(im.logistic_regression, y, x, x_te, id, 20, lambdas = [0.0], gammas = [0.01, 0.02,0.04,0.05,0.06,0.07,0.1,0.25,0.5,0.75,0.9], maxs_iters = [5,10,15,20,50,75,100, 150])
 
