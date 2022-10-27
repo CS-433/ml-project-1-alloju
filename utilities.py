@@ -59,12 +59,13 @@ def sigmoid(t):
     Returns:
         The sigmoid corresponding to the input t 
     """
-    if t > 100:
-        sig = 1
-    elif t < -100:
-        sig = 0
-    else:
-        sig = 1/(1 + np.exp(-t))
+    # TODO: handle overflow ! 
+    # if t > 100:
+    #     sig = 1
+    # elif t < -100:
+    #     sig = 0
+    #else:
+    sig = 1/(1 + np.exp(-t))
 
     return sig
 

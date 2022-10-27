@@ -40,12 +40,13 @@ x_tr, x_val, y_tr, y_val = split_data(x,y,0.8)
 #print(mse_train, mse_val)
 
 # For prediction: 
-#mse_train, _ = apply_method(im.least_squares, y, x, x_te = x_te, id = id, validation = False)
-#print(mse_train)
+mse_train, _ = apply_method(im.least_squares, y, x, x_te = x_te, id = id, validation = False)
+print(mse_train)
 
 # RIDGE REGRESSION
 
-#lambda_, cross_mse_tr_rr, cross_mse_te_rr = best_single_param_selection(im.ridge_regression, y, x, x_te, id, 10, params = [0.0, 1e-6, 1e-5, 1e-4, 1e-3, 1e-2, 1e-1], tuned_param = "lambda")
+#best_lambda_, cross_mse_tr_rr, cross_mse_val_rr = best_single_param_selection(im.ridge_regression, y, x, x_te, id, 10, params = [0.0, 1e-6, 1e-5, 1e-4, 1e-3, 1e-2, 1e-1], tuned_param = "lambda")
+
 
 # LOG REG
 
@@ -65,7 +66,7 @@ x_tr, x_val, y_tr, y_val = split_data(x,y,0.8)
 #best_lambda, best_gamma, best_max_iters, best_mse_val, mse_tr_final = best_triple_param_selection(im.mean_squared_error_gd, y, x, x_te, id, 10, lambdas = [0.0], gammas = [0.001, 0.01, 0.1], maxs_iters = [50,100, 1000])
 #best_lambda, best_gamma, best_max_iters, best_mse_val, mse_tr_final = best_triple_param_selection(im.mean_squared_error_gd, y, x, x_te, id, 10, lambdas = [0.0], gammas = [0.04, 0.045,0.05,0.055,0.06,0.065], maxs_iters = [1000, 1200, 1400, ])
 
-gamma, best_mse_val, mse_tr_final = best_single_param_selection(im.mean_squared_error_gd, y,x, x_te, id, 10, params = [0.045,0.05,0.055,0.1], tuned_param = "gamma", lambda_ = 0, max_iters= 1500)
+#gamma, best_mse_val, mse_tr_final = best_single_param_selection(im.mean_squared_error_gd, y,x, x_te, id, 10, params = [0.045,0.05,0.055,0.1], tuned_param = "gamma", lambda_ = 0, max_iters= 1500)
 #max_iters, best_mse_val, mse_tr_final = best_single_param_selection(im.mean_squared_error_gd, y,x, x_te, id, 10, params = [100,500,1200,1250,1300], tuned_param = "max_iters", lambda_ = 0, gamma= 0.06)
 #TODO: best_lambda, best_gamma, best_max_iters, best_mse_val, mse_tr_final = best_triple_param_selection(im.logistic_regression, y, x, x_te, id, 20, lambdas = [0.0], gammas = [0.01, 0.02,0.04,0.05,0.06,0.07,0.1,0.25,0.5,0.75,0.9], maxs_iters = [5,10,15,20,50,75,100, 150])
 
