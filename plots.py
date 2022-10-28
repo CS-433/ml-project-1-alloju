@@ -2,6 +2,8 @@
 """a function of ploting figures."""
 import numpy as np
 import matplotlib.pyplot as plt
+from paths import plots_dir
+import os
 
 
 def cross_validation_visualization(method, params, rmse_tr, rmse_te, tuned_param):
@@ -14,7 +16,7 @@ def cross_validation_visualization(method, params, rmse_tr, rmse_te, tuned_param
     plt.title("cross validation" + str(method))
     plt.legend(loc=2)
     plt.grid(True)
-    plt.savefig("cross_validation" + str(method))
+    plt.savefig(os.path.join(plots_dir,"cross_validation" + str(method)))
 
 
 def bias_variance_decomposition_visualization(degrees, rmse_tr, rmse_te):
