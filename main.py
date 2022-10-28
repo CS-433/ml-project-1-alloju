@@ -17,29 +17,34 @@ import numpy as np
 #x,y = load_data(training_set)
 
 # TODO: décommenter
-y,x,ids = load_csv_data(training_set)
+y,x,id_tr = load_csv_data(training_set)
 title_tr = load_csv_title(training_set)
 x, title_tr = replace_class(x, title_tr)
 y = to_0_1(y)
-xs, ys = class_separation(x, title_tr, y)
+xs, ys_, ids = class_separation(x, title_tr, id_tr, y)
 
-_, x_te, id = load_csv_data(test_set)
+_, x_te, id_te = load_csv_data(test_set)
 title_te = load_csv_title(test_set)
 x_te, title_te = replace_class(x_te, title_te)
-xs_te, _s = class_separation(x_te, title_te, _)
+xs_te, _s, ids_te = class_separation(x_te, title_te, id_te, _)
 
 mse_train_s = []
 ys = []
+ids = []
 method = im.least_squares
 for i in range(len(xs)):
     print('shape', xs[i].shape)
     xs[i], x_mean, x_std, ind, projection_matrix = preproc_train(xs[i], title_tr, do_corr = False, do_pca = False) #TODO: decomment
     xs_te[i] = preproc_test(xs_te[i], title_te, x_mean, x_std, projection_matrix, ind, do_corr = False, do_pca = False) #TODO: decomment
-    mse_train, _, y_bin = apply_method(method, y, x, x_te = x_te, id = id, validation = False, separation = True)
+    print(ys_.shape, xs.shape, xs_te.shape, id_te.shape)
+    mse_train, _, y_bin = apply_method(method, ys_[i], xs[i], x_te = xs_te[i], id = id_te[i], validation = False, separation = True)
     mse_train_s.append(mse_train)
     ys.append(y_bin)
-np.sort(ys)
-joining_prediction(method, id, ys)
+    ids.append(id_te[i])
+print(ids)
+ids_ys = np.array([[np.squeeze(ids)],[np.squeeze(ys)]], dtype = 'object')
+print(np.squeeze(ids).shape)
+joining_prediction(method, ids_ys[0], ids_ys[1])
 print(np.sum(mse_train_s)/len(mse_train_s))
 
 """

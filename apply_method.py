@@ -22,7 +22,7 @@ def apply_method(method,y_tr,x_tr,y_val = np.zeros([10,1]) ,x_val = np.zeros([10
         rmse_val: validation rmse
         w: computed weights
     """
-
+    print('xtr.shape', x_tr.shape)
     # TODO: if blablabla in file name 
     #une manière plus élégante de faire maybe ?:
     #import foo
@@ -88,8 +88,6 @@ def predict(method, id, x_te, w, separation = False):
         #np.savetxt(path, pred, delimiter=",")
 
 def joining_prediction(method, id, y):
-    print(len(y))
-    y = np.squeeze(y)
     path = op.join(prediction_dir, "prediction" + str(method) + ".csv")
     create_csv_submission(id, y, path)
 

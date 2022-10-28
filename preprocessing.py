@@ -241,7 +241,7 @@ def get_id(data_path): #TODO a enlever ! on en a plus besoin mtn non ?
     id = np.genfromtxt(data_path, delimiter=",", skip_footer=250000, dtype = str)
     return id[2:-1]
     
-def class_separation(x, title, y=None): 
+def class_separation(x, title, id=None, y=None): 
     """Separation of the data from x according to the PRI_jet_num values
 
     Args:
@@ -251,26 +251,20 @@ def class_separation(x, title, y=None):
         id: 
     """
     column_id = [idx for idx, s in enumerate(title) if 'PRI_jet_num' in s]
-
-    x_0 = np.delete(x, np.where(x[:,column_id[0]]==0), axis = 0)
-    x_1 = np.delete(x, np.where(x[:,column_id[1]]==0), axis = 0)
-    x_2 = np.delete(x, np.where(x[:,column_id[2]]==0), axis = 0)
-    x_3 = np.delete(x, np.where(x[:,column_id[3]]==0), axis = 0)
-    xs = []
-    xs.append(x_0)
-    xs.append(x_1)
-    xs.append(x_2)
-    xs.append(x_3)
+    xs =[]
+    for i in range(len(column_id)):
+        xi = np.delete(x, np.where(x[:,column_id[i]]==0), axis = 0)
+        xs.append(xi)
+        
     if y is not None: 
-        y_0 = np.delete(y, np.where(x[:,column_id[0]]==0), axis = 0)
-        y_1 = np.delete(y, np.where(x[:,column_id[0]]==0), axis = 0)
-        y_2 = np.delete(y, np.where(x[:,column_id[0]]==0), axis = 0)
-        y_3 = np.delete(y, np.where(x[:,column_id[0]]==0), axis = 0)
-        print(x_0.shape, y_0.shape)
-        print(x_1.shape, y_1.shape)
-        print(x_2.shape, y_2.shape)
-        print(x_3.shape, y_3.shape)
-        return xs, [y_0, y_1, y_2, y_3]
+        ys = []
+        ids= []
+        for i in range(len(column_id)):
+            yi = np.delete(y, np.where(x[:,column_id[i]]==0), axis = 0)
+            idi = np.delete(id, np.where(x[:,column_id[i]]==0), axis = 0)
+            ys.append(yi)
+            ids.append(idi)
+        return np.array(xs, dtype=object), np.array(ys, dtype=object), np.array(ids, dtype=object)
     else:
         return xs
 
