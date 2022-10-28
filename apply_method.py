@@ -65,7 +65,7 @@ def apply_method(method,y_tr,x_tr,y_val = np.zeros([10,1]) ,x_val = np.zeros([10
             if validation:
                 loss_val = compute_mse(y_val, x_val, w)
     elif loss == "accuracy":
-        loss_val = compute_accuracy(y_tr, x_tr, w)
+        loss_tr = compute_accuracy(y_tr, x_tr, w)
         loss_val = compute_accuracy(y_val,x_val,w)
     #TODO: add other possibilities of calculations !
     #if validation:
