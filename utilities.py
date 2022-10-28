@@ -25,7 +25,7 @@ def compute_accuracy(y,tx,w, logistic = False):
     else:
         ŷ[ŷ < 0] = -1
         ŷ[ŷ >= 0] = 1
-    return sum(ŷ != y)/len(y)
+    return sum(ŷ == y)/len(y)
 
 
 def compute_rmse(mse):

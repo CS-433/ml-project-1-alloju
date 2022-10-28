@@ -255,7 +255,6 @@ def preproc_train(x, title, do_corr = True, do_pca = True):
     title = title
     if do_corr:
         ind = corr(x)
-        print(ind)
         x, title = delete_correlated(x, ind, title)
     else:
         ind = None

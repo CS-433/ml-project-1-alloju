@@ -1,3 +1,4 @@
+from itertools import filterfalse
 from cross_validation import best_single_param_selection, build_k_indices, cross_validation, best_triple_param_selection
 from helpers import standardize, load_csv_data, load_csv_title
 from split_data import split_data
@@ -32,7 +33,7 @@ y = to_0_1(y)
 
 # TODO: stop décommenter
 
-#x_tr, x_val, y_tr, y_val = split_data(x,y,0.8)
+x_tr, x_val, y_tr, y_val = split_data(x,y,0.8)
 
 # LEAST SQUARES
 
@@ -59,9 +60,9 @@ y = to_0_1(y)
 # REG LOG REG
 
 #best_lambda, best_gamma, best_max_iters, best_mse_val, mse_tr_final = best_triple_param_selection(im.reg_logistic_regression, y, x, x_te, id, 20, lambdas = [0.5,1,3,5,6,6.5,7,7.5,8,8.5,9,9.5,10,15,50,80], gammas = [0.01, 0.02,0.04,0.05,0.06,0.07,0.1,0.25,0.5,0.75,0.9], maxs_iters = [5,10,15,20,50,75,100,150,200,500])
-best_lambda, best_gamma, best_max_iters, best_mse_val, mse_tr_final = best_triple_param_selection(im.reg_logistic_regression, y, x, x_te, id, 10, lambdas = [1e-5 , 1e-4, 1e-3, 5e-3, 1e-2, 5e-2, 1e-1, 5e-1, 1], gammas = [1e-5, 1e-4, 5e-3, 1e-3, 9e-2, 7e-2, 5e-2, 3e-2, 1e-2, 1e-1, 5e-1], maxs_iters = [5,7,8,9,10,15,20,50,75,100,150,200,500, 1000, 1200])
+#best_lambda, best_gamma, best_max_iters, best_mse_val, mse_tr_final = best_triple_param_selection(im.reg_logistic_regression, y, x, x_te, id, 10, lambdas = [1e-5 , 1e-4, 1e-3, 5e-3, 1e-2, 5e-2, 1e-1, 5e-1, 1], gammas = [1e-5, 1e-4, 5e-3, 1e-3, 9e-2, 7e-2, 5e-2, 3e-2, 1e-2, 1e-1, 5e-1], maxs_iters = [5,7,8,9,10,15,20,50,75,100,150,200,500, 1000, 1200])
 
-#best_lambda, best_gamma, best_max_iters, best_mse_val, mse_tr_final = best_triple_param_selection(im.reg_logistic_regression, y, x, x_te, id, 20, lambdas = [1e-2], gammas = [0.01,0.05], maxs_iters = [5])
+best_lambda, best_gamma, best_max_iters, best_mse_val, mse_tr_final = best_triple_param_selection(im.reg_logistic_regression, y, x, x_te, id, 20, lambdas = [1e-2], gammas = [0.01,0.05], maxs_iters = [5])
 
 #y,x,ids = load_csv_data(training_set)
 #title = load_csv_title(training_set)
