@@ -5,7 +5,7 @@ import os.path as op
 import numpy as np
 from helpers import create_csv_submission
 
-def apply_method(method,y_tr,x_tr,y_val = np.zeros([10,1]) ,x_val = np.zeros([10,1]), x_te = None, id = np.zeros(5), lambda_ = 0.5, initial_w = None, max_iters = 100, gamma = 0.01, cross_val = False, validation = True, loss = 'original'):
+def apply_method(method,y_tr,x_tr,y_val = np.zeros([10,1]) ,x_val = np.zeros([10,1]), x_te = np.zeros([5,1]), id = np.zeros(5), lambda_ = 0.5, initial_w = None, max_iters = 100, gamma = 0.01, cross_val = False, validation = True, loss = 'original'):
 
     """Apply a given method to the training and validation sets.
 
@@ -69,8 +69,8 @@ def apply_method(method,y_tr,x_tr,y_val = np.zeros([10,1]) ,x_val = np.zeros([10
         loss_val = compute_accuracy(y_val,x_val,w)
     #TODO: add other possibilities of calculations !
     #if validation:
-    #    acc_val = compute_accuracy(y_val,x_val,w)
-    if not(cross_val) and x_te != None:
+    # acc_val = compute_accuracy(y_val,x_val,w)
+    if not(cross_val): # and x_te == None:
         predict(method, id, x_te, w)
     #acc_train = compute_accuracy(y_tr, x_tr, w)
      

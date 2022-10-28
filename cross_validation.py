@@ -190,8 +190,8 @@ def best_triple_param_selection(method, y,x, x_te, id, k_fold, lambdas = [0.1, 0
 
     #cross_validation_visualization(params, loss_tr, loss_val)
     x_tr, x_val, y_tr, y_val = split_data(x,y,0.8)
-    acc_tr, acc_val = apply_method(method, y_tr, x_tr, y_val, x_val, max_iters = best_max_iters, lambda_ = best_lambda, initial_w = initial_w, gamma = best_gamma, validation = True, loss = "accuracy")
-    print("accuracy measures: ", "train = ", acc_tr, "val = ", acc_val)
+    #acc_tr, acc_val = apply_method(method, y_tr, x_tr, y_val, x_val, max_iters = best_max_iters, lambda_ = best_lambda, initial_w = initial_w, gamma = best_gamma, validation = True, loss = "accuracy")
+    #print("accuracy measures: ", "train = ", acc_tr, "val = ", acc_val)
     loss_tr_final, _ = apply_method(method, y, x, x_te = x_te, id = id, max_iters = best_max_iters, lambda_ = best_lambda, initial_w = initial_w, gamma = best_gamma, validation = False)
 
     #loss_tr_final, _ = apply_method(method, y, x, np.zeros_like(y), np.zeros_like(x), x_te, id, best_param, validation = False)
