@@ -71,7 +71,6 @@ def apply_method(method,y_tr,x_tr,y_val = np.zeros([10,1]) ,x_val = np.zeros([10
     #if validation:
     # acc_val = compute_accuracy(y_val,x_val,w)
     if do_predictions: # and x_te == None:
-        print("yes")
         predict(method, id, x_te, w)
     #acc_train = compute_accuracy(y_tr, x_tr, w)
      
