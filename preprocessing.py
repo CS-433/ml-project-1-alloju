@@ -17,7 +17,7 @@ def to_0_1(y):
         y: The vector with the changed values
     """
     y[y >= 0] = 1
-    y[y < 0] = -1
+    y[y < 0] = 0
     return y
 
 

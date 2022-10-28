@@ -17,6 +17,7 @@ import numpy as np
 #x,y = load_data(training_set)
 
 # TODO: décommenter
+
 y,x,ids = load_csv_data(training_set)
 title = load_csv_title(training_set)
 
@@ -31,7 +32,6 @@ y = to_0_1(y)
 
 # TODO: stop décommenter
 
-#x_te, x_te_m, xe_te_std = standardize(x_te)
 #x_tr, x_val, y_tr, y_val = split_data(x,y,0.8)
 
 # LEAST SQUARES
@@ -52,13 +52,16 @@ y = to_0_1(y)
 # LOG REG
 
 #best_lambda, best_gamma, best_max_iters, best_mse_val, mse_tr_final = best_triple_param_selection(im.mean_squared_error_gd, y, x, x_te, id, 10, lambdas = [0.0], gammas = [1e-6, 1e-5, 1e-4, 1e-3, 0.03, 0.04, 0.05,0.06,0.07, 0.09], maxs_iters = [50, 100, 250, 300, 350, 450, 500, 550, 650, 700, 1000, 1100, 1200, 1500])
-best_max_iters, best_loss_tr, best_loss_val = best_single_param_selection(im.logistic_regression, y,x,x_te, id, 10, params = [20,50,100,350,400,450,500], gamma = 0.055, tuned_param = "max_iters")
+#best_max_iters, best_loss_tr, best_loss_val = best_single_param_selection(im.logistic_regression, y,x,x_te, id, 10, params = [20,50,100,350,400,450,500], gamma = 0.055, tuned_param = "max_iters")
 #best_lambda, best_gamma, best_max_iters, best_mse_val, mse_tr_final = best_triple_param_selection(im.mean_squared_error_gd, y, x, x_te, id, 10, lambdas = [0.0], gammas = [1e-6, 1e-5, 1e-4, 1e-3, 0.05,0.07, 0.1], maxs_iters = [50, 100, 500, 1000])
 #TODO: run apply method with : lambda =  0.0 max_iters =  500 gamma =  0.05 loss_val =  0.3747762495867381
+
 # REG LOG REG
 
 #best_lambda, best_gamma, best_max_iters, best_mse_val, mse_tr_final = best_triple_param_selection(im.reg_logistic_regression, y, x, x_te, id, 20, lambdas = [0.5,1,3,5,6,6.5,7,7.5,8,8.5,9,9.5,10,15,50,80], gammas = [0.01, 0.02,0.04,0.05,0.06,0.07,0.1,0.25,0.5,0.75,0.9], maxs_iters = [5,10,15,20,50,75,100,150,200,500])
-#best_lambda, best_gamma, best_max_iters, best_mse_val, mse_tr_final = best_triple_param_selection(im.reg_logistic_regression, y, x, x_te, id, 20, lambdas = [0.5,1,3,5,6,6.5,7,7.5,8,8.5,9,9.5,10,15,50,80], gammas = [0.01, 0.02,0.04,0.05,0.06,0.07,0.1,0.25,0.5,0.75,0.9], maxs_iters = [5,7,8,9,10,15,20,50,75,100,150,200,500, 1000, 1200])
+best_lambda, best_gamma, best_max_iters, best_mse_val, mse_tr_final = best_triple_param_selection(im.reg_logistic_regression, y, x, x_te, id, 20, lambdas = [1e-5 , 1e-4, 1e-3, 5e-3, 1e-2, 5e-2, 1e-1, 5e-1, 1], gammas = [1e-5, 1e-4, 5e-3, 1e-3, 9e-2, 7e-2, 5e-2, 3e-2, 1e-2, 1e-1, 5e-1], maxs_iters = [5,7,8,9,10,15,20,50,75,100,150,200,500, 1000, 1200])
+
+#best_lambda, best_gamma, best_max_iters, best_mse_val, mse_tr_final = best_triple_param_selection(im.reg_logistic_regression, y, x, x_te, id, 20, lambdas = [1e-2], gammas = [0.01,0.05], maxs_iters = [500])
 
 #y,x,ids = load_csv_data(training_set)
 #title = load_csv_title(training_set)

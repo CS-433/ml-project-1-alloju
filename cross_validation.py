@@ -2,6 +2,7 @@ import numpy as np
 from apply_method import apply_method, predict
 from utilities import compute_mse
 from plots import cross_validation_visualization
+from split_data import split_data
 
 def build_k_indices(y, k_fold, seed):
     """build k indices for k-fold.
@@ -138,6 +139,7 @@ def best_triple_param_selection(method, y,x, x_te, id, k_fold, lambdas = [0.1, 0
     k_indices = build_k_indices(y, k_fold, seed)
     # define lists to store the loss of training data and test data
     super_best_loss_val = []
+    super_best_loss_train = []
     best_gammas = []
     super_best_lambdas = []
 
@@ -145,11 +147,13 @@ def best_triple_param_selection(method, y,x, x_te, id, k_fold, lambdas = [0.1, 0
         #if verbose:
         #    print("looping for max iters:", max_iters)
         best_loss_val = []
+        best_loss_train = []
         best_lambdas = []
         for gamma in gammas:
             #if verbose:
             #    print("looping for gamma:", gamma)
             losses_val = []
+            losses_train = []
             for lambda_ in lambdas:
                 #if verbose:
                 #    print("looping for lambda:", lambda_)
@@ -163,27 +167,32 @@ def best_triple_param_selection(method, y,x, x_te, id, k_fold, lambdas = [0.1, 0
                     temp_loss_val.append(loss_val)
                     temp_loss_train.append(loss_tr)
                 losses_val.append(np.mean(temp_loss_val))
+                losses_train.append(np.mean(temp_loss_train))
                 if verbose:
                     print("For: lambda = ", lambda_, " gamma = ", gamma, " max_iters = ", max_iters, ", training loss = ", np.mean(temp_loss_train),  " validation loss = ", np.mean(temp_loss_val))
             best_temp_loss = min(losses_val)
             best_loss_val.append(best_temp_loss)
+            best_loss_train.append(min(losses_train))
             best_lambdas.append(lambdas[np.argmin(losses_val)])
         best_loss = min(best_loss_val)
         best_lambda = best_lambdas[np.argmin(best_loss_val)]
         super_best_lambdas.append(best_lambda)
         best_gammas.append(gammas[np.argmin(best_loss_val)])
         super_best_loss_val.append(best_loss)
+        super_best_loss_train.append(min(best_loss_train))
     super_best_loss = min(super_best_loss_val)
     idx_super_best = np.argmin(super_best_loss_val)
     best_max_iters = maxs_iters[idx_super_best]
     best_gamma = best_gammas[idx_super_best]
     super_best_lambda = super_best_lambdas[idx_super_best]
         
-    print("lambda = ", super_best_lambda, "max_iters = ", best_max_iters, "gamma = ", best_gamma, "loss_val = ", super_best_loss)
+    print("lambda = ", super_best_lambda, "max_iters = ", best_max_iters, "gamma = ", best_gamma, "loss train = ", min(super_best_loss_train), "loss val = ", super_best_loss)
 
     #cross_validation_visualization(params, loss_tr, loss_val)
-
-    loss_tr_final = apply_method(method, y, x, x_te = x_te, id = id, max_iters = best_max_iters, lambda_ = best_lambda, initial_w = initial_w, gamma = best_gamma, validation = False)
+    x_tr, x_val, y_tr, y_val = split_data(x,y,0.8)
+    acc_tr, acc_val = apply_method(method, y_tr, x_tr, y_val, x_val, max_iters = best_max_iters, lambda_ = best_lambda, initial_w = initial_w, gamma = best_gamma, validation = True, loss = "accuracy")
+    print("accuracy measures: ", "train = ", acc_tr, "val = ", acc_val)
+    loss_tr_final, _ = apply_method(method, y, x, x_te = x_te, id = id, max_iters = best_max_iters, lambda_ = best_lambda, initial_w = initial_w, gamma = best_gamma, validation = False)
 
     #loss_tr_final, _ = apply_method(method, y, x, np.zeros_like(y), np.zeros_like(x), x_te, id, best_param, validation = False)
     print("final training loss", loss_tr_final)
