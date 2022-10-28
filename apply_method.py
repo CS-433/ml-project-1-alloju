@@ -5,7 +5,7 @@ import os.path as op
 import numpy as np
 from helpers import create_csv_submission
 
-def apply_method(method,y_tr,x_tr,y_val = np.zeros([10,1]) ,x_val = np.zeros([10,1]), x_te = np.zeros([5,1]), id = np.zeros(5), lambda_ = 0.5, initial_w = None, max_iters = 100, gamma = 0.1, cross_val = False, validation = True):
+def apply_method(method,y_tr,x_tr,y_val = np.zeros([10,1]) ,x_val = np.zeros([10,1]), x_te = np.zeros([5,1]), id = np.zeros(5), lambda_ = 0.5, initial_w = None, max_iters = 100, gamma = 0.1, cross_val = False, validation = True, separation = False):
 
     """Apply a given method to the training and validation sets.
 
@@ -53,13 +53,19 @@ def apply_method(method,y_tr,x_tr,y_val = np.zeros([10,1]) ,x_val = np.zeros([10
         acc_val = compute_accuracy(y_val,x_val,w)
 
     if not(cross_val):
-        predict(method, id, x_te, w)
+        if(separation):
+            y_bin = predict(method, id, x_te, w, separation)
+        else: 
+            predict(method, id, x_te, w)
     acc_train = compute_accuracy(y_tr, x_tr, w)
-     
-    #return acc_train, acc_val
-    return mse_tr, mse_val
 
-def predict(method, id, x_te, w):
+    if(separation):
+        return mse_tr, mse_val, y_bin
+    else:
+        return mse_tr, mse_val #return acc_train, acc_val
+    
+
+def predict(method, id, x_te, w, separation = False):
     """_summary_
 
     Args:
@@ -72,7 +78,19 @@ def predict(method, id, x_te, w):
     y_bin = sigmoid(y)
     y_bin[y_bin < 0.5] = -1
     y_bin[y_bin >= 0.5] = 1
-    #pred = np.vstack((np.array(["Id", "Prediction"]),np.column_stack((id,y))))
+
+    if(separation):
+        return y_bin
+    else:
+        #pred = np.vstack((np.array(["Id", "Prediction"]),np.column_stack((id,y))))
+        path = op.join(prediction_dir, "prediction" + str(method) + ".csv")
+        create_csv_submission(id, y_bin, path)
+        #np.savetxt(path, pred, delimiter=",")
+
+def joining_prediction(method, id, y):
+    print(len(y))
+    y = np.squeeze(y)
     path = op.join(prediction_dir, "prediction" + str(method) + ".csv")
-    create_csv_submission(id, y_bin, path)
-    #np.savetxt(path, pred, delimiter=",")
+    create_csv_submission(id, y, path)
+
+        

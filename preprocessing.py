@@ -41,12 +41,11 @@ def delete_correlated(x, ind, title):
         x: The x input without the correlated column
         title: The title input without the name of the correlated column 
     """
-    print('delete_correlated', ind)
     x = np.delete(x, ind, axis = 1)
     title = np.delete(title, ind)
     return x, title
 
-def remove_outliers(x):
+def remove_outliers(x, title):
     """Remove the outliers by replacing them with with the median 
     
     Args:
@@ -55,17 +54,26 @@ def remove_outliers(x):
     Returns:
         x: The corrected input
     """
-    for i in range(len(x[1])):
+    bounds = 0
+    for j in range(len(x[1])):
+        i = j - bounds
         feature_removed = x[:,i][x[:,i] != -999]
-        qs = np.quantile(feature_removed, np.array([0.25, 0.5, 0.75]), axis = 0)
-        ir = qs[2]-qs[0]
-        lower_limit = qs[0] - (1.5*ir)
-        upper_limit = qs[2] + (1.5*ir)
-        x[:, i][x[:, i] < lower_limit] = qs[1]
-        x[:, i][x[:, i] > upper_limit] = qs[1]
-        x[:, i][x[:, i] == -999] = qs[1]
+        feature_removed_0 = x[:,i][x[:,i] != 0]
+        feature_removed_1 = x[:,i][x[:,i] != 1]
+        if(len(feature_removed)==0 or len(feature_removed_0)==0 or len(feature_removed_1)==0):
+            x = np.delete(x, i, axis = 1) # delete angle value
+            title = np.delete(title, i)
+            bounds += 1
+        else:
+            qs = np.quantile(feature_removed, np.array([0.25, 0.5, 0.75]), axis = 0)
+            ir = qs[2]-qs[0]
+            lower_limit = qs[0] - (1.5*ir)
+            upper_limit = qs[2] + (1.5*ir)
+            x[:, i][x[:, i] < lower_limit] = qs[1]
+            x[:, i][x[:, i] > upper_limit] = qs[1]
+            x[:, i][x[:, i] == -999] = qs[1]
 
-    return x
+    return x, title
 
 def angle_values(x, title):
     """Transform the angle value into sin and cos
@@ -80,7 +88,6 @@ def angle_values(x, title):
     """
     columns_id = [idx for idx, s in enumerate(title) if 'phi' in s and 'centrality' not in s ]
     columns_id = np.squeeze(columns_id)
-    print('angle_values', columns_id)
     for j in range(len(columns_id)):
         i = columns_id[j]
 
@@ -112,7 +119,6 @@ def replace_class(x, title):
     column_id = [idx for idx, s in enumerate(title) if 'PRI_jet_num' in s]
     column_id = np.squeeze(column_id)
     ind = np.unique(x[:,column_id])
-    print('replace_class', column_id)
     for j in reversed(range(len(ind))):
         i = ind[j]
         # Create 4 new columns with indexes column_id to column_id+3 containing solely zeros
@@ -235,15 +241,38 @@ def get_id(data_path): #TODO a enlever ! on en a plus besoin mtn non ?
     id = np.genfromtxt(data_path, delimiter=",", skip_footer=250000, dtype = str)
     return id[2:-1]
     
-def class_separation(x, title): 
+def class_separation(x, title, y=None): 
+    """Separation of the data from x according to the PRI_jet_num values
+
+    Args:
+        data_path: 
+    
+    Returns:
+        id: 
+    """
     column_id = [idx for idx, s in enumerate(title) if 'PRI_jet_num' in s]
-    print(column_id)
+
     x_0 = np.delete(x, np.where(x[:,column_id[0]]==0), axis = 0)
     x_1 = np.delete(x, np.where(x[:,column_id[1]]==0), axis = 0)
     x_2 = np.delete(x, np.where(x[:,column_id[2]]==0), axis = 0)
     x_3 = np.delete(x, np.where(x[:,column_id[3]]==0), axis = 0)
-
-    return x_0, x_1, x_2, x_3
+    xs = []
+    xs.append(x_0)
+    xs.append(x_1)
+    xs.append(x_2)
+    xs.append(x_3)
+    if y is not None: 
+        y_0 = np.delete(y, np.where(x[:,column_id[0]]==0), axis = 0)
+        y_1 = np.delete(y, np.where(x[:,column_id[0]]==0), axis = 0)
+        y_2 = np.delete(y, np.where(x[:,column_id[0]]==0), axis = 0)
+        y_3 = np.delete(y, np.where(x[:,column_id[0]]==0), axis = 0)
+        print(x_0.shape, y_0.shape)
+        print(x_1.shape, y_1.shape)
+        print(x_2.shape, y_2.shape)
+        print(x_3.shape, y_3.shape)
+        return xs, [y_0, y_1, y_2, y_3]
+    else:
+        return xs
 
 def preproc_train(x, title, do_corr = True, do_pca = True):
     """Preprocessing for the training data
@@ -261,7 +290,6 @@ def preproc_train(x, title, do_corr = True, do_pca = True):
         ind: 
         projection_matrix:
     """
-    """
     title = title
     if do_corr:
         ind = corr(x)
@@ -269,25 +297,15 @@ def preproc_train(x, title, do_corr = True, do_pca = True):
         x, title = delete_correlated(x, ind, title)
     else:
         ind = None
-    x = remove_outliers(x)
+    x, title = remove_outliers(x, title)
     x, title = angle_values(x, title)
-    x, title = replace_class(x, title)
+    #x, title = replace_class(x, title)
     x, x_mean, x_std = standardize(x)
     if do_pca:
         projection_matrix = pca(x)
         x = np.dot(x, projection_matrix)
     else:
         projection_matrix = None
-        """
-    x, title = replace_class(x, title)
-    x_0, x_1, x_2, x_3 = class_separation(x, title)
-    a = [x_0, x_1, x_2, x_3]
-    print(a)
-    x_mean = 0
-    x_std = 0
-    ind = 0
-    projection_matrix = 0
-
     return x, x_mean, x_std, ind, projection_matrix
 
 def preproc_test(x, title, x_mean, x_std, projection_matrix, ind, do_corr = True, do_pca = True): 
@@ -309,9 +327,9 @@ def preproc_test(x, title, x_mean, x_std, projection_matrix, ind, do_corr = True
     title = title
     if do_corr:
         x, title = delete_correlated(x, ind, title)
-    x = remove_outliers(x)
+    x, title = remove_outliers(x, title)
     x, title = angle_values(x, title)
-    x, title = replace_class(x, title)
+    #x, title = replace_class(x, title)
     x = x-x_mean
     x = x/x_std
     if do_pca: 

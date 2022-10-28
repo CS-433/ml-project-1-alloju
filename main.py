@@ -2,9 +2,9 @@ from cross_validation import best_single_param_selection, build_k_indices, cross
 from helpers import standardize, load_csv_data, load_csv_title
 from split_data import split_data
 from paths import training_set, test_set
-from apply_method import apply_method, predict
+from apply_method import apply_method, predict, joining_prediction
 import implementations as im
-from preprocessing import angle_values, preproc_test, preproc_train, to_0_1
+from preprocessing import angle_values, preproc_test, preproc_train, to_0_1, class_separation, replace_class
 import numpy as np
 
 #from least_squares import least_squares
@@ -18,16 +18,41 @@ import numpy as np
 
 # TODO: décommenter
 y,x,ids = load_csv_data(training_set)
-title = load_csv_title(training_set)
+title_tr = load_csv_title(training_set)
+x, title_tr = replace_class(x, title_tr)
+y = to_0_1(y)
+xs, ys = class_separation(x, title_tr, y)
 
-x, x_mean, x_std, ind, projection_matrix = preproc_train(x, title, do_corr = False, do_pca = False) #TODO: decomment
+_, x_te, id = load_csv_data(test_set)
+title_te = load_csv_title(test_set)
+x_te, title_te = replace_class(x_te, title_te)
+xs_te, _s = class_separation(x_te, title_te, _)
 
-#_, x_te, id = load_csv_data(test_set)
-#title = load_csv_title(test_set)
+mse_train_s = []
+ys = []
+method = im.least_squares
+for i in range(len(xs)):
+    print('shape', xs[i].shape)
+    xs[i], x_mean, x_std, ind, projection_matrix = preproc_train(xs[i], title_tr, do_corr = False, do_pca = False) #TODO: decomment
+    xs_te[i] = preproc_test(xs_te[i], title_te, x_mean, x_std, projection_matrix, ind, do_corr = False, do_pca = False) #TODO: decomment
+    mse_train, _, y_bin = apply_method(method, y, x, x_te = x_te, id = id, validation = False, separation = True)
+    mse_train_s.append(mse_train)
+    ys.append(y_bin)
+np.sort(ys)
+joining_prediction(method, id, ys)
+print(np.sum(mse_train_s)/len(mse_train_s))
 
-#x_te = preproc_test(x_te, title, x_mean, x_std, projection_matrix, ind, do_corr = False, do_pca = False) #TODO: decomment
+"""
+x_0, x_mean_0, x_std_0, ind_0, projection_matrix_0 = preproc_train(x[0], title_tr, do_corr = False, do_pca = False) #TODO: decomment
+x_1, x_mean_1, x_std_1, ind_1, projection_matrix_1 = preproc_train(x[1], title_tr, do_corr = False, do_pca = False)
+x_2, x_mean_2, x_std_2, ind_2, projection_matrix_2 = preproc_train(x[2], title_tr, do_corr = False, do_pca = False)
+x_3, x_mean_3, x_std_3, ind_3, projection_matrix_3 = preproc_train(x[3], title_tr, do_corr = False, do_pca = False)
 
-#y = to_0_1(y)
+x_te_0 = preproc_test(xs_te[0], title_te, x_mean_0, x_std_0, projection_matrix_0, ind_0, do_corr = False, do_pca = False) #TODO: decomment
+x_te_1 = preproc_test(xs_te[0], title_te, x_mean_1, x_std_1, projection_matrix_1, ind_1, do_corr = False, do_pca = False) #TODO: decomment
+x_te_2 = preproc_test(xs_te[0], title_te, x_mean_2, x_std_2, projection_matrix_2, ind_2, do_corr = False, do_pca = False) #TODO: decomment
+x_te_3 = preproc_test(xs_te[0], title_te, x_mean_3, x_std_3, projection_matrix_3, ind_3, do_corr = False, do_pca = False) #TODO: decomment
+"""
 
 # TODO: stop décommenter
 
