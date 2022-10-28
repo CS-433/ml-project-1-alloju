@@ -34,10 +34,39 @@ final training rmse (0.5853785100257781, 0)
 final training rmse (96.60469177148643, 0)
 
 #### 24.10
-- 1st submission: ridge_regr: final training mse 0.32515735189806094, Chosen lambda is:  0.0
+- 1st submission: ridge_regr: final training mse 0.32515735189806094, Chosen lambda is:  0.0 (tag: v1.0)
 - 2nd submission: ridge_regr: test with higher mse
 - 3rd submission: mean squared error GD, 1-accuracy ≃ 0.24, gamma = 0.05
 
 #### 25.10
 - 1st submission: GD: lambda =  0.0 max_iters =  1200 gamma =  0.06 mse_val =  0.24470400000000003
 final training mse (0.244828, 0)
+- ... failing for everyone
+- something went wrong ?
+- 4th submission: least square, with correct standardization (axis = 0). labels are 0,1, mse = 0.37466406834611504
+- 5th submission: least square, same standardization for test & train data, labels 0,1, mse = 0.37466406834611504
+
+
+? lambda =  0.0 max_iters =  1200 gamma =  0.02 mse_val =  0.3765870081691118
+final training mse (0.3764975488089389, 0) ?
+
+#### 26.10
+- 1st submission: ridge ?
+- 2nd submission: GD, max_iters = 1000, gamma = 0.05, loss_val =  0.37312857606110283
+final training loss (0.3730184763388884, 0)
+
+
+GD sans rien:
+
+lambda =  0.0 max_iters =  1000 gamma =  0.05 loss_val =  0.37312857606110283
+final training loss (0.3730184763388884, 0)
+
+GD delete corr:
+
+lambda =  0.0 max_iters =  1000 gamma =  0.05 loss_val =  0.3806351696232796
+final training loss (0.38054189796368315, 0)
+
+GD pca:
+
+lambda =  0.0 max_iters =  1000 gamma =  0.05 loss_val =  0.37321817828582804
+final training loss (0.3731122738881385, 0)

@@ -52,6 +52,7 @@ def compute_gradient_MSE(y, tx, w):
     """
     e = y - np.dot(tx,w)
     gradient = -1/y.shape[0] * np.dot(np.transpose(tx),e)
+    #print(gradient)
     return gradient   
 
 def sigmoid(t):
@@ -63,7 +64,28 @@ def sigmoid(t):
     Returns:
         The sigmoid corresponding to the input t 
     """
-    return 1/(1 + np.exp(-t))
+    # TODO: handle overflow ! 
+    # if t > 100:
+    #     sig = 1
+    # elif t < -100:
+    #     sig = 0
+    # else:
+    # if t == None:
+    #     print("wtf!!")
+    #     sig = None
+    # else:
+    #print("t: ", t.shape)
+    ind_over = [t > 100][0]
+    t[t > 0]
+    #print(ind_over.shape)
+    t[ind_over] = 0
+    ind_under = [t < -100][0]
+    t[ind_under] = 0
+    sig = 1/(1 + np.exp(-t))
+    sig[ind_over] = 1
+    sig[ind_under] = 0
+
+    return sig
 
 def compute_loss_neg_loglikelihood(y, tx, w):
     """Compute the cost by negative log likelihood.
@@ -88,7 +110,6 @@ def compute_gradient_neg_loglikelihood(y, tx, w):
         Returns: 
             the value of the gradient corresponding to the input parameters.
     """
-    
     return np.dot(tx.T,sigmoid(np.dot(tx,w))-y)/y.shape[0]
     #TODO testé (1/N) selon ce que j'ai lu sur un site mais comprendre pk ça marche 
     #https://medium.com/@IwriteDSblog/gradient-descent-for-logistics-regression-in-python-18e033775082

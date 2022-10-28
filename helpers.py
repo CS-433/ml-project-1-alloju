@@ -25,9 +25,9 @@ def load_csv_data(data_path, sub_sample=False):
 
 def standardize(x):
     """Standardize the original data set."""
-    mean_x = np.mean(x)
+    mean_x = np.mean(x, axis = 0)
     x = x - mean_x
-    std_x = np.std(x)
+    std_x = np.std(x, axis = 0)
     x = x / std_x
     return x, mean_x, std_x
 
@@ -71,3 +71,16 @@ def create_csv_submission(ids, y_pred, name):
         writer.writeheader()
         for r1, r2 in zip(ids, y_pred):
             writer.writerow({"Id": int(r1), "Prediction": int(r2)})
+
+def load_csv_title(data_path): 
+    """Load the name of each column of the csv file
+    
+    Args:
+        data_path: Path to the file
+    
+    Returns:
+        title: Vector containing the column names
+    """
+    title = np.genfromtxt(data_path, delimiter=",", dtype = str, max_rows=1)
+    title = title[2::]
+    return title
