@@ -22,12 +22,12 @@ title = load_csv_title(training_set)
 
 x, x_mean, x_std, ind, projection_matrix = preproc_train(x, title, do_corr = False, do_pca = False) #TODO: decomment
 
-_, x_te, id = load_csv_data(test_set)
-title = load_csv_title(test_set)
+#_, x_te, id = load_csv_data(test_set)
+#title = load_csv_title(test_set)
 
-x_te = preproc_test(x_te, title, x_mean, x_std, projection_matrix, ind, do_corr = False, do_pca = False) #TODO: decomment
+#x_te = preproc_test(x_te, title, x_mean, x_std, projection_matrix, ind, do_corr = False, do_pca = False) #TODO: decomment
 
-y = to_0_1(y)
+#y = to_0_1(y)
 
 # TODO: stop décommenter
 
@@ -39,8 +39,8 @@ y = to_0_1(y)
 #print(mse_train, mse_val)
 
 # For prediction: 
-mse_train, _ = apply_method(im.least_squares, y, x, x_te = x_te, id = id, validation = False)
-print(mse_train)
+#mse_train, _ = apply_method(im.least_squares, y, x, x_te = x_te, id = id, validation = False)
+#print(mse_train)
 
 # RIDGE REGRESSION
 

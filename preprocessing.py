@@ -5,7 +5,7 @@ from helpers import load_csv_data, standardize
 import matplotlib.pyplot as plt
 
 data_path = "data/train.csv"
-x,y = load_csv_data(data_path)
+x,y, ids = load_csv_data(data_path)
 
 def corr(x):
     """Search for the correlation between the columns of the input. 
@@ -235,6 +235,16 @@ def get_id(data_path): #TODO a enlever ! on en a plus besoin mtn non ?
     id = np.genfromtxt(data_path, delimiter=",", skip_footer=250000, dtype = str)
     return id[2:-1]
     
+def class_separation(x, title): 
+    column_id = [idx for idx, s in enumerate(title) if 'PRI_jet_num' in s]
+    print(column_id)
+    x_0 = np.delete(x, np.where(x[:,column_id[0]]==0), axis = 0)
+    x_1 = np.delete(x, np.where(x[:,column_id[1]]==0), axis = 0)
+    x_2 = np.delete(x, np.where(x[:,column_id[2]]==0), axis = 0)
+    x_3 = np.delete(x, np.where(x[:,column_id[3]]==0), axis = 0)
+
+    return x_0, x_1, x_2, x_3
+
 def preproc_train(x, title, do_corr = True, do_pca = True):
     """Preprocessing for the training data
     #TODO finir de compléter
@@ -250,6 +260,7 @@ def preproc_train(x, title, do_corr = True, do_pca = True):
         x_std:
         ind: 
         projection_matrix:
+    """
     """
     title = title
     if do_corr:
@@ -267,6 +278,15 @@ def preproc_train(x, title, do_corr = True, do_pca = True):
         x = np.dot(x, projection_matrix)
     else:
         projection_matrix = None
+        """
+    x, title = replace_class(x, title)
+    x_0, x_1, x_2, x_3 = class_separation(x, title)
+    a = [x_0, x_1, x_2, x_3]
+    print(a)
+    x_mean = 0
+    x_std = 0
+    ind = 0
+    projection_matrix = 0
 
     return x, x_mean, x_std, ind, projection_matrix
 
