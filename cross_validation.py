@@ -87,6 +87,9 @@ def best_single_param_selection(method, y,x, x_te, id, k_fold, params = [0.1, 0.
             else:
                 print("Please specify which parameter you are tuning")
                 return 0
+            if np.isnan(loss_val):
+                loss_tr = 10000
+                loss_val = 10000 #to avoid that the cross val takes nan as the min !
             temp_loss_tr.append(loss_tr)
             temp_loss_val.append(loss_val)
         losses_tr.append(np.mean(temp_loss_tr))
@@ -140,22 +143,27 @@ def best_triple_param_selection(method, y,x, x_te, id, k_fold, lambdas = [0.1, 0
     super_best_lambdas = []
 
     for max_iters in maxs_iters:
-        if verbose:
-            print("looping for max iters:", max_iters)
+        #if verbose:
+        #    print("looping for max iters:", max_iters)
         best_loss_val = []
         best_lambdas = []
         for gamma in gammas:
-            if verbose:
-                print("looping for gamma:", gamma)
+            #if verbose:
+            #    print("looping for gamma:", gamma)
             losses_val = []
             for lambda_ in lambdas:
-                if verbose:
-                    print("looping for lambda:", lambda_)
+                #if verbose:
+                #    print("looping for lambda:", lambda_)
                 temp_loss_val = []
                 for k in range(k_fold):
                     loss_tr, loss_val= cross_validation(method, y , x, k_indices, k, lambda_ = lambda_, initial_w = initial_w, max_iters = max_iters, gamma = gamma)
+                    if np.isnan(loss_val):
+                        loss_tr = 10000
+                        loss_val = 10000 #to avoid that the cross val takes nan as the min !
                     temp_loss_val.append(loss_val)
                 losses_val.append(np.mean(temp_loss_val))
+                if verbose:
+                    print("For: lambda = ", lambda_, " gamma = ", gamma, " max_iters = ", max_iters, ", validation loss = ", np.mean(temp_loss_val))
             best_temp_loss = min(losses_val)
             best_loss_val.append(best_temp_loss)
             best_lambdas.append(lambdas[np.argmin(losses_val)])

@@ -49,3 +49,24 @@ final training mse (0.244828, 0)
 
 ? lambda =  0.0 max_iters =  1200 gamma =  0.02 mse_val =  0.3765870081691118
 final training mse (0.3764975488089389, 0) ?
+
+#### 26.10
+- 1st submission: ridge ?
+- 2nd submission: GD, max_iters = 1000, gamma = 0.05, loss_val =  0.37312857606110283
+final training loss (0.3730184763388884, 0)
+
+
+GD sans rien:
+
+lambda =  0.0 max_iters =  1000 gamma =  0.05 loss_val =  0.37312857606110283
+final training loss (0.3730184763388884, 0)
+
+GD delete corr:
+
+lambda =  0.0 max_iters =  1000 gamma =  0.05 loss_val =  0.3806351696232796
+final training loss (0.38054189796368315, 0)
+
+GD pca:
+
+lambda =  0.0 max_iters =  1000 gamma =  0.05 loss_val =  0.37321817828582804
+final training loss (0.3731122738881385, 0)

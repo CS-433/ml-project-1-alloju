@@ -36,7 +36,7 @@ def separate(x,y):
     return x_0,x_1
 
 def angle_values(x):
-    colomns = np.array([11,14,16,19,20]) #index of colomns containing the colomns with angle values
+    colomns = np.array([15,18,20,25,28]) #index of colomns containing the colomns with angle values
     for j in range(len(colomns)):
         i = colomns[j]
         sin = np.sin(x[:,i]) # compute sin of angle
@@ -79,17 +79,17 @@ def remove_outliers(x):
 def replace_class(x):
     len_ = np.shape(x)[0]
     #create 4 new colomns with indexes 25 to 28 containing solely zeros
-    x = np.insert(x, 22, np.zeros(len_), axis = 1)
-    x = np.insert(x, 22, np.zeros(len_), axis = 1)
-    x = np.insert(x, 22, np.zeros(len_), axis = 1)
-    x = np.insert(x, 22, np.zeros(len_), axis = 1)
+    x = np.insert(x, 26, np.zeros(len_), axis = 1)
+    x = np.insert(x, 26, np.zeros(len_), axis = 1)
+    x = np.insert(x, 26, np.zeros(len_), axis = 1)
+    x = np.insert(x, 26, np.zeros(len_), axis = 1)
     #replace indixes that are missing
-    x[:, 22][x[:,21] == 0] = 1
-    x[:, 23][x[:,21] == 1] = 1
-    x[:, 24][x[:,21] == 2] = 1
-    x[:, 25][x[:,21] == 3] = 1
+    x[:, 26][x[:,25] == 0] = 1
+    x[:, 27][x[:,25] == 1] = 1
+    x[:, 28][x[:,25] == 2] = 1
+    x[:, 29][x[:,25] == 3] = 1
     #delete the colomn
-    x = np.delete(x, 21, axis = 1)
+    x = np.delete(x, 25, axis = 1)
     return x
 
 
