@@ -1,5 +1,5 @@
 from cross_validation import best_single_param_selection, build_k_indices, cross_validation, best_triple_param_selection
-from helpers import standardize, load_csv_data
+from helpers import standardize, load_csv_data, load_csv_title
 from split_data import split_data
 from paths import training_set, test_set
 from apply_method import apply_method, predict
@@ -19,12 +19,12 @@ import numpy as np
 # TODO: décommenter
 # y,x,ids = load_csv_data(training_set)
 
-# x, x_mean, x_std, ind, projection_matrix = preproc_train(x, do_corr = False, do_pca = False) #TODO: decomment
+# x, x_mean, x_std, ind, projection_matrix = preproc_train(x, title, do_corr = False, do_pca = False) #TODO: decomment
 
 # #id, x_te = load_test_data(test_set)
 # _, x_te, id = load_csv_data(test_set)
 
-# x_te = preproc_test(x_te, x_mean, x_std, projection_matrix, ind, do_corr = False, do_pca = False) #TODO: decomment
+# x_te = preproc_test(x_te, title, x_mean, x_std, projection_matrix, ind, do_corr = False, do_pca = False) #TODO: decomment
 
 # y = to_0_1(y)
 
@@ -56,17 +56,18 @@ import numpy as np
 #best_lambda, best_gamma, best_max_iters, best_mse_val, mse_tr_final = best_triple_param_selection(im.reg_logistic_regression, y, x, x_te, id, 20, lambdas = [0.5,1,3,5,6,6.5,7,7.5,8,8.5,9,9.5,10,15,50,80], gammas = [0.01, 0.02,0.04,0.05,0.06,0.07,0.1,0.25,0.5,0.75,0.9], maxs_iters = [5,7,8,9,10,15,20,50,75,100,150,200,500])
 
 y,x,ids = load_csv_data(training_set)
+title = load_csv_title(training_set)
 
-x, x_mean, x_std, ind, projection_matrix = preproc_train(x, do_corr = True, do_pca = False) #TODO: decomment
+x, x_mean, x_std, ind, projection_matrix = preproc_train(x, title, do_corr = True, do_pca = False) #TODO: decomment
 
 #id, x_te = load_test_data(test_set)
 _, x_te, id = load_csv_data(test_set)
 
-x_te = preproc_test(x_te, x_mean, x_std, projection_matrix, ind, do_corr = True, do_pca = False) #TODO: decomment
+x_te = preproc_test(x_te, title, x_mean, x_std, projection_matrix, ind, do_corr = True, do_pca = False) #TODO: decomment
 
 y = to_0_1(y)
 
-best_lambda, best_gamma, best_max_iters, best_mse_val, mse_tr_final = best_triple_param_selection(im.reg_logistic_regression, y, x, x_te, id, 10, lambdas = [0.001,0.01, 0.1], gammas = [0.1,0.5,0.9], maxs_iters = [6,50, 500, 1000])
+best_lambda, best_gamma, best_max_iters, best_mse_val, mse_tr_final = best_triple_param_selection(im.reg_logistic_regression, y, x, x_te, id, 10, lambdas = [0.001, 0.02], gammas = [0.1, 0.8], maxs_iters = [6])
 
 #GRADIENT DESCENT:
 
