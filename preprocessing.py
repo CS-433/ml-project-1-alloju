@@ -1,19 +1,11 @@
 from split_data import load_data
 import numpy as np
 import csv
-from helpers import standardize
+from helpers import load_csv_data, standardize
 import matplotlib.pyplot as plt
-"""
-    
-    Args:
-        x: 
-    
-    Returns:
-        ind_to_delete: 
-    """
 
 data_path = "data/train.csv"
-x,y = load_data(data_path)
+x,y = load_csv_data(data_path)
 
 def corr(x):
     """Search for the correlation between the columns of the input. 
