@@ -154,15 +154,17 @@ def best_triple_param_selection(method, y,x, x_te, id, k_fold, lambdas = [0.1, 0
                 #if verbose:
                 #    print("looping for lambda:", lambda_)
                 temp_loss_val = []
+                temp_loss_train = []
                 for k in range(k_fold):
                     loss_tr, loss_val= cross_validation(method, y , x, k_indices, k, lambda_ = lambda_, initial_w = initial_w, max_iters = max_iters, gamma = gamma)
                     if np.isnan(loss_val):
                         loss_tr = 10000
-                        loss_val = 10000 #to avoid that the cross val takes nan as the min !
+                        loss_val = 10000 #to avoid that the cross val takes nan as the min ! #TODO: raise warning ? But need of a new library...
                     temp_loss_val.append(loss_val)
+                    temp_loss_train.append(loss_tr)
                 losses_val.append(np.mean(temp_loss_val))
                 if verbose:
-                    print("For: lambda = ", lambda_, " gamma = ", gamma, " max_iters = ", max_iters, ", validation loss = ", np.mean(temp_loss_val))
+                    print("For: lambda = ", lambda_, " gamma = ", gamma, " max_iters = ", max_iters, ", training loss = ", np.mean(temp_loss_train),  " validation loss = ", np.mean(temp_loss_val))
             best_temp_loss = min(losses_val)
             best_loss_val.append(best_temp_loss)
             best_lambdas.append(lambdas[np.argmin(losses_val)])
