@@ -1,53 +1,128 @@
 from split_data import load_data
 import numpy as np
 import csv
-from helpers import standardize
+from helpers import load_csv_data, standardize
 import matplotlib.pyplot as plt
 
 data_path = "data/train.csv"
-x,y = load_data(data_path)
+x,y, ids = load_csv_data(data_path)
 
 def to_0_1(y):
+    """Change the input from {-1;1} to {0;1}
+    
+    Args:
+        y: The vector to change
+    
+    Returns:
+        y: The vector with the changed values
+    """
     y[y >= 0] = 1
     y[y < 0] = -1
     return y
 
 
-def get_id(data_path):
+def get_id(data_path): #TODO a enlever ! on en a plus besoin mtn non ? 
+    """
+
+    Args:
+        data_path: 
+    
+    Returns:
+        id: 
+    """
     id = np.genfromtxt(data_path, delimiter=",", skip_footer=250000, dtype = str)
     return id[2:-1]
+    
 
 
-def missing_data(x): 
-    # define colomns with too much missing data
+def missing_data(x): #TODO est ce qu'on en a encore besoin ? 
+    """Define columns with too much missing data
+    
+    Args:
+        x: The data table
+    
+    Returns:
+        x: The input table with the value of the selected table changed to 0 
+    """
     special = [4,5,6,12,23,24,25,26,27,28]
     for i in special :
         x[:,i][x[:,i] == -999] = 0
     return x
 
 
-def delete_correlated(x, ind):
-    return np.delete(x, ind, axis = 1)
+def delete_correlated(x, ind, title):
+    """Delete the column of x determined as correlated by the corr(x) function
+    
+    Args:
+        x: The input vector 
+        ind: The indice of the column that we want to remove from x
+        title: Vector containing the name of the column from x
+    
+    Returns:
+        x: The x input without the correlated column
+        title: The title input without the name of the correlated column 
+    """
+    x = np.delete(x, ind, axis = 1)
+    title = np.delete(title, ind)
+    return x, title
 
 
-def separate(x,y):
+def separate(x,y): #TODO est ce qu'on a toujours besoin ? si oui prendre en conpte que mtn on a y = {0,1}
+    """Separation of the data regarding the prediction value
+    
+    Args:
+        x: The data table
+        y: The prediction vector
+    
+    Returns:
+        x_0: The input table with the prediction equal to 1
+        x_1: The input table with the prediction equal to -1
+    """
     x_0 = np.delete(x, np.where(y==1), axis = 0)
     x_1 = np.delete(x, np.where(y==-1), axis = 0)
     return x_0,x_1
 
-def angle_values(x):
-    colomns = np.array([15,18,20,25,28]) #index of colomns containing the colomns with angle values
-    for j in range(len(colomns)):
-        i = colomns[j]
+def angle_values(x, title):
+    """Transform the angle value into sin and cos
+    
+    Args:
+        x: The input vector 
+        title: Vector containing the name of the column from x 
+    
+    Returns:
+        x: The input vector with the new way of angle expression
+        title: Vector containing the name of the new columns and without the angle ones
+    """
+    columns_id = [idx for idx, s in enumerate(title) if 'phi' in s and 'centrality' not in s ]
+    columns_id = np.squeeze(columns_id)
+    for j in range(len(columns_id)):
+        i = columns_id[j]
+
         sin = np.sin(x[:,i]) # compute sin of angle
         cos = np.cos(x[:,i]) # compute cos of angle
+        t = title[i]
+
         x = np.delete(x, i, axis = 1) # delete angle value
+        title = np.delete(title, i)
         x = np.insert(x, i, sin, axis = 1) # insert sin
+        title = np.insert(title, i, t +'_sin') # insert title sin
         x = np.insert(x, i, cos, axis = 1) # insert cos
-        colomns = colomns + 1
-    return x
+        title = np.insert(title, i, t+'_cos') # insert title cos
+        columns_id = columns_id +1
+    return x, title
+
 
 def plot_hist(x0, x1, id):
+    """Plot an histogram of the data
+    
+    Args:
+        x_0: The data with y = 1
+        x_1: The data with y = -1
+        id: The indice of the columns to plot
+    
+    Returns:
+        None 
+    """
     for i in range (4):
         plt.hist(x0.T[i], bins = 100, density = True, label = 'Background', alpha = 0.5)
         plt.hist(x1.T[i], bins = 100, density = True, label = 'Signal', alpha = 0.5)
@@ -57,6 +132,14 @@ def plot_hist(x0, x1, id):
     return None
 
 def boxplot(x):
+    """Create boxplot of the input values
+    
+    Args:
+        x: The data  
+    
+    Returns:
+        None 
+    """
     for i in range(10, 14, 1):
         dict = plt.boxplot(x.T[i])
         plt.show()
@@ -64,6 +147,14 @@ def boxplot(x):
 
 
 def remove_outliers(x):
+    """Remove the outliers by replacing them with with the median 
+    
+    Args:
+        x: The input 
+    
+    Returns:
+        x: The corrected input
+    """
     for i in range(len(x[1])):
         feature_removed = x[:,i][x[:,i] != -999]
         qs = np.quantile(feature_removed, np.array([0.25, 0.5, 0.75]), axis = 0)
@@ -73,27 +164,48 @@ def remove_outliers(x):
         x[:, i][x[:, i] < lower_limit] = qs[1]
         x[:, i][x[:, i] > upper_limit] = qs[1]
         x[:, i][x[:, i] == -999] = qs[1]
+
     return x
 
 
-def replace_class(x):
+def replace_class(x, title):
+    """
+    
+    Args:
+        x: The input vector 
+        title: Vector containing the name of the column from x  
+    
+    Returns:
+        x: The input vector with the separation of the PRI_jet_num values 
+        title: Vector containing the name of the new columns
+    """
     len_ = np.shape(x)[0]
-    #create 4 new colomns with indexes 25 to 28 containing solely zeros
-    x = np.insert(x, 26, np.zeros(len_), axis = 1)
-    x = np.insert(x, 26, np.zeros(len_), axis = 1)
-    x = np.insert(x, 26, np.zeros(len_), axis = 1)
-    x = np.insert(x, 26, np.zeros(len_), axis = 1)
-    #replace indixes that are missing
-    x[:, 26][x[:,25] == 0] = 1
-    x[:, 27][x[:,25] == 1] = 1
-    x[:, 28][x[:,25] == 2] = 1
-    x[:, 29][x[:,25] == 3] = 1
-    #delete the colomn
-    x = np.delete(x, 25, axis = 1)
-    return x
+    column_id = [idx for idx, s in enumerate(title) if 'PRI_jet_num' in s]
+    column_id = np.squeeze(column_id)
+    ind = np.unique(x[:,column_id])
+    for j in reversed(range(len(ind))):
+        i = ind[j]
+        # Create 4 new columns with indexes column_id to column_id+3 containing solely zeros
+        x = np.insert(x, column_id+1, np.zeros(len_), axis = 1)
+        title = np.insert(title, column_id+1, title[column_id]+'_'+str(int(i)))
+        #replace indixes that are missing
+        x[:, column_id+1][x[:, column_id] == i] = 1
 
+    #delete the colomn
+    x = np.delete(x, column_id, axis = 1)
+    title = np.delete(title, column_id)
+
+    return x, title
 
 def pca(x):
+    """Principal component analysis
+    
+    Args:
+        x: The table of values to whom the PCA is applied 
+    
+    Returns:
+        projection_matrix: The projection matrix with the eigen vectors
+    """
     cov = np.cov(x.T)
     eigen_val, eigen_vec = np.linalg.eig(cov)
     variance_explained = []
@@ -108,7 +220,15 @@ def pca(x):
 
 
 def corr(x):
-    #TODO check which attributes have high correlation, if above a certain threshold, delete one of them
+    """Search for the correlation between the columns of the input. 
+    Check which attributes have high correlation, if above a certain threshold, delete one of them 
+    
+    Args:
+        x: Input table
+    
+    Returns:
+        ind_to_delete: The indice of the column that are correlated to others
+    """
     #id = get_id(data_path)
     corr = np.abs(np.corrcoef(x,rowvar = False))
     #plt.imshow(corr)
@@ -122,29 +242,64 @@ def corr(x):
     return np.squeeze(ind_to_delete)
 
 
-def preproc_train(x, do_corr = True, do_pca = True):
+def preproc_train(x, title, do_corr = True, do_pca = True):
+    """Preprocessing for the training data
+    #TODO finir de compléter
+    Args:
+        x: The input table
+        title: The name of the x columns
+        do_corr: Boolean that indicate the deletion of correlated column is applied 
+        do_pca: Boolean that indicate the PCA is applied 
+    
+    Returns:
+        x: 
+        x_mean:
+        x_std:
+        ind: 
+        projection_matrix:
+    """
+    title = title
     if do_corr:
         ind = corr(x)
-        x = delete_correlated(x, ind)
+        print(ind)
+        x, title = delete_correlated(x, ind, title)
     else:
         ind = None
     x = remove_outliers(x)
-    x = angle_values(x)
-    x = replace_class(x)
+    x, title = angle_values(x, title)
+    x, title = replace_class(x, title)
     x, x_mean, x_std = standardize(x)
     if do_pca:
         projection_matrix = pca(x)
         x = np.dot(x, projection_matrix)
     else:
         projection_matrix = None
+
     return x, x_mean, x_std, ind, projection_matrix
 
-def preproc_test(x, x_mean, x_std, projection_matrix, ind, do_corr = True, do_pca = True): 
+
+def preproc_test(x, title, x_mean, x_std, projection_matrix, ind, do_corr = True, do_pca = True): 
+    """Preprocessing for the test data
+    #TODO finir de compléter
+    Args:
+        x: The input table
+        title: The name of the x columns
+        x_mean:
+        x_std:
+        projection_matrix:
+        ind:
+        do_corr: Boolean that indicate the deletion of correlated column is applied 
+        do_pca: Boolean that indicate the PCA is applied 
+    
+    Returns:
+        x: 
+    """
+    title = title
     if do_corr:
-        x = delete_correlated(x, ind)
+        x, title = delete_correlated(x, ind, title)
     x = remove_outliers(x)
-    x = angle_values(x)
-    x = replace_class(x)
+    x, title = angle_values(x, title)
+    x, title = replace_class(x, title)
     x = x-x_mean
     x = x/x_std
     if do_pca: 
