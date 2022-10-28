@@ -5,7 +5,7 @@ from helpers import load_csv_data, standardize
 import matplotlib.pyplot as plt
 
 data_path = "data/train.csv"
-x,y = load_csv_data(data_path)
+x,y, ids = load_csv_data(data_path)
 
 def corr(x):
     """Search for the correlation between the columns of the input. 
@@ -41,7 +41,6 @@ def delete_correlated(x, ind, title):
         x: The x input without the correlated column
         title: The title input without the name of the correlated column 
     """
-    print('delete_correlated', ind)
     x = np.delete(x, ind, axis = 1)
     title = np.delete(title, ind)
     return x, title
@@ -80,7 +79,6 @@ def angle_values(x, title):
     """
     columns_id = [idx for idx, s in enumerate(title) if 'phi' in s and 'centrality' not in s ]
     columns_id = np.squeeze(columns_id)
-    print('angle_values', columns_id)
     for j in range(len(columns_id)):
         i = columns_id[j]
 
@@ -112,7 +110,6 @@ def replace_class(x, title):
     column_id = [idx for idx, s in enumerate(title) if 'PRI_jet_num' in s]
     column_id = np.squeeze(column_id)
     ind = np.unique(x[:,column_id])
-    print('replace_class', column_id)
     for j in reversed(range(len(ind))):
         i = ind[j]
         # Create 4 new columns with indexes column_id to column_id+3 containing solely zeros
