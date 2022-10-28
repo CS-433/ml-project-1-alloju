@@ -85,15 +85,14 @@ def best_single_param_selection(method, y,x, x_te, id, k_fold, params = [0.1, 0.
             elif tuned_param == "max_iters":
                 loss_tr, loss_val= cross_validation(method, y , x, k_indices, k, max_iters = param, lambda_ = lambda_, initial_w = initial_w, gamma = gamma)
             else:
-                print("Please specify which parameter you are tuning")
-                return 0
+                raise ValueError("Please specify which parameter you are tuning")
             if np.isnan(loss_val):
+
                 loss_tr = 10000
                 loss_val = 10000 #to avoid that the cross val takes nan as the min !
             temp_loss_tr.append(loss_tr)
             temp_loss_val.append(loss_val)
         losses_tr.append(np.mean(temp_loss_tr))
-        print("temporary mean loss: ", np.mean(temp_loss_tr))
         losses_val.append(np.mean(temp_loss_val))
         print("tuned_param = ", param, "loss_tr = ", np.mean(temp_loss_tr), "loss_val", np.mean(temp_loss_val))
     best_loss_val = (min(losses_val))

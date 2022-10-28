@@ -49,7 +49,8 @@ y = to_0_1(y)
 
 # LOG REG
 
-best_lambda, best_gamma, best_max_iters, best_mse_val, mse_tr_final = best_triple_param_selection(im.mean_squared_error_gd, y, x, x_te, id, 10, lambdas = [0.0], gammas = [1e-6, 1e-5, 1e-4, 1e-3, 0.03, 0.04, 0.05,0.06,0.07, 0.09], maxs_iters = [50, 100, 250, 300, 350, 450, 500, 550, 650, 700, 1000, 1100, 1200, 1500])
+#best_lambda, best_gamma, best_max_iters, best_mse_val, mse_tr_final = best_triple_param_selection(im.mean_squared_error_gd, y, x, x_te, id, 10, lambdas = [0.0], gammas = [1e-6, 1e-5, 1e-4, 1e-3, 0.03, 0.04, 0.05,0.06,0.07, 0.09], maxs_iters = [50, 100, 250, 300, 350, 450, 500, 550, 650, 700, 1000, 1100, 1200, 1500])
+best_max_iters, best_loss_tr, best_loss_val = best_single_param_selection(im.logistic_regression, y,x,x_te, id, 10, params = [20,50,100,350,400,450,500], gamma = 0.055, tuned_param = "max_iters")
 #best_lambda, best_gamma, best_max_iters, best_mse_val, mse_tr_final = best_triple_param_selection(im.mean_squared_error_gd, y, x, x_te, id, 10, lambdas = [0.0], gammas = [1e-6, 1e-5, 1e-4, 1e-3, 0.05,0.07, 0.1], maxs_iters = [50, 100, 500, 1000])
 #TODO: run apply method with : lambda =  0.0 max_iters =  500 gamma =  0.05 loss_val =  0.3747762495867381
 # REG LOG REG

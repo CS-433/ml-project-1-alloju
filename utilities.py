@@ -77,7 +77,6 @@ def sigmoid(t):
     t[ind_over] = 0
     ind_under = [t < -100][0]
     t[ind_under] = 0
-    print("indices: ", sum(ind_over), sum(ind_under))
     sig = 1/(1 + np.exp(-t))
     sig[ind_over] = 1
     sig[ind_under] = 0
@@ -107,11 +106,6 @@ def compute_gradient_neg_loglikelihood(y, tx, w):
         Returns: 
             the value of the gradient corresponding to the input parameters.
     """
-    print("sig")
-    sig = sigmoid(np.dot(tx,w))
-    print("grad")
-    b = np.dot(tx.T,sig-y)
-
     return np.dot(tx.T,sigmoid(np.dot(tx,w))-y)/y.shape[0]
     #TODO testé (1/N) selon ce que j'ai lu sur un site mais comprendre pk ça marche 
     #https://medium.com/@IwriteDSblog/gradient-descent-for-logistics-regression-in-python-18e033775082
