@@ -5,9 +5,9 @@ from cross_validation import best_single_param_selection, build_k_indices, cross
 from helpers import standardize, load_csv_data, load_csv_title
 from split_data import split_data
 from paths import training_set, test_set
-from apply_method import apply_method, predict
+from apply_method import apply_method, predict, joining_prediction
 import implementations as im
-from preprocessing import angle_values, preproc_test, preproc_train, to_0_1
+from preprocessing import angle_values, preproc_test, preproc_train, to_0_1, class_separation, replace_class
 import numpy as np
 
 #from least_squares import least_squares
@@ -17,8 +17,49 @@ import numpy as np
 #from utilities import compute_mse, compute_mse
 
 
-#x,y = load_data(training_set)
+# TODO: décommenter
+y,x,id_tr = load_csv_data(training_set)
+title_tr = load_csv_title(training_set)
+x, title_tr = replace_class(x, title_tr)
+y = to_0_1(y)
+xs, ys_, ids_ = class_separation(x, title_tr, id_tr, y)
 
+_, x_te, id_te = load_csv_data(test_set)
+title_te = load_csv_title(test_set)
+x_te, title_te = replace_class(x_te, title_te)
+xs_te, _s, ids_te = class_separation(x_te, title_te, id_te, _)
+
+
+mse_train_s = []
+ys = []
+ids = []
+method = im.least_squares
+for i in range(len(xs)):
+    xs[i], x_mean, x_std, ind, projection_matrix = preproc_train(xs[i], title_tr, percentage = 95, do_corr = False, do_pca = False) 
+    xs_te[i] = preproc_test(xs_te[i], title_te, x_mean, x_std, projection_matrix, ind, do_corr = False, do_pca = False)
+    mse_train, _, y_bin = apply_method(method, ys_[i], xs[i], x_te = xs_te[i], id = ids_te[i], validation = False, separation = True)
+    mse_train_s.append(mse_train)
+    ys = np.concatenate((ys, y_bin))
+    ids = np.concatenate((ids,ids_te[i]))
+
+ids = np.squeeze(ids)
+ids_ys = np.array([ids.T, ys.T], np.int32)
+#Sort in the same order than in the load_csv_data input
+index = np.argsort(ids_ys[0])
+ids_ys[1] = ids_ys[1][index]
+ids_ys[0] = ids_ys[0][index]
+joining_prediction(method, ids_ys[0], ids_ys[1])
+print(np.sum(mse_train_s)/len(mse_train_s))
+
+#For validation: A Mettre dans la boucle ! x,y = xs[i], ys[i]
+#x_tr, x_val, y_tr, y_val = split_data(x,y,0.8)
+# mse_train, mse_val = apply_method(im.least_squares, y_tr, x_tr, y_val = y_val, x_val = x_val, x_te = x_te, id = id, validation = True)
+# print("MSE: ", mse_train, mse_val)
+# acc_train, acc_val = apply_method(im.least_squares, y_tr, x_tr, y_val = y_val, x_val = x_val, x_te = x_te, id = id, validation = True, loss = "accuracy")
+# print("Accuracy:", acc_train, acc_val)
+
+#x,y = load_data(training_set)
+"""
 # TODO: décommenter
 
 y,x,ids = load_csv_data(training_set)
@@ -32,7 +73,7 @@ title = load_csv_title(test_set)
 x_te = preproc_test(x_te, title, x_mean, x_std, projection_matrix, ind, do_corr = False, do_pca = True) #TODO: decomment
 
 y_logistic = to_0_1(y)
-
+"""
 # TODO: stop décommenter
 
 #x_tr, x_val, y_tr, y_val = split_data(x,y,0.8)
@@ -67,7 +108,7 @@ y_logistic = to_0_1(y)
 #TODO: run apply method with : lambda =  0.0 max_iters =  500 gamma =  0.05 loss_val =  0.3747762495867381
 
 # REG LOG REG
-
+"""
 print("reg log reg PCA 95%")
 
 best_lambda, best_gamma, best_max_iters, best_mse_val, mse_tr_final = best_triple_param_selection(im.reg_logistic_regression, y_logistic, x, x_te, id, 10, lambdas = [1e-6, 1e-5 , 1e-4], gammas = [5e-2, 1e-1, 5e-1], maxs_iters = [1200])
@@ -85,7 +126,7 @@ x, x_mean, x_std, ind, projection_matrix = preproc_train(x, title, percentage = 
 x_te = preproc_test(x_te, title, x_mean, x_std, projection_matrix, ind, do_corr = False, do_pca = True) #TODO: decomment
 
 best_lambda, best_gamma, best_max_iters, best_mse_val, mse_tr_final = best_triple_param_selection(im.reg_logistic_regression, y_logistic, x, x_te, id, 10, lambdas = [1e-6, 1e-5 , 1e-4], gammas = [5e-2, 1e-1, 5e-1], maxs_iters = [1200])
-
+"""
 
 #best_lambda, best_gamma, best_max_iters, best_mse_val, mse_tr_final = best_triple_param_selection(im.reg_logistic_regression, y_logistic, x, x_te, id, 20, lambdas = [0.5,1,3,5,6,6.5,7,7.5,8,8.5,9,9.5,10,15,50,80], gammas = [0.01, 0.02,0.04,0.05,0.06,0.07,0.1,0.25,0.5,0.75,0.9], maxs_iters = [5,10,15,20,50,75,100,150,200,500])
 #best_lambda, best_gamma, best_max_iters, best_mse_val, mse_tr_final = best_triple_param_selection(im.reg_logistic_regression, y_logistic, x, x_te, id, 10, lambdas = [1e-5 , 1e-4, 1e-3, 5e-3, 1e-2, 5e-2, 1e-1, 5e-1, 1], gammas = [1e-5, 1e-4, 5e-3, 1e-3, 9e-2, 7e-2, 5e-2, 3e-2, 1e-2, 1e-1, 5e-1], maxs_iters = [5,7,8,9,10,15,20,50,75,100,150,200,500, 1000, 1200])
