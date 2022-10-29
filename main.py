@@ -1,5 +1,6 @@
 from itertools import filterfalse
 from os import truncate
+from tkinter import Y
 from xml.etree.ElementTree import TreeBuilder
 from cross_validation import best_single_param_selection, build_k_indices, cross_validation, best_triple_param_selection
 from helpers import standardize, load_csv_data, load_csv_title
@@ -21,30 +22,50 @@ import numpy as np
 
 # TODO: décommenter
 
-y,x,ids = load_csv_data(training_set)
-title = load_csv_title(training_set)
+# y,x,ids = load_csv_data(training_set)
+# title = load_csv_title(training_set)
+# print("6 first features, degree = 7")
+# x, x_mean, x_std, ind, projection_matrix = preproc_train(x, title, feature_to_keep = 4, do_corr = False, do_pca = True, do_poly = True, degree = 5) #TODO: decomment
 
-x, x_mean, x_std, ind, projection_matrix = preproc_train(x, title, percentage = 95, do_corr = False, do_pca = True) #TODO: decomment
+# _, x_te, id = load_csv_data(test_set)
+# title = load_csv_title(test_set)
 
-_, x_te, id = load_csv_data(test_set)
-title = load_csv_title(test_set)
+# x_te = preproc_test(x_te, title, x_mean, x_std, projection_matrix, ind, do_corr = False, do_pca = True, do_poly = True, degree = 5) #TODO: decomment
 
-x_te = preproc_test(x_te, title, x_mean, x_std, projection_matrix, ind, do_corr = False, do_pca = True) #TODO: decomment
+# y_logistic = to_0_1(y)
 
-y_logistic = to_0_1(y)
+# # TODO: stop décommenter
 
-# TODO: stop décommenter
+# x_tr, x_val, y_tr, y_val = split_data(x,y,0.8)
 
-#x_tr, x_val, y_tr, y_val = split_data(x,y,0.8)
-
-# LEAST SQUARES
-
-#For validation:
+# # LEAST SQUARES
+# #For validation:
 # mse_train, mse_val = apply_method(im.least_squares, y_tr, x_tr, y_val = y_val, x_val = x_val, x_te = x_te, id = id, validation = True)
 # print("MSE: ", mse_train, mse_val)
 # acc_train, acc_val = apply_method(im.least_squares, y_tr, x_tr, y_val = y_val, x_val = x_val, x_te = x_te, id = id, validation = True, loss = "accuracy")
 # print("Accuracy:", acc_train, acc_val)
 
+# print("10 first features, degreee 3")
+
+y,x,ids = load_csv_data(training_set)
+title = load_csv_title(training_set)
+chosen_degree = 9
+
+x, x_mean, x_std, ind, projection_matrix = preproc_train(x, title, do_corr = False, do_pca = False, do_poly = True, degree = chosen_degree) #TODO: decomment
+
+_, x_te, id = load_csv_data(test_set)
+title = load_csv_title(test_set)
+
+x_te = preproc_test(x_te, title, x_mean, x_std, projection_matrix, ind, do_corr = False, do_pca = False, do_poly = True, degree = chosen_degree) #TODO: decomment
+y_logistic = to_0_1(y)
+
+#x_tr, x_val, y_tr, y_val = split_data(x,y,0.8)
+
+
+# mse_train, mse_val = apply_method(im.least_squares, y_tr, x_tr, y_val = y_val, x_val = x_val, x_te = x_te, id = id, validation = True)
+# print("MSE: ", mse_train, mse_val)
+# acc_train, acc_val = apply_method(im.least_squares, y_tr, x_tr, y_val = y_val, x_val = x_val, x_te = x_te, id = id, validation = True, loss = "accuracy")
+# print("Accuracy:", acc_train, acc_val)
 
 # For prediction: 
 #mse_train, _ = apply_method(im.least_squares, y, x, x_te = x_te, id = id, validation = False)
@@ -52,7 +73,9 @@ y_logistic = to_0_1(y)
 
 # RIDGE REGRESSION
 
-#best_lambda_, cross_mse_tr_rr, cross_mse_val_rr = best_single_param_selection(im.ridge_regression, y, x, x_te, id, 10, params = [0.0, 1e-6, 1e-5, 1e-4, 2e-4, 3e-4, 5e-4, 6e-4, 7e-4, 8e-4, 9e-4, 1e-3, 1e-2, 1e-1], tuned_param = "lambda")
+best_lambda_, cross_mse_tr_rr, cross_mse_val_rr = best_single_param_selection(im.ridge_regression, y, x, x_te, id, 10, params = [0.0, 1e-6, 1e-5, 1e-4, 2e-4, 3e-4, 5e-4, 6e-4, 7e-4, 8e-4, 9e-4, 1e-3, 1e-2, 1e-1], tuned_param = "lambda", logistic = False)
+
+# RIDGE REGRESSION WITH POLYNOMIAL
 
 
 # LOG REG
@@ -68,23 +91,30 @@ y_logistic = to_0_1(y)
 
 # REG LOG REG
 
-print("reg log reg PCA 95%")
+#print("reg log reg PCA 95%")
 
-best_lambda, best_gamma, best_max_iters, best_mse_val, mse_tr_final = best_triple_param_selection(im.reg_logistic_regression, y_logistic, x, x_te, id, 10, lambdas = [1e-6, 1e-5 , 1e-4], gammas = [5e-2, 1e-1, 5e-1], maxs_iters = [1200])
+#best_lambda, best_gamma, best_max_iters, best_mse_val, mse_tr_final = best_triple_param_selection(im.reg_logistic_regression, y_logistic, x, x_te, id, 10, lambdas = [1e-6, 1e-5 , 1e-4], gammas = [5e-2, 1e-1, 5e-1], maxs_iters = [1200])
 
-x, x_mean, x_std, ind, projection_matrix = preproc_train(x, title, percentage = 80, do_corr = False, do_pca = True) #TODO: decomment
-x_te = preproc_test(x_te, title, x_mean, x_std, projection_matrix, ind, do_corr = False, do_pca = True) #TODO: decomment
 
-print("reg log reg PCA 80%")
+# print("reg log reg PCA 80%")
 
-best_lambda, best_gamma, best_max_iters, best_mse_val, mse_tr_final = best_triple_param_selection(im.reg_logistic_regression, y_logistic, x, x_te, id, 10, lambdas = [1e-6, 1e-5 , 1e-4], gammas = [5e-2, 1e-1, 5e-1], maxs_iters = [1200])
+# x, x_mean, x_std, ind, projection_matrix = preproc_train(x, title, percentage = 80, do_corr = False, do_pca = True) #TODO: decomment
+# x_te = preproc_test(x_te, title, x_mean, x_std, projection_matrix, ind, do_corr = False, do_pca = True) #TODO: decomment
 
-print("reg log reg PCA 99%")
+# best_lambda, best_gamma, best_max_iters, best_mse_val, mse_tr_final = best_triple_param_selection(im.reg_logistic_regression, y_logistic, x, x_te, id, 10, lambdas = [1e-6, 1e-5 , 1e-4], gammas = [5e-2, 1e-1, 5e-1], maxs_iters = [1200])
 
-x, x_mean, x_std, ind, projection_matrix = preproc_train(x, title, percentage = 99, do_corr = False, do_pca = True) #TODO: decomment
-x_te = preproc_test(x_te, title, x_mean, x_std, projection_matrix, ind, do_corr = False, do_pca = True) #TODO: decomment
+# print("reg log reg PCA 99%")
+# y,x,ids = load_csv_data(training_set)
+# title = load_csv_title(training_set)
 
-best_lambda, best_gamma, best_max_iters, best_mse_val, mse_tr_final = best_triple_param_selection(im.reg_logistic_regression, y_logistic, x, x_te, id, 10, lambdas = [1e-6, 1e-5 , 1e-4], gammas = [5e-2, 1e-1, 5e-1], maxs_iters = [1200])
+# x, x_mean, x_std, ind, projection_matrix = preproc_train(x, title, percentage = 95, do_corr = False, do_pca = True) #TODO: decomment
+
+# _, x_te, id = load_csv_data(test_set)
+# title = load_csv_title(test_set)
+# x, x_mean, x_std, ind, projection_matrix = preproc_train(x, title, percentage = 99, do_corr = False, do_pca = True) #TODO: decomment
+# x_te = preproc_test(x_te, title, x_mean, x_std, projection_matrix, ind, do_corr = False, do_pca = True) #TODO: decomment
+
+# best_lambda, best_gamma, best_max_iters, best_mse_val, mse_tr_final = best_triple_param_selection(im.reg_logistic_regression, y_logistic, x, x_te, id, 10, lambdas = [1e-6, 1e-5 , 1e-4], gammas = [5e-2, 1e-1, 5e-1], maxs_iters = [1200])
 
 
 #best_lambda, best_gamma, best_max_iters, best_mse_val, mse_tr_final = best_triple_param_selection(im.reg_logistic_regression, y_logistic, x, x_te, id, 20, lambdas = [0.5,1,3,5,6,6.5,7,7.5,8,8.5,9,9.5,10,15,50,80], gammas = [0.01, 0.02,0.04,0.05,0.06,0.07,0.1,0.25,0.5,0.75,0.9], maxs_iters = [5,10,15,20,50,75,100,150,200,500])

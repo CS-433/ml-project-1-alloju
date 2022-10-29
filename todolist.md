@@ -45,3 +45,5 @@
     - [ ] un apply_method par method avec des bonne méthodes 
 - [L] Checker si bias method est utile ou non 
 - [ ] Plot de cross validation une fois qu'on aura nos params 
+
+- [ ] polynomial on 4 first PCs

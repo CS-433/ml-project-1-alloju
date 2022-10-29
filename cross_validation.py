@@ -22,7 +22,7 @@ def build_k_indices(y, k_fold, seed):
     k_indices = [indices[k * interval: (k + 1) * interval] for k in range(k_fold)]
     return np.array(k_indices)
 
-def cross_validation(method, y, x, k_indices, k, lambda_ = 0.5, initial_w = None, max_iters = 100, gamma = 0.1):
+def cross_validation(method, y, x, k_indices, k, lambda_ = 0.5, initial_w = None, max_iters = 100, gamma = 0.1, logistic = False):
     #TODO: si on a pas de initial w c'est qu'on l'utilise pas non? Donc on peut y mettre n'importe quoi ?
     """return the loss of ridge regression for a fold corresponding to k_indices
     
@@ -46,11 +46,11 @@ def cross_validation(method, y, x, k_indices, k, lambda_ = 0.5, initial_w = None
     y_tr = y[train_indices]
     y_val = y[valid_indices]  
 
-    loss_tr, loss_val = apply_method(method, y_tr, x_tr, y_val = y_val, x_val = x_val, lambda_ = lambda_, initial_w = initial_w, max_iters = max_iters, gamma = gamma, do_predictions= False)
+    loss_tr, loss_val = apply_method(method, y_tr, x_tr, y_val = y_val, x_val = x_val, lambda_ = lambda_, initial_w = initial_w, max_iters = max_iters, gamma = gamma, do_predictions= False, logistic = logistic)
 
     return loss_tr, loss_val
 
-def best_single_param_selection(method, y,x, x_te, id, k_fold, params = [0.1, 0.5], tuned_param = "", lambda_ = 0.1, initial_w = None, max_iters = 10, gamma = 0.1, seed = 1, verbose = True):
+def best_single_param_selection(method, y,x, x_te, id, k_fold, params = [0.1, 0.5], tuned_param = "", lambda_ = 0.1, initial_w = None, max_iters = 10, gamma = 0.1, seed = 1, verbose = True, logistic = False):
     """cross validation over regularisation parameter lambda.
     
     Args:
@@ -80,11 +80,11 @@ def best_single_param_selection(method, y,x, x_te, id, k_fold, params = [0.1, 0.
         temp_loss_val = []
         for k in range(k_fold):
             if tuned_param == "lambda":
-                loss_tr, loss_val= cross_validation(method, y , x, k_indices, k, lambda_ = param, initial_w = initial_w, max_iters = max_iters, gamma = gamma)
+                loss_tr, loss_val= cross_validation(method, y , x, k_indices, k, lambda_ = param, initial_w = initial_w, max_iters = max_iters, gamma = gamma, logistic = logistic)
             elif tuned_param == "gamma":
-                loss_tr, loss_val= cross_validation(method, y , x, k_indices, k, gamma = param, lambda_ = lambda_, initial_w = initial_w, max_iters = max_iters)
+                loss_tr, loss_val= cross_validation(method, y , x, k_indices, k, gamma = param, lambda_ = lambda_, initial_w = initial_w, max_iters = max_iters, logistic = logistic)
             elif tuned_param == "max_iters":
-                loss_tr, loss_val= cross_validation(method, y , x, k_indices, k, max_iters = param, lambda_ = lambda_, initial_w = initial_w, gamma = gamma)
+                loss_tr, loss_val= cross_validation(method, y , x, k_indices, k, max_iters = param, lambda_ = lambda_, initial_w = initial_w, gamma = gamma, logistic = logistic)
             else:
                 raise ValueError("Please specify which parameter you are tuning")
             if np.isnan(loss_val):
@@ -124,7 +124,7 @@ def best_single_param_selection(method, y,x, x_te, id, k_fold, params = [0.1, 0.
 
     return best_param, best_loss_tr, best_loss_val
 
-def best_triple_param_selection(method, y,x, x_te, id, k_fold, lambdas = [0.1, 0.5], gammas =[0.1,0.5], maxs_iters = [5,10], initial_w = None, seed = 1, verbose = True):
+def best_triple_param_selection(method, y,x, x_te, id, k_fold, lambdas = [0.1, 0.5], gammas =[0.1,0.5], maxs_iters = [5,10], initial_w = None, seed = 1, verbose = True, logistic = False):
     """cross validation over regularisation parameter lambda.
     
     Args:
@@ -168,7 +168,7 @@ def best_triple_param_selection(method, y,x, x_te, id, k_fold, lambdas = [0.1, 0
                 temp_loss_val = []
                 temp_loss_train = []
                 for k in range(k_fold):
-                    loss_tr, loss_val= cross_validation(method, y , x, k_indices, k, lambda_ = lambda_, initial_w = initial_w, max_iters = max_iters, gamma = gamma)
+                    loss_tr, loss_val= cross_validation(method, y , x, k_indices, k, lambda_ = lambda_, initial_w = initial_w, max_iters = max_iters, gamma = gamma, logistic= logistic)
                     if np.isnan(loss_val):
                         loss_tr = 10000
                         loss_val = 10000 #to avoid that the cross val takes nan as the min ! #TODO: raise warning ? But need of a new library...
@@ -198,9 +198,9 @@ def best_triple_param_selection(method, y,x, x_te, id, k_fold, lambdas = [0.1, 0
 
     #cross_validation_visualization(params, loss_tr, loss_val)
     x_tr, x_val, y_tr, y_val = split_data(x,y,0.8)
-    acc_tr, acc_val = apply_method(method, y_tr, x_tr, y_val, x_val, max_iters = best_max_iters, lambda_ = best_lambda, initial_w = initial_w, gamma = best_gamma, validation = True, loss = "accuracy", do_predictions= False)
+    acc_tr, acc_val = apply_method(method, y_tr, x_tr, y_val, x_val, max_iters = best_max_iters, lambda_ = best_lambda, initial_w = initial_w, gamma = best_gamma, validation = True, loss = "accuracy", do_predictions= False, logistic= logistic)
     print("accuracy measures: ", "train = ", acc_tr, "val = ", acc_val)
-    loss_tr_final, _ = apply_method(method, y, x, x_te = x_te, id = id, max_iters = best_max_iters, lambda_ = best_lambda, initial_w = initial_w, gamma = best_gamma, validation = False)
+    loss_tr_final, _ = apply_method(method, y, x, x_te = x_te, id = id, max_iters = best_max_iters, lambda_ = best_lambda, initial_w = initial_w, gamma = best_gamma, validation = False, logistic= logistic)
 
     #loss_tr_final, _ = apply_method(method, y, x, np.zeros_like(y), np.zeros_like(x), x_te, id, best_param, validation = False)
     print("final training loss", loss_tr_final)

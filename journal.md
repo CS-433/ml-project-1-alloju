@@ -63,6 +63,10 @@ final training loss (0.3730184763388884, 0)
 accuracy measures:  train =  0.72199 val =  0.71906
 final training loss 0.1400000190854202
 
+#### 29.10:
+- 1st submission: reg log reg without pca without del corr
+- 2nd submission: reg log reg with one hot encoding: accuracy measures:  train =  0.42694 val =  0.42768
+final training loss 0.07451915987030125, Chosen lambda is:  0.0002
 
 
 
