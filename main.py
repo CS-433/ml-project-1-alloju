@@ -42,9 +42,10 @@ for i in range(len(xs)):
     ids = np.concatenate((ids,ids_te[i]))
 ids = np.squeeze(ids)
 ids_ys = np.array([ids.T, ys.T], np.int32)
-print('ids_ys', ids_ys)
-np.sort(ids_ys[0])
-print('ids_ys', ids_ys)
+#Sort in the same order than in the load_csv_data input
+index = np.argsort(ids_ys[0])
+ids_ys[1] = ids_ys[1][index]
+ids_ys[0] = ids_ys[0][index]
 joining_prediction(method, ids_ys[0], ids_ys[1])
 print(np.sum(mse_train_s)/len(mse_train_s))
 
