@@ -56,6 +56,16 @@ final training mse (0.3764975488089389, 0) ?
 final training loss (0.3730184763388884, 0)
 
 
+#### 28.10
+- 1st submission: least square with del corr + pca, acc_tr = 0.712315, acc_val = 0.71086
+- 2nd submission: ridge regr with no del corr + no pca, acc tr = 0.712325, acc_val = 0.71082
+- 3rd submission: GD: Chosen parameters are:  lambda =  0.0 max_iters =  1000 gamma =  0.045 loss train =  0.13999800032963233 loss val =  0.14003831491993252
+accuracy measures:  train =  0.72199 val =  0.71906
+final training loss 0.1400000190854202
+
+
+
+
 GD sans rien:
 
 lambda =  0.0 max_iters =  1000 gamma =  0.05 loss_val =  0.37312857606110283

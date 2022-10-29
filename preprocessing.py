@@ -193,11 +193,12 @@ def replace_class(x, title):
 
     return x, title
 
-def pca(x):
+def pca(x, percentage):
     """Principal component analysis
     
     Args:
         x: The table of values to whom the PCA is applied 
+        percentage: percentage of variant explained wanted
     
     Returns:
         projection_matrix: The projection matrix with the eigen vectors
@@ -208,8 +209,8 @@ def pca(x):
     for i in eigen_val:
         variance_explained.append((i/sum(eigen_val))*100)
     cumulative_variance_explained = np.cumsum(variance_explained)
-    explained_95 =np.squeeze((cumulative_variance_explained > 95).nonzero())
-    nb_component_keep = explained_95[0]
+    explained_percentage =np.squeeze((cumulative_variance_explained > percentage).nonzero())
+    nb_component_keep = explained_percentage[0]
     print('PCA: nb components to keep: ', nb_component_keep)
     projection_matrix = (eigen_vec.T[:][:nb_component_keep]).T
     return projection_matrix
@@ -236,7 +237,7 @@ def corr(x):
     ind_to_delete = np.unique(ind[0])
     return np.squeeze(ind_to_delete)
 
-def preproc_train(x, title, do_corr = True, do_pca = True):
+def preproc_train(x, title, percentage = 95, do_corr = True, do_pca = True):
     """Preprocessing for the training data
     #TODO finir de compléter
     Args:
@@ -263,7 +264,7 @@ def preproc_train(x, title, do_corr = True, do_pca = True):
     x, title = replace_class(x, title)
     x, x_mean, x_std = standardize(x)
     if do_pca:
-        projection_matrix = pca(x)
+        projection_matrix = pca(x, percentage)
         x = np.dot(x, projection_matrix)
     else:
         projection_matrix = None

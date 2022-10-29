@@ -194,7 +194,7 @@ def best_triple_param_selection(method, y,x, x_te, id, k_fold, lambdas = [0.1, 0
     best_gamma = best_gammas[idx_super_best]
     super_best_lambda = super_best_lambdas[idx_super_best]
         
-    print("lambda = ", super_best_lambda, "max_iters = ", best_max_iters, "gamma = ", best_gamma, "loss train = ", min(super_best_loss_train), "loss val = ", super_best_loss)
+    print("Chosen parameters are: ", "lambda = ", super_best_lambda, "max_iters = ", best_max_iters, "gamma = ", best_gamma, "loss train = ", min(super_best_loss_train), "loss val = ", super_best_loss)
 
     #cross_validation_visualization(params, loss_tr, loss_val)
     x_tr, x_val, y_tr, y_val = split_data(x,y,0.8)
