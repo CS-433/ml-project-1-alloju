@@ -20,3 +20,28 @@
 - [x] utiliser la fonction de helpers.py pour générer le csv
 - [x] Pre-processing: actuellement moyenne pour données pas définies, np.sin/cos pour les angles, standardizer
 - [ ] Pre-processing: pca avec lasso ? ... ?
+
+
+- [ ] Rapport (Prioritaire)
+    - [L] Intro
+    - [ ] Discussion
+    - [A] Results
+    - [L] Abstract (demain)
+    - [ ] [ ] [ ] Relecture finale 
+- [L] Notebook de graph pour le preprocessing
+- [A] Tester avec PCA plus sélective 
+- [J] mettre one_hot dans un main pour tester si c'est ok avec l'accuracy
+- [A, J] trouver des param un peu mieux (un à deux de chaque côté, checker que l'accuracy est plus haute)
+    - [ ] une ligne pour abort les boucles qui diverge ? A-t-on le temps ? 
+- [ ] (Demain ou quand on à le temps:)) Completer les docstring (verifier que tout bien documenté)
+- [ ] Enlever tout les TODO + checker que  et les commentaires
+    - [ ] trier les imports (demain)
+- [ ] Ecrire le README.md (demain)
+    - [ ] Ecrire que pour obtenir les valeurs on a mis la cross-valid bla bla 
+- [ ] Verifier qu'on a tout dans le bon format pour rendre (A la fin!)
+    - [ ] Blackformater 
+    - [ ] git, cliquer sur y ? Pas en capslock attention !
+- [ ] Copier coller la partie bien main.py --> run.py
+    - [ ] un apply_method par method avec des bonne méthodes 
+- [L] Checker si bias method est utile ou non 
+- [ ] Plot de cross validation une fois qu'on aura nos params 
