@@ -39,6 +39,11 @@ for i in range(len(xs)):
     xs_te[i] = preproc_test(xs_te[i], title_te, x_mean, x_std, projection_matrix, ind, do_corr = False, do_pca = False)
     mse_train, _, y_bin = apply_method(method, ys_[i], xs[i], x_te = xs_te[i], id = ids_te[i], validation = False, separation = True)
     mse_train_s.append(mse_train)
+    x_tr, x_val, y_tr, y_val = split_data(xs[i],ys_[i],0.8)
+    ## SI validation par mini groupe Juste le ids_ pas dimension donc je sais pas lequel tu prenais d'habitude 
+    acc_train, acc_val = apply_method(im.least_squares, y_tr, x_tr, y_val = y_val, x_val = x_val, x_te = x_te, id = ids_, validation = True, loss = "accuracy")
+    print("Accuracy:", acc_train, acc_val)
+    ## 
     ys = np.concatenate((ys, y_bin))
     ids = np.concatenate((ids,ids_te[i]))
 
