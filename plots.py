@@ -6,10 +6,10 @@ from paths import plots_dir
 import os
 
 
-def cross_validation_visualization(method, params, rmse_tr, rmse_te, tuned_param):
+def cross_validation_visualization(method, params, mse_tr, mse_te, tuned_param):
     """visualization the curves of mse_tr and mse_te."""
-    plt.semilogx(params, rmse_tr, marker=".", color='b', label='train error')
-    plt.semilogx(params, rmse_te, marker=".", color='r', label='test error')
+    plt.semilogx(params, mse_tr, marker=".", color='b', label='train error')
+    plt.semilogx(params, mse_te, marker=".", color='r', label='test error')
     plt.xlabel(tuned_param)
     plt.ylabel("mse")
     #plt.xlim(1e-4, 1)
