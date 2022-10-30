@@ -16,9 +16,10 @@ def to_0_1(y):
     Returns:
         y: The vector with the changed values
     """
-    y[y >= 0] = 1
-    y[y < 0] = 0
-    return y
+    y_0_1 = np.zeros_like(y)
+    y_0_1[y >= 0] = 1
+    y_0_1[y < 0] = 0
+    return y_0_1
 
 
 def get_id(data_path): #TODO a enlever ! on en a plus besoin mtn non ? 
@@ -193,12 +194,14 @@ def replace_class(x, title):
 
     return x, title
 
-def pca(x, percentage):
-    """Principal component analysis
+def pca(x, percentage, feature_to_keep):
+    """Principal component analysis. If both percentage of variance explained and number of features to keep are given,
+    the value taken is the number of fature to keep.
     
     Args:
         x: The table of values to whom the PCA is applied 
-        percentage: percentage of variant explained wanted
+        percentage: percentage of variance explained wanted
+        feature_to_keep: nb of feature we want to keep
     
     Returns:
         projection_matrix: The projection matrix with the eigen vectors
@@ -209,8 +212,11 @@ def pca(x, percentage):
     for i in eigen_val:
         variance_explained.append((i/sum(eigen_val))*100)
     cumulative_variance_explained = np.cumsum(variance_explained)
-    explained_percentage =np.squeeze((cumulative_variance_explained > percentage).nonzero())
-    nb_component_keep = explained_percentage[0]
+    if feature_to_keep == 0:
+        explained_percentage =np.squeeze((cumulative_variance_explained > percentage).nonzero())
+        nb_component_keep = explained_percentage[0]
+    else:
+        nb_component_keep = feature_to_keep
     print('PCA: nb components to keep: ', nb_component_keep)
     projection_matrix = (eigen_vec.T[:][:nb_component_keep]).T
     return projection_matrix
@@ -237,7 +243,20 @@ def corr(x):
     ind_to_delete = np.unique(ind[0])
     return np.squeeze(ind_to_delete)
 
-def preproc_train(x, title, percentage = 95, do_corr = True, do_pca = True):
+def build_poly(x, title, degree):
+    """polynomial basis functions for input data x, for j=0 up to j=degree."""
+    # ***************************************************
+    #x = np.insert(x, 0, np.ones_like(x[:,0]), axis = 1)
+    #title = np.insert(title, 0,"bias")
+    for i in range(0, (x.shape[1]) * degree, degree):
+        #looping on features
+        t = title[i]
+        for j in range(2,degree+1):
+            x = np.insert(x, i + j-1, x[:,i]**j, axis = 1)
+            title = np.insert(title, i + j-1, t +'_x**' + str(j))
+    return x
+
+def preproc_train(x, title, percentage = 95, feature_to_keep = 0, do_corr = True, do_pca = True, do_poly = False, degree = 0):
     """Preprocessing for the training data
     #TODO finir de compléter
     Args:
@@ -264,15 +283,17 @@ def preproc_train(x, title, percentage = 95, do_corr = True, do_pca = True):
     x, title = replace_class(x, title)
     x, x_mean, x_std = standardize(x)
     if do_pca:
-        projection_matrix = pca(x, percentage)
+        projection_matrix = pca(x, percentage, feature_to_keep)
         x = np.dot(x, projection_matrix)
     else:
         projection_matrix = None
-
+    if do_poly:
+        x = build_poly(x, title, degree)
+    
     return x, x_mean, x_std, ind, projection_matrix
 
 
-def preproc_test(x, title, x_mean, x_std, projection_matrix, ind, do_corr = True, do_pca = True): 
+def preproc_test(x, title, x_mean, x_std, projection_matrix, ind, do_corr = True, do_pca = True, do_poly = False, degree = 0): 
     """Preprocessing for the test data
     #TODO finir de compléter
     Args:
@@ -298,10 +319,11 @@ def preproc_test(x, title, x_mean, x_std, projection_matrix, ind, do_corr = True
     x = x/x_std
     if do_pca: 
         x = np.dot(x, projection_matrix)
+    if do_poly:
+        x = build_poly(x, title, degree)
     return x
 
 #id = get_id(data_path)
 #x0,x1 = separate(x, y)
 #plot_hist(x0,x1,id)
 #boxplot(x)
-

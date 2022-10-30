@@ -29,7 +29,7 @@
     - [L] Abstract (demain)
     - [ ] [ ] [ ] Relecture finale 
 - [L] Notebook de graph pour le preprocessing
-- [A] Tester avec PCA plus sélective 
+- [X] Tester avec PCA plus sélective 
 - [J] mettre one_hot dans un main pour tester si c'est ok avec l'accuracy
 - [A, J] trouver des param un peu mieux (un à deux de chaque côté, checker que l'accuracy est plus haute)
     - [ ] une ligne pour abort les boucles qui diverge ? A-t-on le temps ? 
@@ -45,3 +45,5 @@
     - [ ] un apply_method par method avec des bonne méthodes 
 - [L] Checker si bias method est utile ou non 
 - [ ] Plot de cross validation une fois qu'on aura nos params 
+
+- [ ] polynomial on 4 first PCs
