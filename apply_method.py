@@ -5,8 +5,7 @@ import os.path as op
 import numpy as np
 from helpers import create_csv_submission
 
-def apply_method(method,y_tr,x_tr,y_val = np.zeros([10,1]) ,x_val = np.zeros([10,1]), x_te = np.zeros([5,1]), id = np.zeros(5), lambda_ = 0.5, initial_w = None, max_iters = 100, gamma = 0.01, do_predictions = True, validation = True, loss = 'original', logistic = False):
-
+def apply_method(method,y_tr,x_tr,y_val = np.zeros([10,1]) ,x_val = np.zeros([10,1]), x_te = np.zeros([5,1]), id = np.zeros(5), lambda_ = 0.5, initial_w = None, max_iters = 100, gamma = 0.01, do_predictions = True, validation = True, loss = 'original', logistic = False, separation = False):
     """Apply a given method to the training and validation sets.
 
     Args:
@@ -15,12 +14,13 @@ def apply_method(method,y_tr,x_tr,y_val = np.zeros([10,1]) ,x_val = np.zeros([10
         x_tr: training features
         y_val: validation labels
         x_val: validation features
-        x_te:  
+        x_te: 
+        separation: 
 
     Returns:
         rmse_tr: training rmse
         rmse_val: validation rmse
-        w: computed weights
+        y_bin: The prediction for the input data
     """
 
     # TODO: if blablabla in file name 
@@ -71,26 +71,32 @@ def apply_method(method,y_tr,x_tr,y_val = np.zeros([10,1]) ,x_val = np.zeros([10
     #if validation:
     # acc_val = compute_accuracy(y_val,x_val,w)
     if do_predictions: # and x_te == None:
+        if(separation):
+            y_bin = predict(method, id, x_te, w, separation)
+            return loss_tr, loss_val, y_bin
         predict(method, id, x_te, w)
     #acc_train = compute_accuracy(y_tr, x_tr, w)
      
-    #return acc_train, acc_val
     return loss_tr, loss_val
 
-def predict(method, id, x_te, w):
+def predict(method, id, x_te, w, separation = False):
     """_summary_
 
     Args:
         method (_type_): _description_
         id (_type_): _description_
         x_te (_type_): _description_
+        separation: 
     """
     y = np.dot(x_te,w)
     # appliquer les labels
     y_bin = sigmoid(y)
     y_bin[y_bin < 0.5] = -1
     y_bin[y_bin >= 0.5] = 1
+    if(separation):
+        return y_bin
     #pred = np.vstack((np.array(["Id", "Prediction"]),np.column_stack((id,y))))
     path = op.join(prediction_dir, "prediction" + str(method) + ".csv")
     create_csv_submission(id, y_bin, path)
     #np.savetxt(path, pred, delimiter=",")
+

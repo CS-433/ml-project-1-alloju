@@ -1,4 +1,3 @@
-from split_data import load_data
 import numpy as np
 import csv
 from helpers import load_csv_data, standardize
@@ -48,7 +47,6 @@ def missing_data(x): #TODO est ce qu'on en a encore besoin ?
         x[:,i][x[:,i] == -999] = 0
     return x
 
-
 def delete_correlated(x, ind, title):
     """Delete the column of x determined as correlated by the corr(x) function
     
@@ -64,7 +62,6 @@ def delete_correlated(x, ind, title):
     x = np.delete(x, ind, axis = 1)
     title = np.delete(title, ind)
     return x, title
-
 
 def separate(x,y): #TODO est ce qu'on a toujours besoin ? si oui prendre en conpte que mtn on a y = {0,1}
     """Separation of the data regarding the prediction value
@@ -110,7 +107,6 @@ def angle_values(x, title):
         columns_id = columns_id +1
     return x, title
 
-
 def plot_hist(x0, x1, id):
     """Plot an histogram of the data
     
@@ -144,26 +140,37 @@ def boxplot(x):
         plt.show()
     return None
 
-def remove_outliers(x):
+def remove_outliers(x, title):
     """Remove the outliers by replacing them with with the median 
     
     Args:
         x: The input 
+        title : name of the column from the x table
     
     Returns:
         x: The corrected input
+        title, The corresponding name of the corrected input
     """
-    for i in range(len(x[1])):
+    bounds = 0
+    for j in range(len(x[1])):
+        i = j - bounds
         feature_removed = x[:,i][x[:,i] != -999]
-        qs = np.quantile(feature_removed, np.array([0.25, 0.5, 0.75]), axis = 0)
-        ir = qs[2]-qs[0]
-        lower_limit = qs[0] - (1.5*ir)
-        upper_limit = qs[2] + (1.5*ir)
-        x[:, i][x[:, i] < lower_limit] = qs[1]
-        x[:, i][x[:, i] > upper_limit] = qs[1]
-        x[:, i][x[:, i] == -999] = qs[1]
-    return x
+        feature_removed_0 = x[:,i][x[:,i] != 0]
+        feature_removed_1 = x[:,i][x[:,i] != 1]
+        if(len(feature_removed)==0 or len(feature_removed_0)==0 or len(feature_removed_1)==0):
+            x = np.delete(x, i, axis = 1) # delete angle value
+            title = np.delete(title, i)
+            bounds += 1
+        else:
+            qs = np.quantile(feature_removed, np.array([0.25, 0.5, 0.75]), axis = 0)
+            ir = qs[2]-qs[0]
+            lower_limit = qs[0] - (1.5*ir)
+            upper_limit = qs[2] + (1.5*ir)
+            x[:, i][x[:, i] < lower_limit] = qs[1]
+            x[:, i][x[:, i] > upper_limit] = qs[1]
+            x[:, i][x[:, i] == -999] = qs[1]
 
+    return x, title
 
 def replace_class(x, title):
     """
@@ -243,6 +250,38 @@ def corr(x):
     ind_to_delete = np.unique(ind[0])
     return np.squeeze(ind_to_delete)
 
+def class_separation(x, title, id=None, y=None): 
+    """Separation of the data from x according to the PRI_jet_num values
+
+    Args:
+        x: 
+        title:
+        id:
+        y:
+    
+    Returns:
+        xs:
+        ys: 
+        ids:
+    """
+    column_id = [idx for idx, s in enumerate(title) if 'PRI_jet_num' in s]
+    xs =[]
+    for i in range(len(column_id)):
+        xi = np.delete(x, np.where(x[:,column_id[i]]==0), axis = 0)
+        xs.append(xi)
+        
+    if y is not None: 
+        ys = []
+        ids= []
+        for i in range(len(column_id)):
+            yi = np.delete(y, np.where(x[:,column_id[i]]==0), axis = 0)
+            idi = np.delete(id, np.where(x[:,column_id[i]]==0), axis = 0)
+            ys.append(yi)
+            ids.append(idi)
+        return np.array(xs, dtype=object), np.array(ys, dtype=object), np.array(ids, dtype=object)
+    else:
+        return xs
+
 def build_poly(x, title, degree):
     """polynomial basis functions for input data x, for j=0 up to j=degree."""
     # ***************************************************
@@ -278,9 +317,8 @@ def preproc_train(x, title, percentage = 95, feature_to_keep = 0, do_corr = True
         x, title = delete_correlated(x, ind, title)
     else:
         ind = None
-    x = remove_outliers(x)
+    x, title = remove_outliers(x, title)
     x, title = angle_values(x, title)
-    x, title = replace_class(x, title)
     x, x_mean, x_std = standardize(x)
     if do_pca:
         projection_matrix = pca(x, percentage, feature_to_keep)
@@ -293,7 +331,6 @@ def preproc_train(x, title, percentage = 95, feature_to_keep = 0, do_corr = True
         x = build_poly(x, title, degree)
     
     return x, x_mean, x_std, ind, projection_matrix
-
 
 def preproc_test(x, title, x_mean, x_std, projection_matrix, ind, do_corr = True, do_pca = True, do_poly = False, degree = 0): 
     """Preprocessing for the test data
@@ -314,9 +351,8 @@ def preproc_test(x, title, x_mean, x_std, projection_matrix, ind, do_corr = True
     title = title
     if do_corr:
         x, title = delete_correlated(x, ind, title)
-    x = remove_outliers(x)
+    x, title = remove_outliers(x, title)
     x, title = angle_values(x, title)
-    x, title = replace_class(x, title)
     x = x-x_mean
     x = x/x_std
     if do_pca: 
