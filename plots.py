@@ -6,8 +6,9 @@ from paths import plots_dir
 import os
 
 
-def cross_validation_visualization(method, params, mse_tr, mse_te, tuned_param):
+def cross_validation_visualization(method, params, mse_tr, mse_te, tuned_param,i):
     """visualization the curves of mse_tr and mse_te."""
+    plt.figure(i)
     plt.semilogx(params, mse_tr, marker=".", color='b', label='train error')
     plt.semilogx(params, mse_te, marker=".", color='r', label='test error')
     plt.xlabel(tuned_param)
@@ -19,40 +20,29 @@ def cross_validation_visualization(method, params, mse_tr, mse_te, tuned_param):
     plt.savefig(os.path.join(plots_dir,"cross_validation" + str(method)))
 
 
-def bias_variance_decomposition_visualization(degrees, rmse_tr, rmse_te):
-    """visualize the bias variance decomposition."""
-    rmse_tr_mean = np.expand_dims(np.mean(rmse_tr, axis=0), axis=0)
-    rmse_te_mean = np.expand_dims(np.mean(rmse_te, axis=0), axis=0)
-    plt.plot(
-        degrees,
-        rmse_tr.T,
-        linestyle="-",
-        color=([0.7, 0.7, 1]),
-        linewidth=0.3)
-    plt.plot(
-        degrees,
-        rmse_te.T,
-        linestyle="-",
-        color=[1, 0.7, 0.7],
-        linewidth=0.3)
-    plt.plot(
-        degrees,
-        rmse_tr_mean.T,
-        'b',
-        linestyle="-",
-        label='train',
-        linewidth=3)
-    plt.plot(
-        degrees,
-        rmse_te_mean.T,
-        'r',
-        linestyle="-",
-        label='test',
-        linewidth=3)
-    plt.xlim(1, 9)
-    plt.ylim(0.2, 0.7)
-    plt.xlabel("degree")
-    plt.ylabel("error")
-    plt.legend(loc=1)
-    plt.title("Bias-Variance Decomposition")
-    plt.savefig("bias_variance")
+def cross_validation_visualization_degree(method, params, mse_tr, mse_te, tuned_param,i):
+    """visualization the curves of mse_tr and mse_te."""
+    plt.figure(i)
+    plt.semilogx(params, mse_tr, marker=".", color='b', label='train error')
+    plt.semilogx(params, mse_te, marker=".", color='r', label='test error')
+    plt.xlabel(tuned_param)
+    plt.ylabel("mse")
+    #plt.xlim(1e-4, 1)
+    plt.title("cross validation" + str(method))
+    plt.legend(loc=2)
+    plt.grid(True)
+    plt.savefig(os.path.join(plots_dir,"cross_validation" + str(method)))
+
+def cross_validation_visualization_multiple(method, params, mse_tr, mse_te, tuned_param, additional_param,i):
+    """visualization the curves of mse_tr and mse_te.
+    additional param made for degree"""
+    plt.figure(i)
+    plt.semilogx(params, mse_tr, marker=".", label='train error for degree: ' + str(additional_param))
+    plt.semilogx(params, mse_te, marker=".", label='test error for degree: ' + str(additional_param) )
+    plt.xlabel(tuned_param)
+    plt.ylabel("mse")
+    #plt.xlim(1e-4, 1)
+    plt.title("cross validation" + str(method))
+    plt.legend(loc=2)
+    plt.grid(True)
+    plt.savefig(os.path.join(plots_dir,"cross_validation" + str(method)))
