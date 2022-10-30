@@ -293,6 +293,9 @@ def apply_separation_method(method, y_tr, x_tr, id_tr, title_tr, y_te, x_te, id_
         xi_te = xs_te[i]
         idi_te = ids_te[i]
 
+        if verbose:
+            print("For class ", i, ":")
+
         #Preprocessing
         xi_tr, x_mean, x_std, ind, projection_matrix = preproc_train(xi_tr, title_tr, percentage = percentage, do_corr = do_corr, do_pca = do_pca, do_poly = do_poly, degree = degree) #  do_poly = do_poly
         xi_te = preproc_test(xi_te, title_te, x_mean, x_std, projection_matrix, ind, do_corr = do_corr, do_pca = do_pca, do_poly = do_poly, degree = degree) # do_poly = do_poly
