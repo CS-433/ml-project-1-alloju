@@ -107,15 +107,15 @@ def best_single_param_selection(method, y,x, x_te, id, k_fold, params = [0.1, 0.
     x_tr, x_val, y_tr, y_val = split_data(x,y,0.8)
 
     if tuned_param == "lambda":
-        loss_tr_final, _ = apply_method(method, y, x, x_te = x_te, id = id, lambda_ = best_param, initial_w = initial_w, max_iters = max_iters, gamma = gamma, validation = False)
-        acc_tr, acc_val = apply_method(method, y_tr, x_tr, y_val, x_val, lambda_ = best_param, initial_w = initial_w, max_iters = max_iters, gamma = gamma, validation = True, loss = "accuracy", do_predictions= False)
+        loss_tr_final, _ = apply_method(method, y, x, x_te = x_te, id = id, lambda_ = best_param, initial_w = initial_w, max_iters = max_iters, gamma = gamma, validation = False, logistic = logistic)
+        acc_tr, acc_val = apply_method(method, y_tr, x_tr, y_val, x_val, lambda_ = best_param, initial_w = initial_w, max_iters = max_iters, gamma = gamma, validation = True, loss = "accuracy", do_predictions= False, logistic = logistic)
     elif tuned_param == "gamma":
-        loss_tr_final, _ = apply_method(method, y, x, x_te = x_te, id = id, gamma = best_param, lambda_ = lambda_, initial_w = initial_w, max_iters = max_iters, validation = False)
-        acc_tr, acc_val = apply_method(method, y_tr, x_tr, y_val, x_val, gamma = best_param, lambda_ = lambda_, initial_w = initial_w, max_iters = max_iters, validation = True, loss = "accuracy", do_predictions= False)
+        loss_tr_final, _ = apply_method(method, y, x, x_te = x_te, id = id, gamma = best_param, lambda_ = lambda_, initial_w = initial_w, max_iters = max_iters, validation = False, logistic = logistic)
+        acc_tr, acc_val = apply_method(method, y_tr, x_tr, y_val, x_val, gamma = best_param, lambda_ = lambda_, initial_w = initial_w, max_iters = max_iters, validation = True, loss = "accuracy", do_predictions= False, logistic = logistic)
 
     elif tuned_param == "max_iters":
-        loss_tr_final, _ = apply_method(method, y, x, x_te = x_te, id = id, max_iters = best_param, lambda_ = lambda_, initial_w = initial_w, gamma = gamma, validation = False)
-        acc_tr, acc_val = apply_method(method, y_tr, x_tr, y_val, x_val, max_iters = best_param, lambda_ = lambda_, initial_w = initial_w, gamma = gamma, validation = True, loss = "accuracy", do_predictions= False)
+        loss_tr_final, _ = apply_method(method, y, x, x_te = x_te, id = id, max_iters = best_param, lambda_ = lambda_, initial_w = initial_w, gamma = gamma, validation = False, logistic = logistic)
+        acc_tr, acc_val = apply_method(method, y_tr, x_tr, y_val, x_val, max_iters = best_param, lambda_ = lambda_, initial_w = initial_w, gamma = gamma, validation = True, loss = "accuracy", do_predictions= False, logistic = logistic)
 
     #loss_tr_final, _ = apply_method(method, y, x, np.zeros_like(y), np.zeros_like(x), x_te, id, best_param, validation = False)
     print("accuracy measures: ", "train = ", acc_tr, "val = ", acc_val)
