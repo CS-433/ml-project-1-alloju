@@ -1,8 +1,12 @@
+from cgi import test
 import numpy as np
 from apply_method import apply_method, predict
 from utilities import compute_mse
 from plots import cross_validation_visualization
 from split_data import split_data
+from helpers import load_csv_data, load_csv_title
+from preprocessing import preproc_test, preproc_train, to_0_1
+from paths import training_set, test_set
 
 def build_k_indices(y, k_fold, seed):
     """build k indices for k-fold.
@@ -122,7 +126,7 @@ def best_single_param_selection(method, y,x, x_te, id, k_fold, params = [0.1, 0.
     print("final training loss", loss_tr_final)
     print("Chosen " + tuned_param + " is: ", best_param)
 
-    return best_param, best_loss_tr, best_loss_val
+    return best_param, acc_tr, acc_val
 
 def best_triple_param_selection(method, y,x, x_te, id, k_fold, lambdas = [0.1, 0.5], gammas =[0.1,0.5], maxs_iters = [5,10], initial_w = None, seed = 1, verbose = True, logistic = False):
     """cross validation over regularisation parameter lambda.
@@ -205,52 +209,62 @@ def best_triple_param_selection(method, y,x, x_te, id, k_fold, lambdas = [0.1, 0
     #loss_tr_final, _ = apply_method(method, y, x, np.zeros_like(y), np.zeros_like(x), x_te, id, best_param, validation = False)
     print("final training loss", loss_tr_final)
 
-    return best_lambda, best_gamma, best_max_iters, loss_tr_final, best_loss_val
+    return best_lambda, best_gamma, best_max_iters, acc_tr, acc_val
 
 
-# def best_lambda_and_maxiters_selection(method, y, x, x_te, max_iters, k_fold, lambdas, seed = 1):
-#     """cross validation over regularisation parameter lambda and degree.
-    
-#     Args:
-#         degrees: shape = (d,), where d is the number of degrees to test 
-#         k_fold: integer, the number of folds
-#         lambdas: shape = (p, ) where p is the number of values of lambda to test
-#     Returns:
-#         best_degree : integer, value of the best degree
-#         best_lambda : scalar, value of the best lambda
-#         best_loss : value of the loss for the couple (best_degree, best_lambda)
+def best_degree_selection(method, k_fold, degrees = [2,4], params = [0.1, 0.5], tuned_param = "", lambda_ = 0.1, initial_w = None, max_iters = 10, gamma = 0.1, seed = 1, verbose = True, logistic = False):
+    """Allow to select the best degree, based on a cross validation result of a method. The best degree isn't cross-validated to save running time. 
+    Also, cross validation on only one parameter is allowed, in order not to have multiple 
+
+    Args:
+        method (_type_): _description_
+        k_fold (_type_): _description_
+        degrees (list, optional): _description_. Defaults to [2,4].
+        params (list, optional): _description_. Defaults to [0.1, 0.5].
+        tuned_param (str, optional): _description_. Defaults to "".
+        lambda_ (float, optional): _description_. Defaults to 0.1.
+        initial_w (_type_, optional): _description_. Defaults to None.
+        max_iters (int, optional): _description_. Defaults to 10.
+        gamma (float, optional): _description_. Defaults to 0.1.
+        seed (int, optional): _description_. Defaults to 1.
+        verbose (bool, optional): _description_. Defaults to True.
+        logistic (bool, optional): _description_. Defaults to False.
+
+    Returns:
+        _type_: _description_
+    """
+    cross_mse_tr = []
+    cross_mse_val = []
+    tuned_param = "lambda"
+    for chosen_degree in degrees:
+        y,x,ids = load_csv_data(training_set)
+        title = load_csv_title(training_set)
+
+        print("degree= ", chosen_degree)
+        x, x_mean, x_std, ind, projection_matrix = preproc_train(x, title, do_corr = False, do_pca = False, do_poly = True, degree= chosen_degree) #TODO: decomment
+
+        _, x_te, id = load_csv_data(test_set)
+        title = load_csv_title(test_set)
+
+        x_te = preproc_test(x_te, title, x_mean, x_std, projection_matrix, ind, do_corr = False, do_pca = False, do_poly = True, degree= chosen_degree) #TODO: decomment
         
-#     """
-    
-#     # split data in k fold
-#     k_indices = build_k_indices(y, k_fold, seed)
-    
-#     # ***************************************************
-#     # INSERT YOUR CODE HERE
-#     # cross validation over degrees and lambdas: TODO
-#     #loss_tr = [] isn't useful
-#     best_losss_te = []
-#     best_lambdas = []
-#     for max_iter in max_iters: 
-#         loss_te = []
-#         for lambda_ in lambdas:
-#             #temp_loss_tr = []
-#             temp_loss_te = []
-#             for k in range(k_fold):
-#                 loss_tr, loss_te, w_tr = cross_validation(method, y, x, x_te, k_indices, k, lambda_, max_iter)
-#                 #temp_loss_tr.append(loss_tr)
-#                 temp_loss_te.append(loss_te)
-#             #temp_lambda_loss_tr.append(np.mean(temp_loss_tr))
-#             loss_te.append(np.mean(temp_loss_te))
-            
-#         best_temp_loss = min(loss_te)
-#         best_losss_te.append(best_temp_loss) 
-#         best_lambdas.append(lambdas[np.argmin(temp_loss_te)])
-#         #loss_tr.append(np.mean(temp_lambda_loss_tr))
-#     best_loss = (min(best_losss_te))
-#     best_lambda = best_lambdas[np.argmin(best_losss_te)]
-#     best_max_iter = max_iters[np.argmin(best_losss_te)]
-#     # ***************************************************
-#     #raise NotImplementedError    
-    
-#     return best_max_iter, best_lambda, best_loss
+        if verbose:
+            print("Data have been preprocessed")
+
+        if logistic:
+            y_logistic = to_0_1(y)
+            best_lambda_, cross_mse_tr_rr, cross_mse_val_rr = best_single_param_selection(method, y_logistic, x, x_te, id, k_fold, params = params, tuned_param = tuned_param, logistic = True, verbose = verbose)
+        else:
+            best_lambda_, cross_mse_tr_rr, cross_mse_val_rr = best_single_param_selection(method, y, x, x_te, id, k_fold, params = params, tuned_param = tuned_param, logistic = False, verbose = verbose)
+        cross_mse_tr.append(cross_mse_tr_rr)
+        cross_mse_val.append(cross_mse_val_rr)
+
+    best_accuracy_val = (min(cross_mse_val))
+    idx = np.where(cross_mse_val == best_accuracy_val)
+    best_accuracy_tr = cross_mse_tr[np.squeeze(idx)]
+    best_degree = degrees[np.squeeze(idx)]
+
+    print("Chosen degree = ", best_degree, " accuracies: training: ", best_accuracy_tr, ", validation: ", best_accuracy_val )
+
+    cross_validation_visualization(str(method) + "_degree_selection", degrees, cross_mse_tr, cross_mse_val, "degree")
+    return best_degree, best_accuracy_tr, best_accuracy_val

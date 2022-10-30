@@ -288,6 +288,8 @@ def preproc_train(x, title, percentage = 95, feature_to_keep = 0, do_corr = True
     else:
         projection_matrix = None
     if do_poly:
+        if degree == 0:
+            raise RuntimeError("Please specify the polynomial degree wanted")
         x = build_poly(x, title, degree)
     
     return x, x_mean, x_std, ind, projection_matrix
@@ -320,6 +322,8 @@ def preproc_test(x, title, x_mean, x_std, projection_matrix, ind, do_corr = True
     if do_pca: 
         x = np.dot(x, projection_matrix)
     if do_poly:
+        if degree == 0:
+            raise RuntimeError("Please specify the polynomial degree wanted")
         x = build_poly(x, title, degree)
     return x
 
