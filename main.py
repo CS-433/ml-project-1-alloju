@@ -49,7 +49,7 @@ import numpy as np
 
 y,x,ids = load_csv_data(training_set)
 title = load_csv_title(training_set)
-chosen_degree = 9
+chosen_degree = 6
 
 x, x_mean, x_std, ind, projection_matrix = preproc_train(x, title, do_corr = False, do_pca = False, do_poly = True, degree = chosen_degree) #TODO: decomment
 
@@ -59,7 +59,7 @@ title = load_csv_title(test_set)
 x_te = preproc_test(x_te, title, x_mean, x_std, projection_matrix, ind, do_corr = False, do_pca = False, do_poly = True, degree = chosen_degree) #TODO: decomment
 y_logistic = to_0_1(y)
 
-#x_tr, x_val, y_tr, y_val = split_data(x,y,0.8)
+x_tr, x_val, y_tr, y_val = split_data(x,y,0.8)
 
 
 # mse_train, mse_val = apply_method(im.least_squares, y_tr, x_tr, y_val = y_val, x_val = x_val, x_te = x_te, id = id, validation = True)
@@ -73,7 +73,7 @@ y_logistic = to_0_1(y)
 
 # RIDGE REGRESSION
 
-best_lambda_, cross_mse_tr_rr, cross_mse_val_rr = best_single_param_selection(im.ridge_regression, y, x, x_te, id, 10, params = [0.0, 1e-6, 1e-5, 1e-4, 2e-4, 3e-4, 5e-4, 6e-4, 7e-4, 8e-4, 9e-4, 1e-3, 1e-2, 1e-1], tuned_param = "lambda", logistic = False)
+#best_lambda_, cross_mse_tr_rr, cross_mse_val_rr = best_single_param_selection(im.ridge_regression, y, x, x_te, id, 10, params = [0.0, 1e-6, 1e-5, 1e-4, 2e-4, 3e-4, 5e-4, 6e-4, 7e-4, 8e-4, 9e-4, 1e-3, 1e-2, 1e-1], tuned_param = "lambda", logistic = False)
 
 # RIDGE REGRESSION WITH POLYNOMIAL
 
@@ -93,8 +93,12 @@ best_lambda_, cross_mse_tr_rr, cross_mse_val_rr = best_single_param_selection(im
 
 #print("reg log reg PCA 95%")
 
-#best_lambda, best_gamma, best_max_iters, best_mse_val, mse_tr_final = best_triple_param_selection(im.reg_logistic_regression, y_logistic, x, x_te, id, 10, lambdas = [1e-6, 1e-5 , 1e-4], gammas = [5e-2, 1e-1, 5e-1], maxs_iters = [1200])
+#best_lambda, best_gamma, best_max_iters, best_mse_val, mse_tr_final = best_triple_param_selection(im.reg_logistic_regression, y_logistic, x, x_te, id, 10, lambdas = [1e-6, 1e-5 , 1e-4], gammas = [1e-7, 1e-6], maxs_iters = [500], logistic = True, verbose = True)
 
+mse_train, mse_val = apply_method(im.reg_logistic_regression, y_tr, x_tr, y_val = y_val, x_val = x_val, x_te = x_te, id = id, validation = True, lambda_ = 1e-6, gamma = 1e-5, max_iters = 1200)
+print("MSE: ", mse_train, mse_val)
+acc_train, acc_val = apply_method(im.reg_logistic_regression, y_tr, x_tr, y_val = y_val, x_val = x_val, x_te = x_te, id = id, validation = True, lambda_ = 1e-6, gamma = 1e-5, max_iters = 1200, loss = "accuracy")
+print("Accuracy:", acc_train, acc_val)
 
 # print("reg log reg PCA 80%")
 

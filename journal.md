@@ -67,6 +67,10 @@ final training loss 0.1400000190854202
 - 1st submission: reg log reg without pca without del corr
 - 2nd submission: reg log reg with one hot encoding: accuracy measures:  train =  0.42694 val =  0.42768
 final training loss 0.07451915987030125, Chosen lambda is:  0.0002
+- 3rd submission: trial with bad accuracy on polynomial on ridge regression...
+- 4th submission: ridge regression using polynomial: accuracy measures:  train =  0.814845 val =  0.81402
+final training loss 0.27362973363479154
+Chosen lambda is:  1e-05
 
 
 
