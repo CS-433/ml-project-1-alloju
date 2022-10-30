@@ -2,11 +2,11 @@ from itertools import filterfalse
 from os import truncate
 from re import I
 from xml.etree.ElementTree import TreeBuilder
-from cross_validation import best_single_param_selection, build_k_indices, cross_validation, best_triple_param_selection
+from cross_validation import best_single_param_selection, build_k_indices, cross_validation, best_triple_param_selection, joining_prediction, apply_separation_method
 from helpers import standardize, load_csv_data, load_csv_title
 from split_data import split_data
 from paths import training_set, test_set
-from apply_method import apply_method, predict, joining_prediction
+from apply_method import apply_method, predict
 import implementations as im
 from preprocessing import angle_values, preproc_test, preproc_train, to_0_1, class_separation, replace_class
 import numpy as np
@@ -21,14 +21,22 @@ import numpy as np
 # TODO: décommenter
 y,x,id_tr = load_csv_data(training_set)
 title_tr = load_csv_title(training_set)
-x, title_tr = replace_class(x, title_tr)
-y = to_0_1(y)
-xs, ys_, ids_ = class_separation(x, title_tr, id_tr, y)
+#x, title_tr = replace_class(x, title_tr)
+y_logistic = to_0_1(y)
+#xs, ys_, ids_ = class_separation(x, title_tr, id_tr, y)
 
 _, x_te, id_te = load_csv_data(test_set)
 title_te = load_csv_title(test_set)
-x_te, title_te = replace_class(x_te, title_te)
-xs_te, _s, ids_te = class_separation(x_te, title_te, id_te, _)
+#x_te, title_te = replace_class(x_te, title_te)
+#xs_te, _s, ids_te = class_separation(x_te, title_te, id_te, _)
+
+#apply_separation_method(method = im.least_squares , y_tr = y ,x_tr = x, id_tr = id_tr, title_tr = title_tr, y_te = _, x_te = x_te, id_te = id_te, title_te = title_te, k_fold = 10, lambdas_ = [0.5], initial_w = None, max_iters = [100], gammas = [0.01], do_corr = False, do_pca = False, percentage = 95, logistic = False, verbose = False) #do_poly = False
+#apply_separation_method(method = im.mean_squared_error_gd , y_tr = y ,x_tr = x, id_tr = id_tr, title_tr = title_tr, y_te = _, x_te = x_te, id_te = id_te, title_te = title_te, k_fold = 10, lambdas_ = [1e-3, 0.1], initial_w = None, max_iters = [30, 100], gammas = [2e-3, 0.2], do_corr = False, do_pca = False, percentage = 95, logistic = False, verbose = True) #do_poly = False
+#apply_separation_method(method = im.mean_squared_error_sgd , y_tr = y ,x_tr = x, id_tr = id_tr, title_tr = title_tr, y_te = _, x_te = x_te, id_te = id_te, title_te = title_te, k_fold = 10, lambdas_ = [1e-3, 0.1], initial_w = None, max_iters = [30, 100], gammas = [2e-3, 0.2], do_corr = False, do_pca = False, percentage = 95, logistic = False, verbose = True) #do_poly = False
+apply_separation_method(method = im.ridge_regression , y_tr = y ,x_tr = x, id_tr = id_tr, title_tr = title_tr, y_te = _, x_te = x_te, id_te = id_te, title_te = title_te, k_fold = 10, lambdas_ = [123e-8, 1e-8, 1e-10, 2e-7, 3e-6, 1e-6, 1e-5 , 1e-4, 2e-4, 3e-4, 5e-4, 6e-4, 7e-4, 8e-4, 9e-4,  2e-3, 8e-3, 1e-3, 5e-2, 1e-2, 7e-2, 1e-1, 2e-1, 4e-2, 5e-1, 8e-2, 9e-2, 0.0, 1, 8], initial_w = None, max_iters = [1], gammas = [0.0], do_corr = False, do_pca = False, percentage = 95, logistic = False, verbose = True) #do_poly = False
+#apply_separation_method(method = im.logistic_regression , y_tr = y_logistic ,x_tr = x, id_tr = id_tr, title_tr = title_tr, y_te = _, x_te = x_te, id_te = id_te, title_te = title_te, k_fold = 10, lambdas_ = [1e-3, 0.1], initial_w = None, max_iters = [30, 100], gammas = [2e-3, 0.2], do_corr = False, do_pca = False, percentage = 95, logistic = True, verbose = True) #do_poly = False
+#apply_separation_method(method = im.reg_logistic_regression , y_tr = y_logistic ,x_tr = x, id_tr = id_tr, title_tr = title_tr, y_te = _, x_te = x_te, id_te = id_te, title_te = title_te, k_fold = 10, lambdas_ = [1e-3, 0.1, 1e-5, 1e-4, 0.03, 0.23], initial_w = None, max_iters = [100, 400], gammas = [2e-3, 1e-7, 1e-3, 0.1, 0.2], do_corr = False, do_pca = False, percentage = 95, logistic = True, verbose = True) #do_poly = False
+
 
 """
 mse_train_s = []
@@ -133,7 +141,7 @@ joining_prediction(method, ids_ys[0], ids_ys[1])
 print(np.sum(mse_train_s))
 print('Accuracy:', np.sum(acc_trains), np.sum(acc_vals))
 """
-
+"""
 mse_train_s = []
 ys = []
 ids = []
@@ -168,7 +176,7 @@ ids_ys[0] = ids_ys[0][index]
 joining_prediction(method, ids_ys[0], ids_ys[1])
 print(np.sum(mse_train_s))
 print('Accuracy:', np.sum(acc_trains), np.sum(acc_vals))
-
+"""
 """
 mse_train_s = []
 ys = []

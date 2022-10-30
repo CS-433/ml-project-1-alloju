@@ -3,6 +3,10 @@ from apply_method import apply_method, predict
 from utilities import compute_mse
 from plots import cross_validation_visualization
 from split_data import split_data
+from helpers import create_csv_submission
+from paths import  prediction_dir
+import os.path as op
+from preprocessing import replace_class, class_separation, preproc_train, preproc_test
 
 def build_k_indices(y, k_fold, seed):
     """build k indices for k-fold.
@@ -124,7 +128,7 @@ def best_single_param_selection(method, y,x, x_te, id, k_fold, params = [0.1, 0.
 
     return best_param, best_loss_tr, best_loss_val
 
-def best_triple_param_selection(method, y,x, x_te, id, k_fold, lambdas = [0.1, 0.5], gammas =[0.1,0.5], maxs_iters = [5,10], initial_w = None, seed = 1, verbose = True):
+def best_triple_param_selection(method, y,x, x_te, id, k_fold, lambdas = [0.1, 0.5], gammas =[0.1,0.5], maxs_iters = [5,10], initial_w = None, seed = 1, verbose = True, separation = False, logistic = False):
     """cross validation over regularisation parameter lambda.
     
     Args:
@@ -195,17 +199,17 @@ def best_triple_param_selection(method, y,x, x_te, id, k_fold, lambdas = [0.1, 0
     super_best_lambda = super_best_lambdas[idx_super_best]
         
     print("Chosen parameters are: ", "lambda = ", super_best_lambda, "max_iters = ", best_max_iters, "gamma = ", best_gamma, "loss train = ", min(super_best_loss_train), "loss val = ", super_best_loss)
-
+    if separation:
+        return best_lambda, best_gamma, best_max_iters
+    else:
     #cross_validation_visualization(params, loss_tr, loss_val)
-    x_tr, x_val, y_tr, y_val = split_data(x,y,0.8)
-    acc_tr, acc_val = apply_method(method, y_tr, x_tr, y_val, x_val, max_iters = best_max_iters, lambda_ = best_lambda, initial_w = initial_w, gamma = best_gamma, validation = True, loss = "accuracy", do_predictions= False)
-    print("accuracy measures: ", "train = ", acc_tr, "val = ", acc_val)
-    loss_tr_final, _ = apply_method(method, y, x, x_te = x_te, id = id, max_iters = best_max_iters, lambda_ = best_lambda, initial_w = initial_w, gamma = best_gamma, validation = False)
-
-    #loss_tr_final, _ = apply_method(method, y, x, np.zeros_like(y), np.zeros_like(x), x_te, id, best_param, validation = False)
-    print("final training loss", loss_tr_final)
-
-    return best_lambda, best_gamma, best_max_iters, loss_tr_final, best_loss_val
+        x_tr, x_val, y_tr, y_val = split_data(x,y,0.8)
+        acc_tr, acc_val = apply_method(method, y_tr, x_tr, y_val, x_val, max_iters = best_max_iters, lambda_ = best_lambda, initial_w = initial_w, gamma = best_gamma, validation = True, loss = "accuracy", do_predictions= False, logistic = logistic )
+        print("accuracy measures: ", "train = ", acc_tr, "val = ", acc_val)
+        loss_tr_final, _ = apply_method(method, y, x, x_te = x_te, id = id, max_iters = best_max_iters, lambda_ = best_lambda, initial_w = initial_w, gamma = best_gamma, validation = False,loss = "original",  do_predictions = True, logistic = logistic)
+        #loss_tr_final, _ = apply_method(method, y, x, np.zeros_like(y), np.zeros_like(x), x_te, id, best_param, validation = False)
+        print("final training loss", loss_tr_final)
+        return best_lambda, best_gamma, best_max_iters, loss_tr_final, best_loss_val
 
 
 # def best_lambda_and_maxiters_selection(method, y, x, x_te, max_iters, k_fold, lambdas, seed = 1):
@@ -254,3 +258,58 @@ def best_triple_param_selection(method, y,x, x_te, id, k_fold, lambdas = [0.1, 0
 #     #raise NotImplementedError    
     
 #     return best_max_iter, best_lambda, best_loss
+
+def joining_prediction(method, id, y):
+    path = op.join(prediction_dir, "prediction" + str(method) + ".csv")
+    create_csv_submission(id, y, path)
+
+def apply_separation_method(method, y_tr, x_tr, id_tr, title_tr, y_te, x_te, id_te, title_te, k_fold = 10, lambdas_ = [0.5], initial_w = None, max_iters = [100], gammas = [0.01], do_corr = False, do_pca = False,  percentage = 95, logistic = False, verbose = True): #do_poly = False
+# method,y_tr,x_tr,y_val = np.zeros([10,1]) ,x_val = np.zeros([10,1]), x_te = np.zeros([5,1]), id = np.zeros(5), lambda_ = 0.5, initial_w = None, max_iters = 100, gamma = 0.01, do_predictions = True, validation = True, loss = 'original', separation = False
+    x_tr, title_tr = replace_class(x_tr, title_tr)
+    xs_tr, ys_tr, ids_ = class_separation(x_tr, title_tr, id_tr, y_tr)
+    x_te, title_te = replace_class(x_te, title_te)
+    xs_te, _, ids_te = class_separation(x_te, title_te, id_te, y_te)
+
+
+    mse_trains = []
+    ys = []
+    ids = []
+    acc_trains = []
+    acc_vals = []
+    for i in range(len(xs_tr)):
+        xi_tr = xs_tr[i]
+        yi_tr = ys_tr[i]
+        xi_te = xs_te[i]
+        idi_te = ids_te[i]
+
+        #Preprocessing
+        xi_tr, x_mean, x_std, ind, projection_matrix = preproc_train(xi_tr, title_tr, percentage = percentage, do_corr = do_corr, do_pca = do_pca) #  do_poly = do_poly
+        xi_te = preproc_test(xi_te, title_te, x_mean, x_std, projection_matrix, ind, do_corr = do_corr, do_pca = do_pca) # do_poly = do_poly
+
+        #Tune for the best param
+        best_lambda, best_gamma, best_max_iters = best_triple_param_selection(method, y = yi_tr, x = xi_tr, x_te = xi_te, id= idi_te, k_fold = k_fold, lambdas = lambdas_, gammas = gammas, maxs_iters = max_iters, initial_w = initial_w, seed = 1, verbose = verbose, separation = True )
+       
+        #prepare predictions
+        mse_train, _, y_bin = apply_method(method, yi_tr, xi_tr, x_te = xi_te, id = idi_te, lambda_ = best_lambda, initial_w = initial_w, max_iters = best_max_iters, gamma = best_gamma, loss = "original", validation = False, separation = True, do_predictions = True, logistic = logistic)
+        
+        #calculate accuracies
+        x_tr_sep, x_val_sep, y_tr_sep, y_val_sep = split_data(xi_tr,yi_tr,0.8)
+        acc_train, acc_val = apply_method(method, y_tr_sep, x_tr_sep, y_val = y_val_sep, x_val = x_val_sep, lambda_ = best_lambda, initial_w = initial_w, max_iters = best_max_iters, gamma = best_gamma, do_predictions = False, validation = True, loss = "accuracy", logistic = logistic, separation = False)
+        print("Accuracy:", acc_train, acc_val)
+
+        ratio = len(xi_tr)/len(x_tr)
+        mse_trains.append(mse_train*ratio)
+        acc_trains.append(acc_train*ratio)
+        acc_vals.append( acc_val*ratio)
+        ys = np.concatenate((ys, y_bin))
+        ids = np.concatenate((ids,idi_te))
+
+    ids = np.squeeze(ids)
+    ids_ys = np.array([ids.T, ys.T], np.int32)
+    #Sort in the same order than in the load_csv_data input
+    index = np.argsort(ids_ys[0])
+    ids_ys[1] = ids_ys[1][index]
+    ids_ys[0] = ids_ys[0][index]
+    joining_prediction(method, ids_ys[0], ids_ys[1])
+    print("accuracy measures: ", "train = ", np.sum(acc_trains), "val = ", np.sum(acc_vals))
+    print("final training loss", np.sum(mse_trains))
