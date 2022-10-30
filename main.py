@@ -29,221 +29,10 @@ title_te = load_csv_title(test_set)
 #apply_separation_method(method = im.least_squares , y_tr = y ,x_tr = x, id_tr = id_tr, title_tr = title_tr, y_te = _, x_te = x_te, id_te = id_te, title_te = title_te, k_fold = 10, lambdas_ = [0.5], initial_w = None, max_iters = [100], gammas = [0.01], do_corr = False, do_pca = False, percentage = 95, logistic = False, verbose = False) #do_poly = False
 #apply_separation_method(method = im.mean_squared_error_gd , y_tr = y ,x_tr = x, id_tr = id_tr, title_tr = title_tr, y_te = _, x_te = x_te, id_te = id_te, title_te = title_te, k_fold = 10, lambdas_ = [1e-3, 0.1], initial_w = None, max_iters = [30, 100], gammas = [2e-3, 0.2], do_corr = False, do_pca = False, percentage = 95, logistic = False, verbose = True) #do_poly = False
 #apply_separation_method(method = im.mean_squared_error_sgd , y_tr = y ,x_tr = x, id_tr = id_tr, title_tr = title_tr, y_te = _, x_te = x_te, id_te = id_te, title_te = title_te, k_fold = 10, lambdas_ = [1e-3, 0.1], initial_w = None, max_iters = [30, 100], gammas = [2e-3, 0.2], do_corr = False, do_pca = False, percentage = 95, logistic = False, verbose = True) #do_poly = False
-apply_separation_method(method = im.ridge_regression , y_tr = y ,x_tr = x, id_tr = id_tr, title_tr = title_tr, y_te = _, x_te = x_te, id_te = id_te, title_te = title_te, k_fold = 10, lambdas_ = [123e-8, 1e-8, 1e-10, 2e-7, 3e-6, 1e-6, 1e-5 , 1e-4, 2e-4, 3e-4, 5e-4, 6e-4, 7e-4, 8e-4, 9e-4,  2e-3, 8e-3, 1e-3, 5e-2, 1e-2, 7e-2, 1e-1, 2e-1, 4e-2, 5e-1, 8e-2, 9e-2, 0.0, 1, 8], initial_w = None, max_iters = [1], gammas = [0.0], do_corr = False, do_pca = False, percentage = 95, logistic = False, verbose = True) #do_poly = False
+apply_separation_method(method = im.ridge_regression , y_tr = y ,x_tr = x, id_tr = id_tr, title_tr = title_tr, y_te = _, x_te = x_te, id_te = id_te, title_te = title_te, k_fold = 10, lambdas_ = [123e-8, 1e-8, 1e-10, 2e-7, 3e-6, 1e-6, 1e-5 , 1e-4, 2e-4, 3e-4, 5e-4, 6e-4, 7e-4, 8e-4, 9e-4,  2e-3, 8e-3, 1e-3, 5e-2, 1e-2, 7e-2, 1e-1, 2e-1, 4e-2, 5e-1, 8e-2, 9e-2, 0.0, 1, 8], initial_w = None, max_iters = [1], gammas = [0.0], do_corr = True, do_pca = True, percentage = 95, logistic = False, verbose = True, do_poly = True, degree = 6) #do_poly = False
 #apply_separation_method(method = im.logistic_regression , y_tr = y_logistic ,x_tr = x, id_tr = id_tr, title_tr = title_tr, y_te = _, x_te = x_te, id_te = id_te, title_te = title_te, k_fold = 10, lambdas_ = [1e-3, 0.1], initial_w = None, max_iters = [30, 100], gammas = [2e-3, 0.2], do_corr = False, do_pca = False, percentage = 95, logistic = True, verbose = True) #do_poly = False
 #apply_separation_method(method = im.reg_logistic_regression , y_tr = y_logistic ,x_tr = x, id_tr = id_tr, title_tr = title_tr, y_te = _, x_te = x_te, id_te = id_te, title_te = title_te, k_fold = 10, lambdas_ = [1e-3, 0.1, 1e-5, 1e-4, 0.03, 0.23], initial_w = None, max_iters = [100, 400], gammas = [2e-3, 1e-7, 1e-3, 0.1, 0.2], do_corr = False, do_pca = False, percentage = 95, logistic = True, verbose = True) #do_poly = False
 
-
-"""
-mse_train_s = []
-ys = []
-ids = []
-acc_trains = []
-acc_vals = []
-method = im.least_squares
-for i in range(len(xs)):
-    xs[i], x_mean, x_std, ind, projection_matrix = preproc_train(xs[i], title_tr, percentage = 95, do_corr = False, do_pca = False) 
-    xs_te[i] = preproc_test(xs_te[i], title_te, x_mean, x_std, projection_matrix, ind, do_corr = False, do_pca = False)
-    mse_train, _, y_bin = apply_method(method, ys_[i], xs[i], x_te = xs_te[i], id = ids_te[i], validation = False, separation = True)
-    x_tr, x_val, y_tr, y_val = split_data(xs[i],ys_[i],0.8)
-    ## SI validation par mini groupe Juste le ids_ pas dimension donc je sais pas lequel tu prenais d'habitude 
-    acc_train, acc_val = apply_method(method, y_tr, x_tr, y_val = y_val, x_val = x_val, x_te = x_te, id = ids_, do_predictions = False, validation = True, loss = "accuracy")
-    print("Accuracy:", acc_train, acc_val)
-    ## jusque la 
-    ratio = xs[i].shape[0]/len(x)
-    mse_train_s.append(mse_train*ratio)
-    acc_trains.append(acc_train*ratio)
-    acc_vals.append( acc_val*ratio)
-    ys = np.concatenate((ys, y_bin))
-    ids = np.concatenate((ids,ids_te[i]))
-
-ids = np.squeeze(ids)
-ids_ys = np.array([ids.T, ys.T], np.int32)
-#Sort in the same order than in the load_csv_data input
-index = np.argsort(ids_ys[0])
-ids_ys[1] = ids_ys[1][index]
-ids_ys[0] = ids_ys[0][index]
-joining_prediction(method, ids_ys[0], ids_ys[1])
-print(np.sum(mse_train_s))
-print('Accuracy:', np.sum(acc_trains), np.sum(acc_vals))
-"""
-
-"""
-mse_train_s = []
-ys = []
-ids = []
-acc_trains = []
-acc_vals = []
-method = im.ridge_regression
-lamb = 123e-8
-for i in range(len(xs)):
-    xs[i], x_mean, x_std, ind, projection_matrix = preproc_train(xs[i], title_tr, percentage = 95, do_corr = False, do_pca = False) 
-    xs_te[i] = preproc_test(xs_te[i], title_te, x_mean, x_std, projection_matrix, ind, do_corr = False, do_pca = False)
-    mse_train, _, y_bin = apply_method(method, ys_[i], xs[i], x_te = xs_te[i], id = ids_te[i], lambda_=lamb, validation = False, separation = True)
-    x_tr, x_val, y_tr, y_val = split_data(xs[i],ys_[i],0.8)
-    ## SI validation par mini groupe Juste le ids_ pas dimension donc je sais pas lequel tu prenais d'habitude 
-    acc_train, acc_val = apply_method(method, y_tr, x_tr, y_val = y_val, x_val = x_val, x_te = x_te, id = ids_, lambda_=lamb, do_predictions = False, validation = True, loss = "accuracy")
-    print("Accuracy individual:", acc_train, acc_val)
-    ## jusque la 
-    ratio = xs[i].shape[0]/len(x)
-    mse_train_s.append(mse_train*ratio)
-    acc_trains.append(acc_train*ratio)
-    acc_vals.append( acc_val*ratio)
-    ys = np.concatenate((ys, y_bin))
-    ids = np.concatenate((ids,ids_te[i]))
-
-ids = np.squeeze(ids)
-ids_ys = np.array([ids.T, ys.T], np.int32)
-#Sort in the same order than in the load_csv_data input
-index = np.argsort(ids_ys[0])
-ids_ys[1] = ids_ys[1][index]
-ids_ys[0] = ids_ys[0][index]
-joining_prediction(method, ids_ys[0], ids_ys[1])
-print(np.sum(mse_train_s))
-print('Accuracy:', np.sum(acc_trains), np.sum(acc_vals))
-"""
-"""
-mse_train_s = []
-ys = []
-ids = []
-acc_trains = []
-acc_vals = []
-method = im.mean_squared_error_gd
-max_i = 1000
-gam = 0.05
-for i in range(len(xs)):
-    xs[i], x_mean, x_std, ind, projection_matrix = preproc_train(xs[i], title_tr, percentage = 95, do_corr = False, do_pca = False) 
-    xs_te[i] = preproc_test(xs_te[i], title_te, x_mean, x_std, projection_matrix, ind, do_corr = False, do_pca = False)
-    mse_train, _, y_bin = apply_method(method, ys_[i], xs[i], x_te = xs_te[i], id = ids_te[i], max_iters = max_i, gamma = gam, validation = False, separation = True)
-    x_tr, x_val, y_tr, y_val = split_data(xs[i],ys_[i],0.8)
-    ## SI validation par mini groupe Juste le ids_ pas dimension donc je sais pas lequel tu prenais d'habitude 
-    acc_train, acc_val = apply_method(method, y_tr, x_tr, y_val = y_val, x_val = x_val, x_te = x_te, id = ids_, max_iters = max_i, gamma = gam,  do_predictions = False, validation = True, loss = "accuracy")
-    print("Accuracy individual:", acc_train, acc_val)
-    ## jusque la 
-    ratio = xs[i].shape[0]/len(x)
-    mse_train_s.append(mse_train*ratio)
-    acc_trains.append(acc_train*ratio)
-    acc_vals.append( acc_val*ratio)
-    ys = np.concatenate((ys, y_bin))
-    ids = np.concatenate((ids,ids_te[i]))
-
-ids = np.squeeze(ids)
-ids_ys = np.array([ids.T, ys.T], np.int32)
-#Sort in the same order than in the load_csv_data input
-index = np.argsort(ids_ys[0])
-ids_ys[1] = ids_ys[1][index]
-ids_ys[0] = ids_ys[0][index]
-joining_prediction(method, ids_ys[0], ids_ys[1])
-print(np.sum(mse_train_s))
-print('Accuracy:', np.sum(acc_trains), np.sum(acc_vals))
-"""
-"""
-mse_train_s = []
-ys = []
-ids = []
-acc_trains = []
-acc_vals = []
-method = im.mean_squared_error_sgd
-max_i = 2000
-gam = 1e-4
-lamb = 0.0001
-for i in range(len(xs)):
-    xs[i], x_mean, x_std, ind, projection_matrix = preproc_train(xs[i], title_tr, percentage = 95, do_corr = False, do_pca = False) 
-    xs_te[i] = preproc_test(xs_te[i], title_te, x_mean, x_std, projection_matrix, ind, do_corr = False, do_pca = False)
-    mse_train, _, y_bin = apply_method(method, ys_[i], xs[i], x_te = xs_te[i], id = ids_te[i], max_iters = max_i, gamma = gam, lambda_=lamb, validation = False, separation = True)
-    x_tr, x_val, y_tr, y_val = split_data(xs[i],ys_[i],0.8)
-    ## SI validation par mini groupe Juste le ids_ pas dimension donc je sais pas lequel tu prenais d'habitude 
-    acc_train, acc_val = apply_method(method, y_tr, x_tr, y_val = y_val, x_val = x_val, x_te = x_te, id = ids_, max_iters = max_i, gamma = gam, lambda_=lamb, do_predictions = False, validation = True, loss = "accuracy")
-    print("Accuracy individual:", acc_train, acc_val)
-    ## jusque la 
-    ratio = xs[i].shape[0]/len(x)
-    mse_train_s.append(mse_train*ratio)
-    acc_trains.append(acc_train*ratio)
-    acc_vals.append( acc_val*ratio)
-    ys = np.concatenate((ys, y_bin))
-    ids = np.concatenate((ids,ids_te[i]))
-
-ids = np.squeeze(ids)
-ids_ys = np.array([ids.T, ys.T], np.int32)
-#Sort in the same order than in the load_csv_data input
-index = np.argsort(ids_ys[0])
-ids_ys[1] = ids_ys[1][index]
-ids_ys[0] = ids_ys[0][index]
-joining_prediction(method, ids_ys[0], ids_ys[1])
-print(np.sum(mse_train_s))
-print('Accuracy:', np.sum(acc_trains), np.sum(acc_vals))
-"""
-"""
-mse_train_s = []
-ys = []
-ids = []
-acc_trains = []
-acc_vals = []
-method = im.logistic_regression
-max_i = 400
-gam = 0.2
-for i in range(len(xs)):
-    xs[i], x_mean, x_std, ind, projection_matrix = preproc_train(xs[i], title_tr, percentage = 95, do_corr = False, do_pca = False) 
-    xs_te[i] = preproc_test(xs_te[i], title_te, x_mean, x_std, projection_matrix, ind, do_corr = False, do_pca = False)
-    mse_train, _, y_bin = apply_method(method, ys_[i], xs[i], x_te = xs_te[i], id = ids_te[i], max_iters = max_i, gamma = gam, validation = False, separation = True)
-    x_tr, x_val, y_tr, y_val = split_data(xs[i],ys_[i],0.8)
-    ## SI validation par mini groupe Juste le ids_ pas dimension donc je sais pas lequel tu prenais d'habitude 
-    acc_train, acc_val = apply_method(method, y_tr, x_tr, y_val = y_val, x_val = x_val, x_te = x_te, id = ids_, max_iters = max_i, gamma = gam,  do_predictions = False, validation = True, loss = "accuracy")
-    print("Accuracy individual:", acc_train, acc_val)
-    ## jusque la 
-    ratio = xs[i].shape[0]/len(x)
-    mse_train_s.append(mse_train*ratio)
-    acc_trains.append(acc_train*ratio)
-    acc_vals.append( acc_val*ratio)
-    ys = np.concatenate((ys, y_bin))
-    ids = np.concatenate((ids,ids_te[i]))
-
-ids = np.squeeze(ids)
-ids_ys = np.array([ids.T, ys.T], np.int32)
-#Sort in the same order than in the load_csv_data input
-index = np.argsort(ids_ys[0])
-ids_ys[1] = ids_ys[1][index]
-ids_ys[0] = ids_ys[0][index]
-joining_prediction(method, ids_ys[0], ids_ys[1])
-print(np.sum(mse_train_s))
-print('Accuracy:', np.sum(acc_trains), np.sum(acc_vals))
-"""
-"""
-mse_train_s = []
-ys = []
-ids = []
-acc_trains = []
-acc_vals = []
-method = im.reg_logistic_regression
-max_i = 1200
-gam = 0.05
-lamb = 0.001
-for i in range(len(xs)):
-    xs[i], x_mean, x_std, ind, projection_matrix = preproc_train(xs[i], title_tr, percentage = 95, do_corr = False, do_pca = False) 
-    xs_te[i] = preproc_test(xs_te[i], title_te, x_mean, x_std, projection_matrix, ind, do_corr = False, do_pca = False)
-    mse_train, _, y_bin = apply_method(method, ys_[i], xs[i], x_te = xs_te[i], id = ids_te[i], max_iters = max_i, gamma = gam, lambda_=lamb, validation = False, separation = True)
-    x_tr, x_val, y_tr, y_val = split_data(xs[i],ys_[i],0.8)
-    ## SI validation par mini groupe Juste le ids_ pas dimension donc je sais pas lequel tu prenais d'habitude 
-    acc_train, acc_val = apply_method(method, y_tr, x_tr, y_val = y_val, x_val = x_val, x_te = x_te, id = ids_, max_iters = max_i, gamma = gam, lambda_=lamb, do_predictions = False, validation = True, loss = "accuracy")
-    print("Accuracy individual:", acc_train, acc_val)
-    ## jusque la 
-    ratio = xs[i].shape[0]/len(x)
-    mse_train_s.append(mse_train*ratio)
-    acc_trains.append(acc_train*ratio)
-    acc_vals.append( acc_val*ratio)
-    ys = np.concatenate((ys, y_bin))
-    ids = np.concatenate((ids,ids_te[i]))
-
-ids = np.squeeze(ids)
-ids_ys = np.array([ids.T, ys.T], np.int32)
-#Sort in the same order than in the load_csv_data input
-index = np.argsort(ids_ys[0])
-ids_ys[1] = ids_ys[1][index]
-ids_ys[0] = ids_ys[0][index]
-joining_prediction(method, ids_ys[0], ids_ys[1])
-print(np.sum(mse_train_s))
-print('Accuracy:', np.sum(acc_trains), np.sum(acc_vals))
-"""
 
 #For validation: A Mettre dans la boucle ! x,y = xs[i], ys[i]
 #x_tr, x_val, y_tr, y_val = split_data(x,y,0.8)
@@ -253,7 +42,7 @@ print('Accuracy:', np.sum(acc_trains), np.sum(acc_vals))
 # print("Accuracy:", acc_train, acc_val)
 
 #x,y = load_data(training_set)
-
+"""
 # TODO: décommenter
 
 y,x,ids = load_csv_data(training_set)
@@ -429,3 +218,4 @@ best_lambda, best_gamma, best_max_iters, best_mse_val, mse_tr_final = best_tripl
 # print("ridge regression: ", mse_tr_rr, mse_val_rr)
 # print("mean squared SGD: ", mse_tr_mss, mse_val_mss)
 # print("mean squared GD: ", mse_tr_msg, mse_val_msg)
+"""

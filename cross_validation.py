@@ -4,7 +4,7 @@ from utilities import compute_mse
 from plots import cross_validation_visualization
 from split_data import split_data
 from helpers import create_csv_submission, load_csv_data, load_csv_title
-from paths import  prediction_dir
+from paths import  prediction_dir, training_set, test_set
 import os.path as op
 from preprocessing import replace_class, class_separation, preproc_train, preproc_test, to_0_1
 
@@ -274,7 +274,7 @@ def joining_prediction(method, id, y):
     path = op.join(prediction_dir, "prediction" + str(method) + ".csv")
     create_csv_submission(id, y, path)
 
-def apply_separation_method(method, y_tr, x_tr, id_tr, title_tr, y_te, x_te, id_te, title_te, k_fold = 10, lambdas_ = [0.5], initial_w = None, max_iters = [100], gammas = [0.01], do_corr = False, do_pca = False,  percentage = 95, logistic = False, verbose = True): #do_poly = False
+def apply_separation_method(method, y_tr, x_tr, id_tr, title_tr, y_te, x_te, id_te, title_te, k_fold = 10, lambdas_ = [0.5], initial_w = None, max_iters = [100], gammas = [0.01], do_corr = False, do_pca = False,  percentage = 95, logistic = False, verbose = True, do_poly = False, degree = 0): #do_poly = False
 # method,y_tr,x_tr,y_val = np.zeros([10,1]) ,x_val = np.zeros([10,1]), x_te = np.zeros([5,1]), id = np.zeros(5), lambda_ = 0.5, initial_w = None, max_iters = 100, gamma = 0.01, do_predictions = True, validation = True, loss = 'original', separation = False
     x_tr, title_tr = replace_class(x_tr, title_tr)
     xs_tr, ys_tr, ids_ = class_separation(x_tr, title_tr, id_tr, y_tr)
@@ -294,8 +294,8 @@ def apply_separation_method(method, y_tr, x_tr, id_tr, title_tr, y_te, x_te, id_
         idi_te = ids_te[i]
 
         #Preprocessing
-        xi_tr, x_mean, x_std, ind, projection_matrix = preproc_train(xi_tr, title_tr, percentage = percentage, do_corr = do_corr, do_pca = do_pca) #  do_poly = do_poly
-        xi_te = preproc_test(xi_te, title_te, x_mean, x_std, projection_matrix, ind, do_corr = do_corr, do_pca = do_pca) # do_poly = do_poly
+        xi_tr, x_mean, x_std, ind, projection_matrix = preproc_train(xi_tr, title_tr, percentage = percentage, do_corr = do_corr, do_pca = do_pca, do_poly = do_poly, degree = degree) #  do_poly = do_poly
+        xi_te = preproc_test(xi_te, title_te, x_mean, x_std, projection_matrix, ind, do_corr = do_corr, do_pca = do_pca, do_poly = do_poly, degree = degree) # do_poly = do_poly
 
         #Tune for the best param
         best_lambda, best_gamma, best_max_iters = best_triple_param_selection(method, y = yi_tr, x = xi_tr, x_te = xi_te, id= idi_te, k_fold = k_fold, lambdas = lambdas_, gammas = gammas, maxs_iters = max_iters, initial_w = initial_w, seed = 1, verbose = verbose, separation = True )
