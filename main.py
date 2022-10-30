@@ -49,7 +49,7 @@ import numpy as np
 
 y,x,ids = load_csv_data(training_set)
 title = load_csv_title(training_set)
-chosen_degree = 6
+chosen_degree = 5
 
 x, x_mean, x_std, ind, projection_matrix = preproc_train(x, title, do_corr = False, do_pca = False, do_poly = True, degree = chosen_degree) #TODO: decomment
 
@@ -95,9 +95,9 @@ x_tr, x_val, y_tr, y_val = split_data(x,y,0.8)
 
 #best_lambda, best_gamma, best_max_iters, best_mse_val, mse_tr_final = best_triple_param_selection(im.reg_logistic_regression, y_logistic, x, x_te, id, 10, lambdas = [1e-6, 1e-5 , 1e-4], gammas = [1e-7, 1e-6], maxs_iters = [500], logistic = True, verbose = True)
 
-mse_train, mse_val = apply_method(im.reg_logistic_regression, y_tr, x_tr, y_val = y_val, x_val = x_val, x_te = x_te, id = id, validation = True, lambda_ = 1e-6, gamma = 1e-5, max_iters = 1200)
+mse_train, mse_val = apply_method(im.reg_logistic_regression, y_tr, x_tr, y_val = y_val, x_val = x_val, x_te = x_te, id = id, validation = True, lambda_ = 1e-6, gamma = 1e-4, max_iters = 1300)
 print("MSE: ", mse_train, mse_val)
-acc_train, acc_val = apply_method(im.reg_logistic_regression, y_tr, x_tr, y_val = y_val, x_val = x_val, x_te = x_te, id = id, validation = True, lambda_ = 1e-6, gamma = 1e-5, max_iters = 1200, loss = "accuracy")
+acc_train, acc_val = apply_method(im.reg_logistic_regression, y_tr, x_tr, y_val = y_val, x_val = x_val, x_te = x_te, id = id, validation = True, lambda_ = 1e-6, gamma = 1e-4, max_iters = 1300, loss = "accuracy")
 print("Accuracy:", acc_train, acc_val)
 
 # print("reg log reg PCA 80%")
