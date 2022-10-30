@@ -1,12 +1,12 @@
 import numpy as np
 from apply_method import apply_method, predict
 from utilities import compute_mse
-from plots import cross_validation_visualization
+from plots import cross_validation_visualization, cross_validation_visualization_degree, cross_validation_visualization_multiple
 from split_data import split_data
-from helpers import create_csv_submission, load_csv_data, load_csv_title
-from paths import  prediction_dir, training_set, test_set
+from helpers import load_csv_data, load_csv_title, create_csv_submission
+from preprocessing import preproc_test, preproc_train, to_0_1, replace_class, class_separation
+from paths import prediction_dir, training_set, test_set
 import os.path as op
-from preprocessing import replace_class, class_separation, preproc_train, preproc_test, to_0_1
 
 def build_k_indices(y, k_fold, seed):
     """build k indices for k-fold.
@@ -106,7 +106,7 @@ def best_single_param_selection(method, y,x, x_te, id, k_fold, params = [0.1, 0.
     best_loss_tr = losses_tr[np.squeeze(idx)]
     best_param = params[np.squeeze(idx)]
 
-    cross_validation_visualization(method, params, losses_tr, losses_val, tuned_param)
+    cross_validation_visualization(method, params, losses_tr, losses_val, tuned_param, 0)
 
     x_tr, x_val, y_tr, y_val = split_data(x,y,0.8)
 
@@ -126,7 +126,7 @@ def best_single_param_selection(method, y,x, x_te, id, k_fold, params = [0.1, 0.
     print("final training loss", loss_tr_final)
     print("Chosen " + tuned_param + " is: ", best_param)
 
-    return best_param, acc_tr, acc_val
+    return best_param, acc_tr, acc_val, best_loss_tr, best_loss_val, losses_tr, losses_val
 
 def best_triple_param_selection(method, y,x, x_te, id, k_fold, lambdas = [0.1, 0.5], gammas =[0.1,0.5], maxs_iters = [5,10], initial_w = None, seed = 1, verbose = True, separation = False, logistic = False):
     """cross validation over regularisation parameter lambda.
@@ -254,21 +254,22 @@ def best_degree_selection(method, k_fold, degrees = [2,4], params = [0.1, 0.5], 
 
         if logistic:
             y_logistic = to_0_1(y)
-            best_lambda_, cross_mse_tr_rr, cross_mse_val_rr = best_single_param_selection(method, y_logistic, x, x_te, id, k_fold, params = params, tuned_param = tuned_param, logistic = True, verbose = verbose)
+            best_param, cross_mse_tr, cross_mse_val, best_loss_tr, best_loss_val, losses_tr, losses_val = best_single_param_selection(method, y_logistic, x, x_te, id, k_fold, params = params, tuned_param = tuned_param, logistic = True, verbose = verbose)
         else:
-            best_lambda_, cross_mse_tr_rr, cross_mse_val_rr = best_single_param_selection(method, y, x, x_te, id, k_fold, params = params, tuned_param = tuned_param, logistic = False, verbose = verbose)
+            best_param, cross_mse_tr_rr, cross_mse_val_rr, best_loss_tr, best_loss_val, losses_tr, losses_val = best_single_param_selection(method, y, x, x_te, id, k_fold, params = params, tuned_param = tuned_param, logistic = False, verbose = verbose)
         cross_mse_tr.append(cross_mse_tr_rr)
         cross_mse_val.append(cross_mse_val_rr)
+        cross_validation_visualization_multiple(str(method)[1:-19], params, losses_tr, losses_val, tuned_param, chosen_degree , 1)
 
-    best_accuracy_val = (min(cross_mse_val))
+    best_accuracy_val = (max(cross_mse_val))
     idx = np.where(cross_mse_val == best_accuracy_val)
     best_accuracy_tr = cross_mse_tr[np.squeeze(idx)]
     best_degree = degrees[np.squeeze(idx)]
 
     print("Chosen degree = ", best_degree, " accuracies: training: ", best_accuracy_tr, ", validation: ", best_accuracy_val )
 
-    cross_validation_visualization(str(method) + "_degree_selection", degrees, cross_mse_tr, cross_mse_val, "degree")
-    return best_degree, best_accuracy_tr, best_accuracy_val
+    cross_validation_visualization_degree(str(method)[1:-19] + "_degree_selection", degrees, cross_mse_tr, cross_mse_val, "degree",2)
+    return best_param, best_degree, best_accuracy_tr, best_accuracy_val
 
 def joining_prediction(method, id, y):
     path = op.join(prediction_dir, "prediction" + str(method) + ".csv")
