@@ -1,6 +1,5 @@
 import numpy as np
 import utilities as ut
-import helpers as hp
 
 def mean_squared_error_gd(y, tx, initial_w, max_iters, gamma):
     """Linear regression using gradient descent
@@ -39,7 +38,7 @@ def mean_squared_error_sgd(y, tx, initial_w, max_iters, gamma):
         loss: the loss value (scalar) for the last iteration of SGD
     """
     w = initial_w
-    for minibatch_y, minibatch_tx in hp.batch_iter(y, tx, 1):
+    for minibatch_y, minibatch_tx in ut.batch_iter(y, tx, 1):
         for n_iter in range(max_iters):
             grad = ut.compute_gradient_MSE(minibatch_y,minibatch_tx,w)
             w -= gamma * grad
@@ -104,7 +103,7 @@ def logistic_regression(y, tx, initial_w, max_iters, gamma):
     return w, np.squeeze(loss)
 
 def reg_logistic_regression(y, tx, lambda_,initial_w, max_iters, gamma):
-    """# Regularized logistic regression using gradient descent or SGD (y ∈ {0, 1}, with regularization term λ∥w∥2 (ridge regulation))
+    """Regularized logistic regression using gradient descent or SGD (y ∈ {0, 1}, with regularization term λ∥w∥2 (ridge regulation))
 
     Args:
         y: shape=(N, ), N is the number of samples.

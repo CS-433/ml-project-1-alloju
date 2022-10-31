@@ -1,5 +1,5 @@
 import numpy as np
-from helpers import standardize
+from utilities import standardize
 import matplotlib.pyplot as plt
 
 def to_0_1(y):
