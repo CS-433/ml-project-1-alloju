@@ -32,7 +32,7 @@ Secondly `preprocessing.py` containing all the different steps implemented in th
 - In `utilities.py` the user can find methods that have been used accross the program and were stored here for easy access.
 - In `paths.py` we stored all the different paths allowing us to access and store our data and prediction files.
 - In `plots.py` one can find the methods that allowed us to plot and visualize our results.
-- In `apply_method.py` the user will find the modular method to call any implementation and the predict method that creates submission files
+- In `methods.py` the user will find the modular method to call any implementation and the predict method that creates submission files
 
 ## Cross validation
 
