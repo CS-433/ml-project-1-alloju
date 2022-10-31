@@ -1,8 +1,7 @@
-from cross_validation import best_degree_selection, best_single_param_selection, build_k_indices, cross_validation, best_triple_param_selection, joining_prediction, apply_separation_method
-from helpers import standardize, load_csv_data, load_csv_title
-from split_data import split_data
+from cross_validation import best_degree_selection, best_single_param_selection, build_k_indices, cross_validation, best_triple_param_selection, joining_prediction, apply_separation_method, apply_method, predict
+from helpers import load_csv_data 
+from utilities import standardize, load_csv_title, split_data
 from paths import training_set, test_set
-from apply_method import apply_method, predict
 import implementations as im
 from preprocessing import angle_values, preproc_test, preproc_train, to_0_1, class_separation, replace_class
 import numpy as np
