@@ -103,7 +103,7 @@ def logistic_regression(y, tx, initial_w, max_iters, gamma):
     return w, np.squeeze(loss)
 
 def reg_logistic_regression(y, tx, lambda_,initial_w, max_iters, gamma):
-    """# Regularized logistic regression using gradient descent or SGD (y ∈ {0, 1}, with regularization term λ∥w∥2 (ridge regulation))
+    """Regularized logistic regression using gradient descent or SGD (y ∈ {0, 1}, with regularization term λ∥w∥2 (ridge regulation))
 
     Args:
         y: shape=(N, ), N is the number of samples.
