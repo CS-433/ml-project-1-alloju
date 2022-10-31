@@ -144,7 +144,7 @@ apply_separation_method(
 #     k_fold=10,
 #     lambdas_=[0.0],
 #     initial_w=None,
-#     max_iters=[300],
+#     max_iters=[600],
 #     gammas=[3e-4],
 #     do_corr=False,
 #     do_pca=False,
