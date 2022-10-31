@@ -20,7 +20,7 @@ def mean_squared_error_gd(y, tx, initial_w, max_iters, gamma):
     for n_iter in range(max_iters):
         grad = ut.compute_gradient_MSE(y,tx,w)
         w -= gamma * grad
-        loss = ut.compute_mse(y, tx, w)
+    loss = ut.compute_mse(y, tx, w)
     return w, np.squeeze(loss)
 
 def mean_squared_error_sgd(y, tx, initial_w, max_iters, gamma):
@@ -43,7 +43,7 @@ def mean_squared_error_sgd(y, tx, initial_w, max_iters, gamma):
         for n_iter in range(max_iters):
             grad = ut.compute_gradient_MSE(minibatch_y,minibatch_tx,w)
             w -= gamma * grad
-            loss = ut.compute_mse(minibatch_y, minibatch_tx, w)
+        loss = ut.compute_mse(minibatch_y, minibatch_tx, w)
     return w, np.squeeze(loss)
 
 def least_squares(y, tx):
@@ -100,7 +100,6 @@ def logistic_regression(y, tx, initial_w, max_iters, gamma):
         # update w: 
         w -= gamma * gradient
         # compute the cost: 
-    #loss = ut.compute_rmse(ut.compute_mse(y,tx,w))
     loss = ut.compute_loss_neg_loglikelihood(y,tx,w)
     return w, np.squeeze(loss)
 
@@ -127,6 +126,5 @@ def reg_logistic_regression(y, tx, lambda_,initial_w, max_iters, gamma):
         # update w: 
         w -= gamma * gradient
         # compute the cost: 
-    #loss = ut.compute_rmse(ut.compute_mse(y,tx,w))
     loss = ut.compute_loss_neg_loglikelihood(y,tx,w)
     return w, np.squeeze(loss)

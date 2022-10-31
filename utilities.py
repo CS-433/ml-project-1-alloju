@@ -1,23 +1,18 @@
 import numpy as np
-import csv
-
-def compute_mse(y, tx, w):
-    """Compute the loss using MSE
-
-    Args:
-        y: shape=(N, )
-        tx: shape=(N,D)
-        w: shape=(D,). The vector of model parameters.
-
-    Returns:
-        the value of the loss (a scalar), corresponding to the input parameters w.
-    """
-    e = y - np.dot(tx,w)
-    loss = 1/(2*y.shape[0])*(np.dot(np.transpose(e),e))
-    return loss
 
 def compute_accuracy(y,tx,w, logistic = False):
-    #e = y - np.dot(tx,w)
+    """Compute the accuracy
+
+    Args:
+        y:          shape=(N, ), the label vector
+        tx:         shape=(N,D), the feature data set
+        w:          shape=(D,). The vector of the weight
+        logistic:   boolean; specified the type of method
+
+    Returns:
+        the accuracy of the model 
+    """
+
     ŷ = np.dot(tx,w)
     if logistic:
         ŷ[ŷ >= 0.5] = 1
@@ -27,6 +22,20 @@ def compute_accuracy(y,tx,w, logistic = False):
         ŷ[ŷ < 0] = -1
     return sum(ŷ == y)/len(y)
 
+def compute_mse(y, tx, w):
+    """Compute the loss using MSE
+
+    Args:
+        y:      shape=(N, ), the label vector
+        tx:     shape=(N,D), the feature data set
+        w:      shape=(D,). The vector of the weight
+
+    Returns:
+        loss:   the value of the loss (a scalar), corresponding to the input parameters w.
+    """
+    e = y - np.dot(tx,w)
+    loss = 1/(2*y.shape[0])*(np.dot(np.transpose(e),e))
+    return loss
 
 def compute_rmse(mse):
     """Compute the rmse given the mse
@@ -43,44 +52,33 @@ def compute_gradient_MSE(y, tx, w):
     """Computes the gradient at w of the MSE for linear regression.
 
     Args:
-        y: shape=(N, )
-        tx: shape=(N,2)
-        w: shape=(2, ). The vector of model parameters.
+        y:          shape=(N, ), the label vector    
+        tx:         shape=(N,D), the features dataset
+        w:          shape=(D, ). The vector of weight
 
     Returns:
-        An array of shape (2, ) (same shape as w), containing the gradient of the loss at w.
+        gradient : An array containing the gradient of the loss at w.
     """
     e = y - np.dot(tx,w)
     gradient = -1/y.shape[0] * np.dot(np.transpose(tx),e)
-    #print(gradient)
     return gradient   
 
 def sigmoid(t):
     """Apply sigmoid function on t.
 
     Arg:
-        t:
+        t:   the value for the sigmoid
     
     Returns:
-        The sigmoid corresponding to the input t 
+        sig: the sigmoid corresponding to the input t 
     """
-    # TODO: handle overflow ! 
-    # if t > 100:
-    #     sig = 1
-    # elif t < -100:
-    #     sig = 0
-    # else:
-    # if t == None:
-    #     print("wtf!!")
-    #     sig = None
-    # else:
-    #print("t: ", t.shape)
+    #To avoid overflow
     ind_over = [t > 100][0]
     t[t > 0]
-    #print(ind_over.shape)
     t[ind_over] = 0
     ind_under = [t < -100][0]
     t[ind_under] = 0
+
     sig = 1/(1 + np.exp(-t))
     sig[ind_over] = 1
     sig[ind_under] = 0
@@ -91,45 +89,23 @@ def compute_loss_neg_loglikelihood(y, tx, w):
     """Compute the cost by negative log likelihood.
     
     Args:
-        y: shape=(N, )
-        tx: shape=(N,D)
-        w: shape=(D, ). The vector of model parameters.
+        y:          shape=(N, ), the label vector    
+        tx:         shape=(N,D), the features dataset
+        w:          shape=(D, ). The vector of weight
     Returns: 
         the value of the loss (a scalar), corresponding to the input parameters w.
     """
     sig = sigmoid(tx.dot(w))
     loss = - y.T@(np.log(sig)) - (1-y).T@(np.log(1 - sig))
-    return (1/y.shape[0])*np.squeeze(loss) # squeeze remove axes of length 1 from loss
+    return (1/y.shape[0])*np.squeeze(loss) 
 
 def compute_gradient_neg_loglikelihood(y, tx, w):
     """Compute the gradient of loss (negative log likelihood).
         Args:
-            y: shape=(N, )
-            tx: shape=(N,D)
-            w: shape=(D, ). The vector of model parameters.
+        y:     shape=(N, ), the label vector    
+        tx:    shape=(N,D), the features dataset
+        w:     shape=(D, ). The vector of weight
         Returns: 
             the value of the gradient corresponding to the input parameters.
     """
     return np.dot(tx.T,sigmoid(np.dot(tx,w))-y)/y.shape[0]
-    #TODO testé (1/N) selon ce que j'ai lu sur un site mais comprendre pk ça marche 
-    #https://medium.com/@IwriteDSblog/gradient-descent-for-logistics-regression-in-python-18e033775082
-
-
-""""
-if __name__ == "__main__":
-    assert # Test 
-"""
-
-def create_csv_submission(ids, y_pred, name):
-    """
-    Creates an output file in .csv format for submission to Kaggle or AIcrowd
-    Arguments: ids (event ids associated with each prediction)
-               y_pred (predicted class labels)
-               name (string name of .csv output file to be created)
-    """
-    with open(name, "w") as csvfile:
-        fieldnames = ["Id", "Prediction"]
-        writer = csv.DictWriter(csvfile, delimiter=",", fieldnames=fieldnames)
-        writer.writeheader()
-        for r1, r2 in zip(ids, y_pred):
-            writer.writerow({"Id": int(r1), "Prediction": int(r2)})

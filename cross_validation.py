@@ -1,6 +1,5 @@
 import numpy as np
-from apply_method import apply_method, predict
-from utilities import compute_mse
+from apply_method import apply_method
 from plots import cross_validation_visualization, cross_validation_visualization_degree, cross_validation_visualization_multiple
 from split_data import split_data
 from helpers import load_csv_data, load_csv_title, create_csv_submission
@@ -27,21 +26,24 @@ def build_k_indices(y, k_fold, seed):
     return np.array(k_indices)
 
 def cross_validation(method, y, x, k_indices, k, lambda_ = 0.5, initial_w = None, max_iters = 100, gamma = 0.1, logistic = False):
-    #TODO: si on a pas de initial w c'est qu'on l'utilise pas non? Donc on peut y mettre n'importe quoi ?
     """return the loss of ridge regression for a fold corresponding to k_indices
     
     Args:
+        method:     method to apply to the data
         y:          shape=(N,)
         x:          shape=(N,)
         k_indices:  2D array returned by build_k_indices()
         k:          scalar, the k-th fold (N.B.: not to confused with k_fold which is the fold nums)
-        lambda_:    scalar, cf. ridge_regression()
-        degree:     scalar, cf. build_poly()
+        lambda_:    scalar, regularisation parameter 
+        initial_w:  the initial weight
+        max_iters:  the number of iteration maximal 
+        gamma:      the learning rate  
+        logistic:   Boolean; indicates if we have a logistic method 
 
     Returns:
-        train and test root mean square errors mse = sqrt(2 mse)
+        loss_tr:    loss of the training set 
+        loss_val:   loss of the validation
     """
-
     # get k'th subgroup in validation, others in train: 
     valid_indices = k_indices[k]
     train_indices = np.delete(k_indices,k, axis = 0).reshape(-1)
@@ -58,24 +60,35 @@ def best_single_param_selection(method, y,x, x_te, id, k_fold, params = [0.1, 0.
     """cross validation over regularisation parameter lambda.
     
     Args:
-        degree: integer, degree of the polynomial expansion
-        k_fold: integer, the number of folds
-        params: shape = (p, ) where p is the number of values of tuned parameter to test. 
-        tuned_param: name of parameters to tune. Possibilities are: lambda, initial_w, max_iters, gamma
-        lambda_: value if lambda is not tuned
-        initial_ws: initial weights
-        maxs_iters: nb maximal of iterations
-        gamma: value if gamma is not tuned
-        seed: fixed seed
+        method:         method to apply to the data
+        y:              labels
+        x:              features
+        x_te:           test features
+        id:             index of the labels
+        k_fold:         integer, the number of folds
+        params:         shape = (p, ) where p is the number of values of tuned parameter to test
+        tuned_param:    name of parameters to tune. Possibilities are: lambda, max_iters, gamma
+        lambda_:        regularisation parameter 
+        initial_ws:     initial weights
+        max_iters:      the number maximal of iterations
+        gamma:          the learning rate  
+        seed:           fixed seed
+        verbose:        boolean; specifies if the intermediate losses and accuracies are printed
+        logistic:       boolean; indicates if we have a logistic method 
         
     Returns:
-        best_lambda : scalar, value of the best lambda
-        best_loss : scalar, the associated root mean squared error for the best lambda
+        best_param:     best value of the tune parameter
+        acc_tr:         accuracy of the training set 
+        acc_val:        accuracy of the validation set 
+        best_loss_tr:   best loss of the training set 
+        best_loss_val:  best loss of the validsation set
+        losses_tr:      losses of the training set
+        losses_val:     losses of the validation set 
     """
     
     # split data in k fold
     k_indices = build_k_indices(y, k_fold, seed)
-    # define lists to store the loss of training data and test data
+    # define lists to store the loss of training data and validation data
     losses_tr = []
     losses_val = []
     # cross validation over tuned parameter
@@ -92,9 +105,10 @@ def best_single_param_selection(method, y,x, x_te, id, k_fold, params = [0.1, 0.
             else:
                 raise ValueError("Please specify which parameter you are tuning")
             if np.isnan(loss_val):
-
+                # to avoid that the cross val takes nan as the min !
                 loss_tr = 10000
-                loss_val = 10000 #to avoid that the cross val takes nan as the min !
+                loss_val = 10000 
+
             temp_loss_tr.append(loss_tr)
             temp_loss_val.append(loss_val)
         losses_tr.append(np.mean(temp_loss_tr))
@@ -121,7 +135,6 @@ def best_single_param_selection(method, y,x, x_te, id, k_fold, params = [0.1, 0.
         loss_tr_final, _ = apply_method(method, y, x, x_te = x_te, id = id, max_iters = best_param, lambda_ = lambda_, initial_w = initial_w, gamma = gamma, validation = False, logistic = logistic)
         acc_tr, acc_val = apply_method(method, y_tr, x_tr, y_val, x_val, max_iters = best_param, lambda_ = lambda_, initial_w = initial_w, gamma = gamma, validation = True, loss = "accuracy", do_predictions= False, logistic = logistic)
 
-    #loss_tr_final, _ = apply_method(method, y, x, np.zeros_like(y), np.zeros_like(x), x_te, id, best_param, validation = False)
     print("accuracy measures: ", "train = ", acc_tr, "val = ", acc_val)
     print("final training loss", loss_tr_final)
     print("Chosen " + tuned_param + " is: ", best_param)
@@ -132,66 +145,76 @@ def best_triple_param_selection(method, y,x, x_te, id, k_fold, lambdas = [0.1, 0
     """cross validation over regularisation parameter lambda.
     
     Args:
-        degree: integer, degree of the polynomial expansion
-        k_fold: integer, the number of folds
-        params: shape = (p, ) where p is the number of values of tuned parameter to test. 
-        tuned_param: name of parameters to tune. Possibilities are: lambda, initial_w, max_iters, gamma
-        lambda_: value if lambda is not tuned
-        initial_ws: initial weights
-        maxs_iters: nb maximal of iterations
-        gamma: value if gamma is not tuned
-        seed: fixed seed
+        method:         method to apply to the data
+        y:              labels
+        x:              features
+        x_te:           test features
+        id:             index of the labels
+        k_fold:         integer, the number of folds
+        lambdas:        regularisation parameter 
+        gammas:          the learning rate
+        max_iters:      the number maximal of iterations
+        initial_ws:     initial weights   
+        seed:           fixed seed
+        verbose:        boolean; specifies if the intermediate losses and accuracies are printed
+        separation:     boolean; indicates if we use the function for the whole dataset or a fraction of the dataset 
+        logistic:       boolean; indicates if we have a logistic method 
         
     Returns:
-        best_lambda : scalar, value of the best lambda
-        best_loss : scalar, the associated root mean squared error for the best lambda
+        best_lambda:    scalar, value of the best lambda
+        best_gamma:     scalar, value of the best gamma
+        best_max_iters: scalar, value of the best max_iters
+        acc_tr:         if separation = False:
+        acc_val:        if separation = False:
     """
     
     # split data in k fold
     k_indices = build_k_indices(y, k_fold, seed)
-    # define lists to store the loss of training data and test data
+    # define lists to store the loss of training and validation datas, the best gammas and best lambdas
     super_best_loss_val = []
     super_best_loss_train = []
     best_gammas = []
     super_best_lambdas = []
 
     for max_iters in maxs_iters:
-        #if verbose:
-        #    print("looping for max iters:", max_iters)
         best_loss_val = []
         best_loss_train = []
         best_lambdas = []
+
         for gamma in gammas:
-            #if verbose:
-            #    print("looping for gamma:", gamma)
             losses_val = []
             losses_train = []
+
             for lambda_ in lambdas:
-                #if verbose:
-                #    print("looping for lambda:", lambda_)
                 temp_loss_val = []
                 temp_loss_train = []
+
                 for k in range(k_fold):
                     loss_tr, loss_val= cross_validation(method, y , x, k_indices, k, lambda_ = lambda_, initial_w = initial_w, max_iters = max_iters, gamma = gamma, logistic= logistic)
                     if np.isnan(loss_val):
+                        #to avoid that the cross val takes nan as the min !
                         loss_tr = 10000
-                        loss_val = 10000 #to avoid that the cross val takes nan as the min ! #TODO: raise warning ? But need of a new library...
+                        loss_val = 10000 
+
                     temp_loss_val.append(loss_val)
                     temp_loss_train.append(loss_tr)
                 losses_val.append(np.mean(temp_loss_val))
                 losses_train.append(np.mean(temp_loss_train))
                 if verbose:
                     print("For: lambda = ", lambda_, " gamma = ", gamma, " max_iters = ", max_iters, ", training loss = ", np.mean(temp_loss_train),  " validation loss = ", np.mean(temp_loss_val))
+            
             best_temp_loss = min(losses_val)
             best_loss_val.append(best_temp_loss)
             best_loss_train.append(min(losses_train))
             best_lambdas.append(lambdas[np.argmin(losses_val)])
+
         best_loss = min(best_loss_val)
         best_lambda = best_lambdas[np.argmin(best_loss_val)]
         super_best_lambdas.append(best_lambda)
         best_gammas.append(gammas[np.argmin(best_loss_val)])
         super_best_loss_val.append(best_loss)
         super_best_loss_train.append(min(best_loss_train))
+
     super_best_loss = min(super_best_loss_val)
     idx_super_best = np.argmin(super_best_loss_val)
     best_max_iters = maxs_iters[idx_super_best]
@@ -206,33 +229,33 @@ def best_triple_param_selection(method, y,x, x_te, id, k_fold, lambdas = [0.1, 0
     acc_tr, acc_val = apply_method(method, y_tr, x_tr, y_val, x_val, max_iters = best_max_iters, lambda_ = best_lambda, initial_w = initial_w, gamma = best_gamma, validation = True, loss = "accuracy", do_predictions= False, logistic= logistic)
     print("accuracy measures: ", "train = ", acc_tr, "val = ", acc_val)
     loss_tr_final, _ = apply_method(method, y, x, x_te = x_te, id = id, max_iters = best_max_iters, lambda_ = best_lambda, initial_w = initial_w, gamma = best_gamma, validation = False, logistic= logistic)
-
-    #loss_tr_final, _ = apply_method(method, y, x, np.zeros_like(y), np.zeros_like(x), x_te, id, best_param, validation = False)
     print("final training loss", loss_tr_final)
 
     return best_lambda, best_gamma, best_max_iters, acc_tr, acc_val
-
 
 def best_degree_selection(method, k_fold, degrees = [2,4], params = [0.1, 0.5], tuned_param = "", lambda_ = 0.1, initial_w = None, max_iters = 10, gamma = 0.1, seed = 1, verbose = True, logistic = False):
     """Allow to select the best degree, based on a cross validation result of a method. The best degree isn't cross-validated to save running time. 
     Also, cross validation on only one parameter is allowed, in order not to have multiple 
 
     Args:
-        method (_type_): _description_
-        k_fold (_type_): _description_
-        degrees (list, optional): _description_. Defaults to [2,4].
-        params (list, optional): _description_. Defaults to [0.1, 0.5].
-        tuned_param (str, optional): _description_. Defaults to "".
-        lambda_ (float, optional): _description_. Defaults to 0.1.
-        initial_w (_type_, optional): _description_. Defaults to None.
-        max_iters (int, optional): _description_. Defaults to 10.
-        gamma (float, optional): _description_. Defaults to 0.1.
-        seed (int, optional): _description_. Defaults to 1.
-        verbose (bool, optional): _description_. Defaults to True.
-        logistic (bool, optional): _description_. Defaults to False.
+        method:     method to apply to the data
+        k_fold:     integer, the number of folds
+        degrees:    degrees to select for the best polynomial
+        params:     possible value for the tuned parameter
+        tuned_param:name of parameters to tune. Possibilities are: lambda, max_iters, gamma
+        lambda_:    regularisation parameter 
+        initial_w:  initial weights  
+        max_iters:  the number maximal of iterations
+        gamma:      the learning rate
+        seed:       fixed seed
+        verbose:    boolean; specifies if the intermediate losses and accuracies are printed
+        logistic:   boolean; indicates if we have a logistic method 
 
     Returns:
-        _type_: _description_
+        best_param:         the best tuned parameter value
+        best_degree:        the best degree value
+        best_accuracy_tr:   the best accuracy of the training data
+        best_accuracy_val:  the best accuracy of the validation data
     """
     cross_mse_tr = []
     cross_mse_val = []
@@ -242,12 +265,12 @@ def best_degree_selection(method, k_fold, degrees = [2,4], params = [0.1, 0.5], 
         title = load_csv_title(training_set)
 
         print("degree= ", chosen_degree)
-        x, x_mean, x_std, ind, projection_matrix = preproc_train(x, title, do_corr = False, do_pca = False, do_poly = True, degree= chosen_degree) #TODO: decomment
+        x, x_mean, x_std, ind, projection_matrix = preproc_train(x, title, do_corr = False, do_pca = False, do_poly = True, degree= chosen_degree)
 
         _, x_te, id = load_csv_data(test_set)
         title = load_csv_title(test_set)
 
-        x_te = preproc_test(x_te, title, x_mean, x_std, projection_matrix, ind, do_corr = False, do_pca = False, do_poly = True, degree= chosen_degree) #TODO: decomment
+        x_te = preproc_test(x_te, title, x_mean, x_std, projection_matrix, ind, do_corr = False, do_pca = False, do_poly = True, degree= chosen_degree)
         
         if verbose:
             print("Data have been preprocessed")
@@ -272,22 +295,54 @@ def best_degree_selection(method, k_fold, degrees = [2,4], params = [0.1, 0.5], 
     return best_param, best_degree, best_accuracy_tr, best_accuracy_val
 
 def joining_prediction(method, id, y):
+    """Create csv submission of the prediction from the different classes 
+    Args:
+        method: method to apply to the data
+        id:     index of the y labels
+        y:      the labels
+    """
     path = op.join(prediction_dir, "prediction" + str(method) + ".csv")
     create_csv_submission(id, y, path)
 
-def apply_separation_method(method, y_tr, x_tr, id_tr, title_tr, y_te, x_te, id_te, title_te, k_fold = 10, lambdas_ = [0.5], initial_w = None, max_iters = [100], gammas = [0.01], do_corr = False, do_pca = False,  percentage = 95, logistic = False, verbose = True, do_poly = False, degree = 0): #do_poly = False
-# method,y_tr,x_tr,y_val = np.zeros([10,1]) ,x_val = np.zeros([10,1]), x_te = np.zeros([5,1]), id = np.zeros(5), lambda_ = 0.5, initial_w = None, max_iters = 100, gamma = 0.01, do_predictions = True, validation = True, loss = 'original', separation = False
+def apply_separation_method(method, y_tr, x_tr, id_tr, title_tr, y_te, x_te, id_te, title_te, k_fold = 10, lambdas_ = [0.5], initial_w = None, max_iters = [100], gammas = [0.01], do_corr = False, do_pca = False,  percentage = 95, logistic = False, verbose = True, do_poly = False, degree = 0): 
+    """
+    Args:
+     , verbose = True, do_poly = False, degree = 0
+        method:     method to apply to the data
+        y_tr:       training labels
+        x_tr:       training features
+        id_tr:      index of the training labels
+        title_tr:   name of the training features
+        y_te:       test labels
+        x_te:       test features
+        id_te:      ndex of the test labels
+        title_te:   name of the test features
+        k_fold:     integer, the number of folds
+        lambdas_:   regularisation parameter 
+        initial_w:  the initial weight
+        max_iters:  the number of iteration maximal 
+        gammas:     the learning rate  
+        do_corr:    boolean; indicates if the deletion of correlated features is applied
+        do_pca:     boolean; indicates if the PCA is applied
+        percentage: percentage for the PCA
+        logistic:   boolean; indicates if we have a logistic method 
+        verbose:    boolean; specifies if the intermediate losses and accuracies are printed 
+        do_poly:    boolean; indicates if the polynomial feature expansion is performed
+        degree:     degree for the polynomial feature expansion
+    """
+    # Separation of the training and test data according to the classes
     x_tr, title_tr = replace_class(x_tr, title_tr)
     xs_tr, ys_tr, ids_ = class_separation(x_tr, title_tr, id_tr, y_tr)
     x_te, title_te = replace_class(x_te, title_te)
     xs_te, _, ids_te = class_separation(x_te, title_te, id_te, y_te)
 
-
+    # Definition of lists to store values
     mse_trains = []
     ys = []
     ids = []
     acc_trains = []
     acc_vals = []
+
     for i in range(len(xs_tr)):
         xi_tr = xs_tr[i]
         yi_tr = ys_tr[i]
@@ -325,6 +380,7 @@ def apply_separation_method(method, y_tr, x_tr, id_tr, title_tr, y_te, x_te, id_
     index = np.argsort(ids_ys[0])
     ids_ys[1] = ids_ys[1][index]
     ids_ys[0] = ids_ys[0][index]
+
     joining_prediction(method, ids_ys[0], ids_ys[1])
     print("accuracy measures: ", "train = ", np.sum(acc_trains), "val = ", np.sum(acc_vals))
     print("final training loss", np.sum(mse_trains))

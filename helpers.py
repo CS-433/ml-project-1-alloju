@@ -4,7 +4,16 @@ import numpy as np
 import csv
 
 def load_csv_data(data_path, sub_sample=False):
-    """Loads data and returns y (class labels), tX (features) and ids (event ids)"""
+    """Loads data and returns y (class labels), tX (features) and ids (event ids)
+    Args:
+        data_path:  Path to the file
+        sub_sample: boolean; indicates if the data is sampled
+    
+    Returns:
+        yb:         the label vector
+        input_data: the features table
+        ids:        the index of the label
+    """
     y = np.genfromtxt(data_path, delimiter=",", skip_header=1, dtype=str, usecols=1)
     x = np.genfromtxt(data_path, delimiter=",", skip_header=1)
     ids = x[:, 0].astype(np.int)
@@ -22,15 +31,47 @@ def load_csv_data(data_path, sub_sample=False):
 
     return yb, input_data, ids
 
+def create_csv_submission(ids, y_pred, name):
+    """
+    Creates an output file in .csv format for submission to Kaggle or AIcrowd
+    Arguments: ids (event ids associated with each prediction)
+               y_pred (predicted class labels)
+               name (string name of .csv output file to be created)
+    """
+    with open(name, "w") as csvfile:
+        fieldnames = ["Id", "Prediction"]
+        writer = csv.DictWriter(csvfile, delimiter=",", fieldnames=fieldnames)
+        writer.writeheader()
+        for r1, r2 in zip(ids, y_pred):
+            writer.writerow({"Id": int(r1), "Prediction": int(r2)})
 
 def standardize(x):
-    """Standardize the original data set."""
+    """Standardize the original data set.
+    Args:
+        x:      input table
+    Returns: 
+        x:      the standardize input table
+        mean_x: the mean vector of the input table
+        std_x:  the standard deviation vector of the input table
+    """
     mean_x = np.mean(x, axis = 0)
     x = x - mean_x
     std_x = np.std(x, axis = 0)
     x = x / std_x
     return x, mean_x, std_x
 
+def load_csv_title(data_path): 
+    """Load the name of each column of the csv file
+    
+    Args:
+        data_path: Path to the file
+    
+    Returns:
+        title: Vector containing the column names
+    """
+    title = np.genfromtxt(data_path, delimiter=",", dtype = str, max_rows=1)
+    title = title[2::]
+    return title
 
 def batch_iter(y, tx, batch_size, num_batches=1, shuffle=True):
     """
@@ -41,6 +82,13 @@ def batch_iter(y, tx, batch_size, num_batches=1, shuffle=True):
     Example of use :
     for minibatch_y, minibatch_tx in batch_iter(y, tx, 32):
         <DO-SOMETHING>
+    Args:
+        y:              the tabel vector
+        tx:             the features table
+        batch_size:     size of the batches
+        num_batches:    number of batches
+        shuffle:        boolean; indicates if the data is randomly shuffled
+    Returns:
     """
     data_size = len(y)
 
@@ -56,31 +104,3 @@ def batch_iter(y, tx, batch_size, num_batches=1, shuffle=True):
         end_index = min((batch_num + 1) * batch_size, data_size)
         if start_index != end_index:
             yield shuffled_y[start_index:end_index], shuffled_tx[start_index:end_index]
-
-
-def create_csv_submission(ids, y_pred, name):
-    """
-    Creates an output file in .csv format for submission to Kaggle or AIcrowd
-    Arguments: ids (event ids associated with each prediction)
-               y_pred (predicted class labels)
-               name (string name of .csv output file to be created)
-    """
-    with open(name, "w") as csvfile:
-        fieldnames = ["Id", "Prediction"]
-        writer = csv.DictWriter(csvfile, delimiter=",", fieldnames=fieldnames)
-        writer.writeheader()
-        for r1, r2 in zip(ids, y_pred):
-            writer.writerow({"Id": int(r1), "Prediction": int(r2)})
-
-def load_csv_title(data_path): 
-    """Load the name of each column of the csv file
-    
-    Args:
-        data_path: Path to the file
-    
-    Returns:
-        title: Vector containing the column names
-    """
-    title = np.genfromtxt(data_path, delimiter=",", dtype = str, max_rows=1)
-    title = title[2::]
-    return title
