@@ -464,23 +464,3 @@ apply_separation_method(
 #     do_poly=True,
 #     degree=3,
 # )
-
-# # Example of cross validation on regularized logistic regression :
-# (
-#     best_lambda,
-#     best_gamma,
-#     best_max_iters,
-#     accuracy_tr,
-#     accuracy_val,
-# ) = best_triple_param_selection(
-#     im.reg_logistic_regression,
-#     y_logistic,
-#     x,
-#     x_te,
-#     id,
-#     10,
-#     lambdas=[1e-5, 1e-4],
-#     maxs_iters=[500, 1000],
-#     gammas=[0.1, 0.5],
-#     logistic=True,
-# )
