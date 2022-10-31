@@ -1,4 +1,4 @@
-from cross_validation import best_degree_selection, best_single_param_selection, build_k_indices, cross_validation, best_triple_param_selection, joining_prediction, apply_separation_method
+from methods import best_degree_selection, best_single_param_selection, build_k_indices, cross_validation, best_triple_param_selection, joining_prediction, apply_separation_method
 from helpers import standardize, load_csv_data, load_csv_title
 from utilities import split_data
 from paths import training_set, test_set
@@ -64,7 +64,7 @@ x_te = preproc_test(x_te, title_te, x_mean, x_std, projection_matrix, ind, do_co
 #run the method
 best_lambda_, cross_mse_tr_rr, cross_mse_val_rr = best_single_param_selection(im.ridge_regression, y, x, x_te, id_te, 10, params = [0.0, 1e-6, 1e-5, 1e-4, 2e-4, 3e-4, 5e-4, 6e-4, 7e-4, 8e-4, 9e-4, 1e-3, 1e-2, 1e-1], tuned_param = "lambda")
 
-print('Polynomial feature expansion, degree 8 :')
+print('Polynomial feature expansion on ridge regression, degree 8 :')
 #reload the data
 y,x,id_tr = load_csv_data(training_set)
 title_tr = load_csv_title(training_set)
@@ -75,3 +75,19 @@ x, x_mean, x_std, ind, projection_matrix = preproc_train(x, title_tr, do_corr = 
 x_te = preproc_test(x_te, title_te, x_mean, x_std, projection_matrix, ind, do_corr = False, do_pca = False, do_poly = True, degree = 8)
 #run the method
 best_lambda_, cross_mse_tr_rr, cross_mse_val_rr = best_single_param_selection(im.ridge_regression, y, x, x_te, id_te, 10, params = [0.0, 1e-6, 1e-5, 1e-4, 2e-4, 3e-4, 5e-4, 6e-4, 7e-4, 8e-4, 9e-4, 1e-3, 1e-2, 1e-1], tuned_param = "lambda")
+
+# Example of cross validation:
+
+# print('Cross Validation on regularized logistic regression, using polynomial expansion of degree 3:')
+# y,x,id_tr = load_csv_data(training_set)
+# title_tr = load_csv_title(training_set)
+# _, x_te, id_te = load_csv_data(test_set)
+# title_te = load_csv_title(test_set)
+# #preprocess the data
+# x, x_mean, x_std, ind, projection_matrix = preproc_train(x, title_tr, do_corr = False, do_pca = False, do_poly = True, degree = 3)
+# x_te = preproc_test(x_te, title_te, x_mean, x_std, projection_matrix, ind, do_corr = False, do_pca = False, do_poly = True, degree = 3)
+
+# #Example of cross validation on regularized logistic regression :
+# best_triple_param_selection(im.reg_logistic_regression, y_logistic, x, x_te, id, 10, lambdas = [1e-5, 1e-4], maxs_iters=[500,1000], gammas= [0.1,0.5], logistic= True)
+
+
