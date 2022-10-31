@@ -36,8 +36,8 @@ def cross_validation_visualization_degree(method, params, mse_tr, mse_te, tuned_
         i:              
     """
     plt.figure(i)
-    plt.semilogx(params, mse_tr, marker=".", color='b', label='train error')
-    plt.semilogx(params, mse_te, marker=".", color='r', label='test error')
+    plt.plot(params, mse_tr, marker=".", color='b', label='train error')
+    plt.plot(params, mse_te, marker=".", color='r', label='test error')
     plt.xlabel(tuned_param)
     plt.ylabel("mse")
     #plt.xlim(1e-4, 1)
