@@ -12,7 +12,7 @@
 - 5th submission: 1st SGD, tr_loss = 0.62, val_loss = 2.83, max_iters = 5, gamma = 0.08
 
 ## 21.10 
-- ??
+- don't remember :(
 
 #### 22.10
 - 1st submission: reg_logistic_regression, y, x, x_te, id, 10, lambdas = [0.5,1,3,5,6,7,8,9,10,15,50,80], gammas = [0.01,0.02,0.05,0.1,0.25,0.5,0.75,0.9], maxs_iters = [5,10,20,50,75,100,150,200]) -> chosen: lambda = 7, max_iters = 10, gamma = 0.05, rmse training = 1.137
@@ -46,15 +46,10 @@ final training mse (0.244828, 0)
 - 4th submission: least square, with correct standardization (axis = 0). labels are 0,1, mse = 0.37466406834611504
 - 5th submission: least square, same standardization for test & train data, labels 0,1, mse = 0.37466406834611504
 
-
-? lambda =  0.0 max_iters =  1200 gamma =  0.02 mse_val =  0.3765870081691118
-final training mse (0.3764975488089389, 0) ?
-
 #### 26.10
 - 1st submission: ridge ?
 - 2nd submission: GD, max_iters = 1000, gamma = 0.05, loss_val =  0.37312857606110283
 final training loss (0.3730184763388884, 0)
-
 
 #### 28.10
 - 1st submission: least square with del corr + pca, acc_tr = 0.712315, acc_val = 0.71086
@@ -72,19 +67,6 @@ final training loss 0.07451915987030125, Chosen lambda is:  0.0002
 final training loss 0.27362973363479154
 Chosen lambda is:  1e-05
 
-
-
-GD sans rien:
-
-lambda =  0.0 max_iters =  1000 gamma =  0.05 loss_val =  0.37312857606110283
-final training loss (0.3730184763388884, 0)
-
-GD delete corr:
-
-lambda =  0.0 max_iters =  1000 gamma =  0.05 loss_val =  0.3806351696232796
-final training loss (0.38054189796368315, 0)
-
-GD pca:
-
-lambda =  0.0 max_iters =  1000 gamma =  0.05 loss_val =  0.37321817828582804
-final training loss (0.3731122738881385, 0)
+### 30.10:
+- 1st submission: ridge regression with polynomial and one hot encoding class separation, accuracy measures:  train =  0.8242241395555271 val =  0.8259633904722368
+final training loss 0.25988178355348635
