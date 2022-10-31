@@ -18,10 +18,10 @@ This reproduces the accuracy values for each implementation presented in the rep
 ## Implementations
 
 In the file `implementations.py`, the user can find the following required implementations :
-- `least_squares` : the least square error implementation, returning the weights and loss using mean squared error
-- `mean_squared_error_sgd` : the least square error using stochastic gradient descent, returning the weights and loss using mean squared error
-- `mean_squared_error_gd`: the least square error using gradient descent, returning the weights and loss using mean squared error
-- `ridge_regression` : the least square implementation with L2 regularization, returning the weights and loss using mean squared error
+- `least_squares` : the least squares error implementation, returning the weights and loss using mean squared error
+- `mean_squared_error_sgd` : the mean squared error using stochastic gradient descent, returning the weights and loss using mean squared error
+- `mean_squared_error_gd`: the mean squared error using gradient descent, returning the weights and loss using mean squared error
+- `ridge_regression` : the mean squared implementation with L2 regularization, returning the weights and loss using mean squared error
 - `logistic_regression` : the logistic regression implementation, returning the weights and loss using negative log likelyhood
 - `reg_logistic_regression` : the L2 regularized logistic regression, returning the weights and loss using negative log likelyhood
 
@@ -29,8 +29,7 @@ In the file `implementations.py`, the user can find the following required imple
 
 There are two files regarding the preprocessing. 
 
-- First `prepro_plots.ijynb` containing to visualisation of the data. By running this command in the terminal `python3 prepro_plots.ijynb` the user can observe some basic plots
-allowing to get a better vision of the data.
+- First `prepro_plots.ijynb` containing the visualisation of the data. By running this command in the terminal `python3 prepro_plots.ipynb` the user can observe some basic plots, allowing to get a better vision of the data.
 - Secondly `preprocessing.py` containing all the different steps implemented in the preprocessing as well as the two final preprocessing functions, one for the train and one for the test set.
 
 ## Useful files 
