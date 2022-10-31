@@ -18,10 +18,10 @@ This reproduces the accuracy values for each implementation presented in the rep
 ## Implementations
 
 In the file `implementations.py`, the user can find the following required implementations :
-- `least_squares` : the least square error implementation, returning the weights and loss using mean square error
-- `mean_squared_error_sgd` : the least square error using stochastic gradient descent, returning the weights and loss using mean square error
-- `mean_squared_error_gd`: the least square error using gradient descent, returning the weights and loss using mean square error
-- `ridge_regression` : the least square implementation with L2 regularization, returning the weights and loss using mean square error
+- `least_squares` : the least square error implementation, returning the weights and loss using mean squared error
+- `mean_squared_error_sgd` : the least square error using stochastic gradient descent, returning the weights and loss using mean squared error
+- `mean_squared_error_gd`: the least square error using gradient descent, returning the weights and loss using mean squared error
+- `ridge_regression` : the least square implementation with L2 regularization, returning the weights and loss using mean squared error
 - `logistic_regression` : the logistic regression implementation, returning the weights and loss using negative log likelyhood
 - `reg_logistic_regression` : the L2 regularized logistic regression, returning the weights and loss using negative log likelyhood
 
