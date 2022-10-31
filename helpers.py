@@ -3,12 +3,13 @@
 import numpy as np
 import csv
 
+
 def load_csv_data(data_path, sub_sample=False):
     """Loads data and returns y (class labels), tX (features) and ids (event ids)
     Args:
         data_path:  Path to the file
         sub_sample: boolean; indicates if the data is sampled
-    
+
     Returns:
         yb:         the label vector
         input_data: the features table
@@ -30,6 +31,7 @@ def load_csv_data(data_path, sub_sample=False):
         ids = ids[::50]
 
     return yb, input_data, ids
+
 
 def create_csv_submission(ids, y_pred, name):
     """
