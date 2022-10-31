@@ -36,7 +36,7 @@ Secondly `preprocessing.py` containing all the different steps implemented in th
 
 ## Cross validation
 
-- All cross validation implementations are to be found in `cross_validation.py`. This means the generic functions splitting the data and applying cross validation, but mostly one will find the implemented methods that can determine the best single or triple param for the different implementations, as well as the selection of the best degree for polynomial feature expansion. 
+- All cross validation implementations are to be found in `methods.py`. This means the generic functions splitting the data and applying cross validation, but mostly one will find the implemented methods that can determine the best single or triple param for the different implementations, as well as the selection of the best degree for polynomial feature expansion. 
 
 ## Tests 
 
