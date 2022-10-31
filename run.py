@@ -1,10 +1,10 @@
-from methods import best_degree_selection, best_single_param_selection, build_k_indices, cross_validation, best_triple_param_selection, joining_prediction, apply_separation_method
-from helpers import standardize, load_csv_data, load_csv_title
-from utilities import split_data
+from methods import best_single_param_selection, apply_separation_method
+from helpers import load_csv_data
+from utilities import load_csv_title
 from paths import training_set, test_set
 from apply_method import apply_method, predict
 import implementations as im
-from preprocessing import angle_values, preproc_test, preproc_train, to_0_1, class_separation, replace_class
+from preprocessing import preproc_test, preproc_train, to_0_1
 import numpy as np
 
 #load the training set
@@ -24,7 +24,7 @@ apply_separation_method(method = im.ridge_regression , y_tr = y ,x_tr = x, id_tr
 
 #reproduce the results for each implematation using polynomial feature expansion and one hot encoder
 print('Least squares, degree 5 :')
-apply_separation_method(method = im.least_squares , y_tr = y ,x_tr = x, id_tr = id_tr, title_tr = title_tr, y_te = _, x_te = x_te, id_te = id_te, title_te = title_te, k_fold = 10, lambdas_ = [0.5], initial_w = None, max_iters = [100], gammas = [0.01], do_corr = False, do_pca = False, percentage = 95, logistic = False, verbose = True, do_poly = True, degree = 8)
+apply_separation_method(method = im.least_squares , y_tr = y ,x_tr = x, id_tr = id_tr, title_tr = title_tr, y_te = _, x_te = x_te, id_te = id_te, title_te = title_te, k_fold = 10, lambdas_ = [0.5], initial_w = None, max_iters = [100], gammas = [0.01], do_corr = False, do_pca = False, percentage = 95, logistic = False, verbose = True, do_poly = True, degree = 5)
 print('Ridge regression, degree 6 :')
 apply_separation_method(method = im.ridge_regression , y_tr = y ,x_tr = x, id_tr = id_tr, title_tr = title_tr, y_te = _, x_te = x_te, id_te = id_te, title_te = title_te, k_fold = 10, lambdas_ = [0.0, 1e-6, 1e-5, 1e-4, 2e-4, 3e-4, 4e-4, 5e-4, 6e-4, 7e-4, 8e-4, 9e-4, 1e-3, 1e-2, 1e-1], initial_w = None, max_iters = [1], gammas = [0.0], do_corr = False, do_pca = False, percentage = 95, logistic = False, verbose = True, do_poly = True, degree = 6) 
 print('Gradient descent, degree 3 :')
