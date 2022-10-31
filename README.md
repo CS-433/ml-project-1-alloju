@@ -7,6 +7,7 @@
     Then run: <br/>
     `conda create --file=environment.yml --name=project1-grading` <br/>
     `conda activate project1-grading`
+- Put the datasets found here: `https://www.aicrowd.com/challenges/epfl-machine-learning-higgs/dataset_files` in a folder called `data`
 
 ## Reproducibility 
 
@@ -18,6 +19,7 @@ This reproduces the accuracy values for each implementation presented in the rep
 ## Implementations
 
 In the file `implementations.py`, the user can find the following required implementations :
+
 - `least_squares` : the least squares error implementation, returning the weights and loss using mean squared error
 - `mean_squared_error_sgd` : the mean squared error using stochastic gradient descent, returning the weights and loss using mean squared error
 - `mean_squared_error_gd`: the mean squared error using gradient descent, returning the weights and loss using mean squared error
@@ -34,6 +36,7 @@ There are two files regarding the preprocessing.
 
 ## Useful files 
 
+- In `paths.py` the user can specify the path to their different folders. *E.g. folder containing data, folder in which to put the predictions,...*
 - In `helpers.py` the user can find all the methods that were given at the beginning of the project. 
 - In `utilities.py` the user can find methods that have been used accross the program and were stored here for easy access.
 - In `paths.py` we stored all the different paths allowing us to access and store our data and prediction files.
