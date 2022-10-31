@@ -467,10 +467,11 @@ x_te = preproc_test(
 
 # Example of cross validation on regularized logistic regression :
 (
-    best_param,
-    best_degree,
-    best_accuracy_tr,
-    best_accuracy_val,
+    best_lambda,
+    best_gamma,
+    best_max_iters,
+    accuracy_tr,
+    accuracy_val,
 ) = best_triple_param_selection(
     im.reg_logistic_regression,
     y_logistic,
