@@ -64,7 +64,7 @@ apply_separation_method(
 )
 
 
-# Reproduce the results for each implematation using polynomial feature expansion and one hot encoder
+# # Reproduce the results for each implematation using polynomial feature expansion and one hot encoder
 
 # print("Least squares, degree 5 :")
 # apply_separation_method(
@@ -216,7 +216,7 @@ apply_separation_method(
 #     k_fold=10,
 #     lambdas_=[1e-5],
 #     initial_w=None,
-#     max_iters=[100, 0],
+#     max_iters=[1000],
 #     gammas=[0.1],
 #     do_corr=False,
 #     do_pca=False,
@@ -404,7 +404,7 @@ apply_separation_method(
 #     do_poly=True,
 #     degree=8,
 # )
-# # run the method 
+# # run the method
 # (
 #     best_param,
 #     acc_tr,
