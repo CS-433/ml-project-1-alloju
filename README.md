@@ -8,7 +8,7 @@ BALABABDJBJKBJKSDBJKSBD sur l'environnement
 ## Reproducibility 
 
 To reproduce the results presented in the report, the user should run the following command in its terminal `python3 run.py`. This produces a csv file that contains our best prediction posted on AICrowd. 
-To reproduce the rest of the results, the user should decoment the lines ... to ... and run the same command. This reproduces the accuracy values for each implementation presented in the report.
+To reproduce the rest of the results, the user should open `run.py` and decoment the lines ... to ... and run the same command. This reproduces the accuracy values for each implementation presented in the report.
 
 ## Implementations
 
