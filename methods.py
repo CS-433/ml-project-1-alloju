@@ -399,7 +399,7 @@ def joining_prediction(method, id, y):
 def apply_separation_method(method, y_tr, x_tr, id_tr, title_tr, y_te, x_te, id_te, title_te, k_fold = 10, lambdas_ = [0.5], initial_w = None, max_iters = [100], gammas = [0.01], do_corr = False, do_pca = False,  percentage = 95, logistic = False, verbose = True, do_poly = False, degree = 0): 
     """
     Args:
-     , verbose = True, do_poly = False, degree = 0
+        verbose = True, do_poly = False, degree = 0
         method:     method to apply to the data
         y_tr:       training labels
         x_tr:       training features
